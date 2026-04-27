@@ -13,6 +13,7 @@ use std::sync::atomic::Ordering;
 
 use parking_lot::Mutex;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
+#[cfg(windows)]
 use tokio::net::windows::named_pipe;
 use tokio::sync::mpsc;
 
@@ -116,6 +117,7 @@ fn memchr_subseq(haystack: &[u8], needle: &[u8]) -> bool {
     haystack.windows(needle.len()).any(|w| w == needle)
 }
 
+#[cfg(windows)]
 async fn viewer_loop(
     id: u32,
     mut rx: mpsc::Receiver<Vec<u8>>,
@@ -156,4 +158,14 @@ async fn viewer_loop(
     }
     to_viewer.abort();
     tracing::debug!(id, "viewer_loop exiting");
+}
+
+#[cfg(not(windows))]
+async fn viewer_loop(
+    _id: u32,
+    mut rx: mpsc::Receiver<Vec<u8>>,
+    _writer: Arc<Mutex<Box<dyn Write + Send>>>,
+) {
+    // Just drain the channel so the pump doesn't block
+    while rx.recv().await.is_some() {}
 }

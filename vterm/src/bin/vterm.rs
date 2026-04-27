@@ -15,6 +15,7 @@ use anyhow::{Context, Result};
 use clap::Parser;
 use crossterm::terminal as ct_term;
 use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
+#[cfg(windows)]
 use tokio::net::windows::named_pipe::{ClientOptions, NamedPipeServer, ServerOptions};
 use tower::{Service, ServiceExt};
 use tracing_subscriber::EnvFilter;
@@ -103,6 +104,7 @@ fn init_tracing() {
 
 // ── server ────────────────────────────────────────────────────────────────────
 
+#[cfg(windows)]
 async fn accept_loop(app: Arc<App>) -> Result<()> {
     let mut first = true;
     loop {
@@ -135,6 +137,12 @@ async fn accept_loop(app: Arc<App>) -> Result<()> {
     }
 }
 
+#[cfg(not(windows))]
+async fn accept_loop(_app: Arc<App>) -> Result<()> {
+    anyhow::bail!("Orchestrator server is only supported on Windows in v0.7.1")
+}
+
+#[cfg(windows)]
 async fn handle_connection(app: Arc<App>, conn: NamedPipeServer) -> Result<()> {
     let guard = ConnectionGuard::new(Arc::clone(&app));
     let owner = guard.id();
@@ -178,6 +186,7 @@ async fn handle_connection(app: Arc<App>, conn: NamedPipeServer) -> Result<()> {
 
 // ── viewer client ─────────────────────────────────────────────────────────────
 
+#[cfg(windows)]
 async fn run_client(id: u32) -> Result<()> {
     let pipe_name = format!(r"\\.\pipe\vterm-rs-client-{id}");
     let client = loop {
@@ -214,6 +223,12 @@ async fn run_client(id: u32) -> Result<()> {
     Ok(())
 }
 
+#[cfg(not(windows))]
+async fn run_client(_id: u32) -> Result<()> {
+    anyhow::bail!("Viewer mode is only supported on Windows in v0.7.1")
+}
+
+#[cfg(windows)]
 async fn run_skill(variant: String, payload: Option<String>) -> Result<()> {
     let client = ClientOptions::new()
         .open(PIPE_NAME)
@@ -234,4 +249,9 @@ async fn run_skill(variant: String, payload: Option<String>) -> Result<()> {
         println!("{}", response.trim());
     }
     Ok(())
+}
+
+#[cfg(not(windows))]
+async fn run_skill(_variant: String, _payload: Option<String>) -> Result<()> {
+    anyhow::bail!("Skill CLI mode is only supported on Windows in v0.7.1")
 }

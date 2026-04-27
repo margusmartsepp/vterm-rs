@@ -1,3 +1,4 @@
+#![cfg(windows)]
 use anyhow::Result;
 use tokio::io::{AsyncBufRead, AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::windows::named_pipe;

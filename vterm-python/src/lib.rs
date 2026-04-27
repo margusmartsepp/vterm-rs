@@ -25,9 +25,9 @@ impl VTermClient {
     }
 
     /// Spawns a new terminal session. Returns the terminal ID.
-    #[pyo3(signature = (title, command=None, timeout_ms=None, max_lines=None, visible=None))]
-    fn spawn(&self, py: Python<'_>, title: String, command: Option<String>, timeout_ms: Option<u64>, max_lines: Option<u32>, visible: Option<bool>) -> PyResult<u32> {
-        let args = SpawnArgs { title, command, timeout_ms, max_lines, visible };
+    #[pyo3(signature = (title, command=None, timeout_ms=None, max_lines=None, visible=None, cols=None, rows=None, env=None))]
+    fn spawn(&self, py: Python<'_>, title: String, command: Option<String>, timeout_ms: Option<u64>, max_lines: Option<u32>, visible: Option<bool>, cols: Option<u16>, rows: Option<u16>, env: Option<std::collections::HashMap<String, String>>) -> PyResult<u32> {
+        let args = SpawnArgs { title, command, timeout_ms, max_lines, visible, cols, rows, env };
         let cmd = SkillCommand::Spawn(args);
         
         py.allow_threads(|| {
@@ -40,10 +40,21 @@ impl VTermClient {
     }
 
     /// Returns a Spawn command dictionary without executing it.
-    #[pyo3(signature = (title, command=None, timeout_ms=None, max_lines=None, visible=None))]
-    fn spawn_op(&self, py: Python<'_>, title: String, command: Option<String>, timeout_ms: Option<u64>, max_lines: Option<u32>, visible: Option<bool>) -> PyResult<PyObject> {
-        let cmd = SkillCommand::Spawn(SpawnArgs { title, command, timeout_ms, max_lines, visible });
+    #[pyo3(signature = (title, command=None, timeout_ms=None, max_lines=None, visible=None, cols=None, rows=None, env=None))]
+    fn spawn_op(&self, py: Python<'_>, title: String, command: Option<String>, timeout_ms: Option<u64>, max_lines: Option<u32>, visible: Option<bool>, cols: Option<u16>, rows: Option<u16>, env: Option<std::collections::HashMap<String, String>>) -> PyResult<PyObject> {
+        let cmd = SkillCommand::Spawn(SpawnArgs { title, command, timeout_ms, max_lines, visible, cols, rows, env });
         pythonize::pythonize(py, &cmd).map_err(|e| PyRuntimeError::new_err(e.to_string())).map(|obj| obj.unbind())
+    }
+
+    /// Returns version and build metadata for this vterm-rs instance.
+    fn get_info(&self, py: Python<'_>) -> PyResult<PyObject> {
+        let res = py.allow_threads(|| {
+            self.rt.block_on(async {
+                self.client.execute(SkillCommand::Hello { client_version: "0.7.13".into() }).await
+                    .map_err(|e| PyRuntimeError::new_err(format!("Get info failed: {}", e)))
+            })
+        })?;
+        pythonize::pythonize(py, &res).map_err(|e| PyRuntimeError::new_err(e.to_string())).map(|obj| obj.unbind())
     }
 
     /// Returns a Write command dictionary.
@@ -53,8 +64,9 @@ impl VTermClient {
     }
 
     /// Returns a Read command dictionary.
-    fn read_op(&self, py: Python<'_>, id: u32) -> PyResult<PyObject> {
-        let cmd = SkillCommand::ScreenRead { id };
+    #[pyo3(signature = (id, history=false))]
+    fn read_op(&self, py: Python<'_>, id: u32, history: bool) -> PyResult<PyObject> {
+        let cmd = SkillCommand::ScreenRead { id, history };
         pythonize::pythonize(py, &cmd).map_err(|e| PyRuntimeError::new_err(e.to_string())).map(|obj| obj.unbind())
     }
 
@@ -82,10 +94,11 @@ impl VTermClient {
     }
 
     /// Reads the current contents of the terminal screen.
-    fn read(&self, py: Python<'_>, id: u32) -> PyResult<String> {
+    #[pyo3(signature = (id, history=false))]
+    fn read(&self, py: Python<'_>, id: u32, history: bool) -> PyResult<String> {
         py.allow_threads(|| {
             self.rt.block_on(async {
-                let res = self.client.execute(SkillCommand::ScreenRead { id }).await
+                let res = self.client.execute(SkillCommand::ScreenRead { id, history }).await
                     .map_err(|e| PyRuntimeError::new_err(format!("Read failed: {}", e)))?;
                 Ok(res.content.unwrap_or_default())
             })
@@ -112,6 +125,23 @@ impl VTermClient {
                 Ok(())
             })
         })
+    }
+
+    /// Returns the current process state (running, exit_code).
+    fn get_process_state(&self, py: Python<'_>, id: u32) -> PyResult<PyObject> {
+        let res = py.allow_threads(|| {
+            self.rt.block_on(async {
+                self.client.execute(SkillCommand::GetProcessState { id }).await
+                    .map_err(|e| PyRuntimeError::new_err(format!("GetProcessState failed: {}", e)))
+            })
+        })?;
+        pythonize::pythonize(py, &res).map_err(|e| PyRuntimeError::new_err(e.to_string())).map(|obj| obj.into())
+    }
+
+    /// Returns a GetProcessState command dictionary.
+    fn get_process_state_op(&self, py: Python<'_>, id: u32) -> PyResult<PyObject> {
+        let cmd = SkillCommand::GetProcessState { id };
+        pythonize::pythonize(py, &cmd).map_err(|e| PyRuntimeError::new_err(e.to_string())).map(|obj| obj.unbind())
     }
 
     /// Low-level entry point for any SkillCommand. 

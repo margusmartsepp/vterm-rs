@@ -77,10 +77,10 @@ async fn execute(app: Arc<App>, owner: ConnectionId, cmd: SkillCommand) -> Resul
             r.id = Some(id);
         }
 
-        ScreenRead { id } => {
+        ScreenRead { id, history } => {
             let term = app.terminal(owner, id)?;
             r.id = Some(id);
-            r.content = Some(term.read_screen());
+            r.content = Some(term.read_screen(history));
         }
 
         ScreenControl { id, action } => {
@@ -116,6 +116,14 @@ async fn execute(app: Arc<App>, owner: ConnectionId, cmd: SkillCommand) -> Resul
                 tokio::time::sleep(Duration::from_millis(100)).await;
             }
             return Err(crate::Error::Timeout { what: "wait_until", ms: timeout_ms });
+        }
+
+        GetProcessState { id } => {
+            let term = app.terminal(owner, id)?;
+            let (running, exit_code) = term.process_state();
+            r.id = Some(id);
+            r.running = Some(running);
+            r.exit_code = exit_code;
         }
 
         Batch(BatchArgs { commands, stop_on_error, .. }) => {

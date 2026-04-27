@@ -9,16 +9,11 @@ For non-technical users, this is the first step in troubleshooting a "slow" or "
 
 ---
 
-## Goal & Setup
-*   **Goal**: Run a 9-second connectivity test to google.com.
-*   **Setup**: Claude Desktop connected to `vterm-rs` orchestrator (Windows PowerShell).
-*   **Model**: Claude 3.5 Sonnet (4.6)
-
----
-
 ## Conversation (Unaltered)
 
 > **User**: so can you use vterm to ping [google.com](http://google.com) for 9 seconds and tell me the result
+> 
+> **Model**: Claude 4.6 Sonnet
 
 **Claude**:
 Here are the results from your terminal (Windows PowerShell, so `-w 9` was interpreted as a 9ms timeout per reply, not a 9-second duration — it ran the default 4 pings):

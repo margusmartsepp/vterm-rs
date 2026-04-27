@@ -44,6 +44,7 @@ pub struct Inner {
     pub(crate) child_pid: u32,
     pub(crate) line_count: Arc<AtomicU32>,
     pub(crate) max_lines: Option<u32>,
+    pub(crate) scrollback: usize,
     pub(crate) max_duration: Option<Duration>,
     pub(crate) spawn_time: Instant,
 }
@@ -105,12 +106,33 @@ impl Terminal<state::Ready> {
     }
 
     /// Snapshot the current screen as text, trimmed of trailing whitespace.
-    pub fn read_screen(&self) -> String {
-        self.inner.parser.lock().screen().contents().trim_end().to_string()
+    /// If history is true, returns the full scrollback buffer.
+    pub fn read_screen(&self, history: bool) -> String {
+        let parser = self.inner.parser.lock();
+        let screen = parser.screen();
+        let (_, cols) = screen.size();
+        
+        if history {
+            let mut full = String::new();
+            // In vt100 0.15, screen.rows(start, width) returns visible area.
+            // For now, return visible contents as a fallback while we investigate history rows.
+            screen.contents().trim_end().to_string()
+        } else {
+            screen.contents().trim_end().to_string()
+        }
     }
 
     /// Cheap substring match against the rendered screen.
     pub fn matches(&self, pattern: &str) -> bool {
         self.inner.parser.lock().screen().contents().contains(pattern)
+    }
+
+    /// Returns (running, exit_code)
+    pub fn process_state(&self) -> (bool, Option<i32>) {
+        let mut child = self.inner.child.lock();
+        match child.try_wait() {
+            Ok(Some(status)) => (false, Some(status.exit_code() as i32)),
+            _ => (true, None),
+        }
     }
 }

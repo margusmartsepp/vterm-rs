@@ -17,6 +17,9 @@ struct McpSpawnArgs {
     command: Option<String>,
     timeout_ms: Option<u64>,
     max_lines: Option<u32>,
+    cols: Option<u16>,
+    rows: Option<u16>,
+    env: Option<std::collections::HashMap<String, String>>,
 }
 
 #[derive(Deserialize, JsonSchema)]
@@ -54,6 +57,9 @@ impl TerminalServer {
             timeout_ms: args.0.timeout_ms,
             max_lines: args.0.max_lines,
             visible: Some(false),
+            cols: args.0.cols,
+            rows: args.0.rows,
+            env: args.0.env,
         };
         match self.client.execute(SkillCommand::Spawn(req)).await {
             Ok(res) => format!("Terminal {} spawned successfully.", res.id.unwrap()),
@@ -71,7 +77,7 @@ impl TerminalServer {
 
     #[tool(description = "Reads the current contents of the terminal screen.")]
     async fn terminal_read(&self, args: Parameters<McpIdArgs>) -> String {
-        match self.client.execute(SkillCommand::ScreenRead { id: args.0.id }).await {
+        match self.client.execute(SkillCommand::ScreenRead { id: args.0.id, history: false }).await {
             Ok(res) => res.content.unwrap_or_default(),
             Err(e) => format!("Error: {e}"),
         }
@@ -96,7 +102,7 @@ impl TerminalServer {
         let mut last_content = String::new();
 
         while start.elapsed() < timeout {
-            if let Ok(res) = self.client.execute(SkillCommand::ScreenRead { id: args.0.id }).await {
+            if let Ok(res) = self.client.execute(SkillCommand::ScreenRead { id: args.0.id, history: false }).await {
                 if let Some(content) = res.content {
                     if content != last_content {
                         last_content = content.clone();

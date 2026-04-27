@@ -39,9 +39,11 @@ pub async fn spawn(
     let visible = args.visible.unwrap_or(default_visible);
 
     // ── open the PTY ────────────────────────────────────────────────────────────
+    let rows = args.rows.unwrap_or(30);
+    let cols = args.cols.unwrap_or(120);
     let pty = native_pty_system();
     let pair = pty
-        .openpty(PtySize { rows: 50, cols: 120, pixel_width: 0, pixel_height: 0 })
+        .openpty(PtySize { rows, cols, pixel_width: 0, pixel_height: 0 })
         .map_err(|e| Error::Pty(format!("openpty: {e}")))?;
 
     let writer = pair.master.take_writer().map_err(|e| Error::Pty(format!("take_writer: {e}")))?;
@@ -51,6 +53,11 @@ pub async fn spawn(
     let mut cmd = CommandBuilder::new("powershell.exe");
     cmd.args(["-NoLogo", "-NoProfile", "-NoExit", "-ExecutionPolicy", "Bypass", "-Command", "Remove-Module PSReadLine -ErrorAction SilentlyContinue"]);
     cmd.env("TERM", "xterm-256color");
+    if let Some(env) = args.env {
+        for (k, v) in env {
+            cmd.env(k, v);
+        }
+    }
 
     let child = pair.slave.spawn_command(cmd).map_err(|e| Error::Pty(format!("spawn: {e}")))?;
     let child_pid = child.process_id().unwrap_or(0);
@@ -59,7 +66,8 @@ pub async fn spawn(
     // drop(pair.slave);
 
     // ── plumb the inner state ───────────────────────────────────────────────────
-    let parser = Arc::new(Mutex::new(vt100::Parser::new(30, 100, 0)));
+    let scrollback = args.max_lines.unwrap_or(1000) as usize;
+    let parser = Arc::new(Mutex::new(vt100::Parser::new(rows, cols, scrollback)));
     let inner = Arc::new(Inner {
         id,
         title: format!("Terminal {id}: {}", args.title),
@@ -70,6 +78,7 @@ pub async fn spawn(
         child_pid,
         line_count: Arc::new(AtomicU32::new(0)),
         max_lines: args.max_lines,
+        scrollback,
         max_duration: args.timeout_ms.map(Duration::from_millis),
         spawn_time: Instant::now(),
     });

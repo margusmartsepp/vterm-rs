@@ -68,7 +68,11 @@ pub enum SkillCommand {
     Hello { client_version: String },
     Spawn(SpawnArgs),
     ScreenWrite { id: u32, text: String },
-    ScreenRead { id: u32 },
+    ScreenRead { 
+        id: u32,
+        #[serde(default)]
+        history: bool,
+    },
     ScreenControl { id: u32, action: String },
     ScreenClose {
         #[serde(default)]
@@ -80,6 +84,7 @@ pub enum SkillCommand {
     Wait { ms: u64 },
     WaitUntil { id: u32, pattern: String, timeout_ms: u64 },
     Batch(BatchArgs),
+    GetProcessState { id: u32 },
 }
 
 fn default_close_target() -> String { "single".into() }
@@ -99,6 +104,7 @@ impl SkillCommand {
             Self::Wait { .. }         => "wait",
             Self::WaitUntil { .. }    => "wait_until",
             Self::Batch(_)            => "batch",
+            Self::GetProcessState { .. } => "get_process_state",
         }
     }
 }
@@ -110,6 +116,9 @@ pub struct SpawnArgs {
     #[serde(default, skip_serializing_if = "Option::is_none")] pub timeout_ms: Option<u64>,
     #[serde(default, skip_serializing_if = "Option::is_none")] pub max_lines: Option<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")] pub visible: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")] pub cols: Option<u16>,
+    #[serde(default, skip_serializing_if = "Option::is_none")] pub rows: Option<u16>,
+    #[serde(default, skip_serializing_if = "Option::is_none")] pub env: Option<std::collections::HashMap<String, String>>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
@@ -138,6 +147,8 @@ pub struct CommandResult {
     #[serde(default, skip_serializing_if = "Option::is_none")] pub error: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")] pub sub_results: Option<Vec<CommandResult>>,
     #[serde(default, skip_serializing_if = "Option::is_none")] pub version: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")] pub running: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")] pub exit_code: Option<i32>,
 }
 
 impl CommandResult {

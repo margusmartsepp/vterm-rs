@@ -7,9 +7,28 @@ mcp = FastMCP("vterm")
 client = vterm_python.VTermClient()
 
 @mcp.tool()
-def spawn(title: str, visible: bool = False, max_lines: int = 1000) -> int:
-    """Spawns a new terminal session. Returns the terminal ID."""
-    return client.spawn(title, visible=visible, max_lines=max_lines)
+def get_info() -> dict:
+    """Returns version and build metadata for this vterm-rs instance."""
+    return client.get_info()
+
+@mcp.tool()
+def spawn(title: str, max_lines: int = 1000, visible: bool = False, cols: int = 80, rows: int = 24, env: dict = None) -> int:
+    """
+    Spawns a new terminal session.
+    - cols/rows: Set terminal dimensions (e.g., 120, 40)
+    - env: Dictionary of environment variables to inject
+    """
+    return client.spawn(title, max_lines=max_lines, visible=visible, cols=cols, rows=rows, env=env)
+
+@mcp.tool()
+def wait_until(id: int, pattern: str, timeout_ms: int = 10000) -> str:
+    """Blocks until a regex pattern appears on the terminal screen."""
+    return client.wait_until(id, pattern, timeout_ms=timeout_ms)
+
+@mcp.tool()
+def get_process_state(id: int) -> dict:
+    """Returns the current process state (running: bool, exit_code: int?)."""
+    return client.get_process_state(id)
 
 @mcp.tool()
 def write(id: int, text: str) -> str:
@@ -18,9 +37,9 @@ def write(id: int, text: str) -> str:
     return "OK"
 
 @mcp.tool()
-def read(id: int) -> str:
-    """Reads the current screen state of a terminal."""
-    return client.read(id)
+def read(id: int, history: bool = False) -> str:
+    """Reads the current contents of the terminal screen. Set history=True for full scrollback."""
+    return client.read(id, history=history)
 
 @mcp.tool()
 def wait_until(id: int, pattern: str, timeout_ms: int = 10000) -> str:

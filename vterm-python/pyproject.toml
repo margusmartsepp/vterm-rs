@@ -1,0 +1,26 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "vterm-rs-python-mcp"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dynamic = ["version"]
+dependencies = [
+    "fastmcp",
+    "pydantic"
+]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "vterm_python"
+
+[dependency-groups]
+dev = [
+    "maturin>=1.13.1",
+]

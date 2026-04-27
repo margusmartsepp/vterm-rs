@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "vterm-rs": {
+      "command": "cargo",
+      "args": [
+        "run",
+        "--release",
+        "--bin",
+        "vterm-mcp"
+      ],
+      "env": {
+        "RUST_LOG": "info"
+      }
+    }
+  }
+}

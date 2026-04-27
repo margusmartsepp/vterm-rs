@@ -93,6 +93,7 @@ fn init_tracing() {
     let filter = EnvFilter::try_from_env("VTERM_LOG")
         .unwrap_or_else(|_| EnvFilter::new("info,vterm_rs=debug"));
     tracing_subscriber::fmt()
+        .with_writer(std::io::stderr)
         .with_env_filter(filter)
         .with_target(true)
         .with_thread_names(true)

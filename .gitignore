@@ -22,3 +22,14 @@ Thumbs.db
 *.log
 /tests/test_results.md
 /scratch/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/

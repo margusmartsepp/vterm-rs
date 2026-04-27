@@ -4,7 +4,7 @@ use tokio::time::{sleep, Duration};
 use crate::client::PIPE_NAME;
 
 pub async fn try_connect() -> Result<NamedPipeClient> {
-    for i in 0..5 {
+    for i in 0..10 {
         if let Ok(client) = ClientOptions::new().open(PIPE_NAME) {
             return Ok(client);
         }

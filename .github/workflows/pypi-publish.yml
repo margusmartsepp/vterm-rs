@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
-          path: dist
+          path: vterm-python/dist
 
   build_sdist:
     name: Build sdist
@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sdist
-          path: dist
+          path: vterm-python/dist
 
   publish:
     name: Publish to PyPI

@@ -2,6 +2,9 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
+## v0.7.8 — MCP Bridge
+- Fixed PyPI workflow (corrected artifact upload paths).
+
 ## v0.7.7 — MCP Bridge
 - Fixed watchdog compilation on Rust 2021 (removed let-chains).
 

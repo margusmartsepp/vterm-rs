@@ -22,7 +22,8 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          args: --release --out dist --find-interpreter --working-directory vterm-python
+          args: --release --out dist --find-interpreter
+          working-directory: vterm-python
           sccache: 'true'
           manylinux: auto
       - name: Upload wheels
@@ -40,7 +41,8 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           command: sdist
-          args: --out dist --working-directory vterm-python
+          args: --out dist
+          working-directory: vterm-python
       - name: Upload sdist
         uses: actions/upload-artifact@v4
         with:

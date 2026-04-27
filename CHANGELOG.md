@@ -2,6 +2,9 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
+## v0.7.3 — MCP Bridge
+- Fixed Python 3.14 compatibility in CI (ABI3 forward compatibility).
+
 ## v0.7.2 — MCP Bridge
 - Platform-safety fixes for Linux and macOS (modularized Windows networking).
 - Crates.io and PyPI coordinated release.

@@ -8,13 +8,7 @@ my actual shell"*. It does not capture stdout, it does not sandbox — it owns a
 ConPTY, parses it through `vt100`, and lets you write keystrokes (including `Ctrl-C`,
 `<Up>`, `<Tab>`, raw escape sequences) and read what the screen actually shows.
 
-```
-┌─ AI agent ───┐   NDJSON over    ┌─ vterm.exe ───┐   ConPTY    ┌─ powershell.exe ─┐
-│  Claude /    │  named pipe      │  PTY pool     │             │   your real      │
-│  IDE / MCP   │ ───────────────▶ │  vt100 parser │ ──────────▶ │    shell         │
-│  client      │ ◀─────────────── │  reaper       │ ◀────────── │                  │
-└──────────────┘  CommandResult   └───────────────┘  bytes      └──────────────────┘
-```
+
 ```mermaid
 graph LR
     Agent["AI agent<br/>(Claude/IDE/MCP)"]
@@ -136,7 +130,7 @@ when editing.
 | Area              | State                                                  |
 | ----------------- | ------------------------------------------------------ |
 | Windows + ConPTY  | works                                                  |
-| Python Bridge     | works (v0.7.0, available via PyPI `vterm-rs-python-mcp`) |
+| Python Bridge     | works (v0.7.1, available via PyPI `vterm-rs-python-mcp`) |
 | Linux / macOS     | planned (v0.8.0)                                       |
 | Wire protocol     | unstable, will be pinned at v1.0                       |
 | Test coverage     | smoke (PowerShell) + Rust integration + Python FastMCP |

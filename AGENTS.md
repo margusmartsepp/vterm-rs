@@ -28,29 +28,21 @@ vterm-rs/
 ├── README.md                  # product front door
 ├── ROADMAP.md                 # vision + milestones
 ├── CHANGELOG.md               # release notes
-├── Cargo.toml                 # single crate, multiple bins
+├── Cargo.toml                 # workspace manifest
 ├── skill.toml                 # AI skill manifest
-├── .ai/
-│   └── instructions.md        # mirror of agent-relevant rules
-├── docs/
-│   ├── architecture.md
-│   ├── protocol.md            # wire-format spec
-│   └── features/
-│       ├── v0.2.md … v0.6.md
-├── src/
-│   ├── lib.rs                 # public API surface
-│   ├── error.rs               # thiserror-based Error
-│   ├── protocol/              # wire types + framing + shortcut parser
-│   ├── terminal/              # PTY lifecycle + vt100 parser + prompt detection
-│   ├── window/                # Win32 PID→HWND (cfg windows), no-op stubs elsewhere
-│   ├── session/               # per-connection ownership + reaping
-│   ├── service/               # tower-style command pipeline (timing, tracing, correlation)
-│   ├── app.rs                 # process-wide state
-│   └── bin/
-│       └── vterm.rs           # the orchestrator binary (was main.rs)
-└── tests/
-    ├── playbook_tests.ps1     # PowerShell smoke harness
-    └── protocol.rs            # Rust integration tests
+├── .github/workflows/         # CI/CD (crates.io & PyPI publish)
+├── vterm/                     # core Rust orchestrator (vterm-rs crate)
+│   ├── Cargo.toml
+│   ├── src/
+│   │   ├── lib.rs             # business logic
+│   │   └── bin/               # vterm and vterm-mcp binaries
+│   └── tests/                 # integration tests
+├── vterm-python/              # Python SDK (vterm-rs-python-mcp)
+│   ├── Cargo.toml
+│   ├── pyproject.toml         # maturin/PyPI config
+│   └── src/                   # PyO3 bindings
+├── examples/                  # usage examples (Python SDK)
+└── tests/                     # cross-workspace test suites
 ```
 
 ---

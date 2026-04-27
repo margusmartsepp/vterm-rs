@@ -2,7 +2,7 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
-## v0.7.0 — MCP Bridge
+## v0.7.1 — MCP Bridge
 
 See [`docs/features/v0.7.md`](docs/features/v0.7.md) for the full changeset.
 

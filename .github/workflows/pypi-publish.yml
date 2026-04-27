@@ -25,7 +25,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          args: --release --out dist --find-interpreter --compatibility abi3
+          args: --release --out dist --find-interpreter
           working-directory: vterm-python
           sccache: 'true'
           manylinux: auto

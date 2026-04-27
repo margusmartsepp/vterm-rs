@@ -25,6 +25,7 @@ impl VTermClient {
     }
 
     /// Spawns a new terminal session. Returns the terminal ID.
+    #[pyo3(signature = (title, command=None, timeout_ms=None, max_lines=None))]
     fn spawn(&self, py: Python<'_>, title: String, command: Option<String>, timeout_ms: Option<u64>, max_lines: Option<u32>) -> PyResult<u32> {
         let req = SpawnArgs {
             title,

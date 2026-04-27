@@ -2,6 +2,11 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
+## v0.7.6 — MCP Bridge
+- Fixed abi3 auto-detection (removed redundant CLI flag).
+- Downgraded to Rust edition 2021 for broader tooling compatibility.
+- Added explicit Python signatures to `VTermClient`.
+
 ## v0.7.5 — MCP Bridge
 - Fixed PyPI workflow (moved abi3 compatibility flag to command line).
 

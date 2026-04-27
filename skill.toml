@@ -1,6 +1,6 @@
 name = "vterm-rs"
 description = "A professional-grade Rust PTY orchestrator with advanced window management and keyboard interaction."
-version = "0.7.3"
+version = "0.7.4"
 
 [tools]
 spawn          = { command = "target/release/vterm.exe", args = ["--skill", "Spawn"] }
@@ -16,7 +16,7 @@ batch          = { command = "target/release/vterm.exe", args = ["--skill", "Bat
 [[skills]]
 name = "vterm"
 description = "Professional terminal orchestration with stateful snapshots, keyboard shortcuts, and full window lifecycle management."
-version = "0.7.3"
+version = "0.7.4"
 capabilities = ["stateful_read", "shortcut_input", "window_management", "bulk_close"]
 
 [skills.config]

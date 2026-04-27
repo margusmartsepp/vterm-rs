@@ -8,7 +8,6 @@ requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dynamic = ["version"]
 dependencies = [
@@ -19,6 +18,7 @@ dependencies = [
 [tool.maturin]
 features = ["pyo3/extension-module"]
 module-name = "vterm_python"
+compatibility = "abi3"
 
 [dependency-groups]
 dev = [

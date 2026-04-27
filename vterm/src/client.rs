@@ -2,18 +2,16 @@ use anyhow::Result;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
-
-#[cfg(windows)]
-use tokio::net::windows::named_pipe::{ClientOptions, NamedPipeClient};
-
 use tokio::sync::oneshot;
-use tokio::time::{sleep, Duration};
 use crate::{Request, Response, SkillCommand, CommandResult, Status};
 
 #[cfg(windows)]
-const PIPE_NAME: &str = r"\\.\pipe\vterm-rs-skill";
+mod windows;
+
+#[cfg(windows)]
+pub const PIPE_NAME: &str = r"\\.\pipe\vterm-rs-skill";
 #[cfg(not(windows))]
-const PIPE_NAME: &str = "/tmp/vterm-rs-skill";
+pub const PIPE_NAME: &str = "/tmp/vterm-rs-skill";
 
 /// A multiplexed client for the vterm-rs orchestrator.
 #[derive(Clone)]
@@ -76,26 +74,13 @@ impl OrchestratorClient {
     }
 
     #[cfg(windows)]
-    pub async fn try_connect() -> Result<NamedPipeClient> {
-        for i in 0..5 {
-            if let Ok(client) = ClientOptions::new().open(PIPE_NAME) {
-                return Ok(client);
-            }
-            if i == 0 {
-                // Auto-spawn headless orchestrator if not found
-                std::process::Command::new("cargo")
-                    .args(["run", "-p", "vterm-rs", "--bin", "vterm", "--", "--headless"])
-                    .spawn()
-                    .ok();
-            }
-            sleep(Duration::from_millis(1000)).await;
-        }
-        anyhow::bail!("Failed to connect to vterm.exe orchestrator")
+    pub async fn try_connect() -> Result<tokio::net::windows::named_pipe::NamedPipeClient> {
+        self::windows::try_connect().await
     }
 
     #[cfg(not(windows))]
     pub async fn try_connect() -> Result<tokio::net::TcpStream> {
-        anyhow::bail!("Orchestrator connection (Named Pipes) is only supported on Windows in v0.7.1. Linux/macOS support is planned for v0.8.0.")
+        anyhow::bail!("Orchestrator connection is only supported on Windows in v0.7.2")
     }
 
     pub async fn execute(&self, command: SkillCommand) -> Result<CommandResult> {

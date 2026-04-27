@@ -2,15 +2,12 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
-## v0.7.1 — MCP Bridge
+## v0.7.2 — MCP Bridge
+- Platform-safety fixes for Linux and macOS (modularized Windows networking).
+- Crates.io and PyPI coordinated release.
 
-See [`docs/features/v0.7.md`](docs/features/v0.7.md) for the full changeset.
-
-### Added
-
-- Cargo Workspace Migration: Extracted `vterm` core to a reusable module and moved PyO3 bindings to a separate `vterm-python` crate.
-- High-Performance Python PyO3 Bindings (`vterm_python.VTermClient`) dropping the GIL for synchronous async operations.
-- Python `fastmcp` SDK integration (`vterm-rs-python-mcp` on PyPI) allowing any Python developer to build custom terminal tools.
+## v0.7.1 — MCP Bridge (Internal)
+- Reorganized workspace structure (`vterm/` and `vterm-python/`).
 - Auto-spawning orchestration process if unavailable.
 - Examples demonstrating use cases for DevOps, GitHub CI, and Docker debugging.
 

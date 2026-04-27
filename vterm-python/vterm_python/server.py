@@ -39,6 +39,28 @@ def close(id: int) -> str:
     client.close(id)
     return "Closed"
 
+@mcp.tool()
+def get_architecture() -> str:
+    """Returns the architectural knowledge graph report for this codebase."""
+    # First, look for the bundled report in the package
+    base_dir = os.path.dirname(__file__)
+    bundled_path = os.path.join(base_dir, "GRAPH_REPORT.md")
+    
+    # Second, look for the local dev path
+    dev_path = os.path.join(base_dir, "../../graphify-out/GRAPH_REPORT.md")
+    
+    for path in [bundled_path, dev_path]:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return f.read()
+                
+    return "Architecture report not found. The package might be missing its bundled GRAPH_REPORT.md."
+
+@mcp.resource("vterm://architecture")
+def architecture_resource() -> str:
+    """The definitive architectural map of vterm-rs."""
+    return get_architecture()
+
 def main():
     mcp.run()
 

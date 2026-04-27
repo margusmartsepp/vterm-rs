@@ -2,7 +2,7 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
-## v0.7.12 — State-Aware Orchestration (Final)
+## v0.7.13 — State-Aware Orchestration (Final)
 - **High-Performance Python SDK**: Native PyO3 bindings for near-zero orchestration latency.
 - **Atomic Batch API**: Orchestrate multiple terminals in a single round-trip with the `batch()` method.
 - **Fluent Operator API**: Added typed `_op` helpers (spawn_op, write_op, etc.) for intuitive batch construction.

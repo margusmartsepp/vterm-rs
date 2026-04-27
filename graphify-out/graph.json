@@ -9,7 +9,7 @@
       "source_file": "examples\\python_sdk\\ci_github_runner.py",
       "source_location": "L1",
       "id": "examples_python_sdk_ci_github_runner_py",
-      "community": 0,
+      "community": 1,
       "norm_label": "ci_github_runner.py"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "examples\\python_sdk\\ci_github_runner.py",
       "source_location": "L9",
       "id": "ci_github_runner_trigger_and_monitor_build",
-      "community": 0,
+      "community": 1,
       "norm_label": "trigger_and_monitor_build()"
     },
     {
@@ -26,7 +26,7 @@
       "file_type": "rationale",
       "source_file": "examples\\python_sdk\\ci_github_runner.py",
       "source_location": "L10",
-      "community": 0,
+      "community": 1,
       "norm_label": "simulates cloning a repo and running a ci build, monitoring the terminal until c",
       "id": "ci_github_runner_rationale_10"
     },
@@ -36,7 +36,7 @@
       "source_file": "examples\\python_sdk\\devops_server_health.py",
       "source_location": "L1",
       "id": "examples_python_sdk_devops_server_health_py",
-      "community": 0,
+      "community": 1,
       "norm_label": "devops_server_health.py"
     },
     {
@@ -45,7 +45,7 @@
       "source_file": "examples\\python_sdk\\devops_server_health.py",
       "source_location": "L8",
       "id": "devops_server_health_check_disk_space",
-      "community": 0,
+      "community": 1,
       "norm_label": "check_disk_space()"
     },
     {
@@ -54,7 +54,7 @@
       "source_file": "examples\\python_sdk\\devops_server_health.py",
       "source_location": "L23",
       "id": "devops_server_health_ping_internal_services",
-      "community": 0,
+      "community": 1,
       "norm_label": "ping_internal_services()"
     },
     {
@@ -62,7 +62,7 @@
       "file_type": "rationale",
       "source_file": "examples\\python_sdk\\devops_server_health.py",
       "source_location": "L9",
-      "community": 0,
+      "community": 1,
       "norm_label": "spawns a terminal, checks system disk space, and returns the result.",
       "id": "devops_server_health_rationale_9"
     },
@@ -71,7 +71,7 @@
       "file_type": "rationale",
       "source_file": "examples\\python_sdk\\devops_server_health.py",
       "source_location": "L24",
-      "community": 0,
+      "community": 1,
       "norm_label": "pings an internal service to verify network connectivity.",
       "id": "devops_server_health_rationale_24"
     },
@@ -81,7 +81,7 @@
       "source_file": "examples\\python_sdk\\docker_container_debug.py",
       "source_location": "L1",
       "id": "examples_python_sdk_docker_container_debug_py",
-      "community": 0,
+      "community": 1,
       "norm_label": "docker_container_debug.py"
     },
     {
@@ -90,7 +90,7 @@
       "source_file": "examples\\python_sdk\\docker_container_debug.py",
       "source_location": "L8",
       "id": "docker_container_debug_inspect_docker_container",
-      "community": 0,
+      "community": 1,
       "norm_label": "inspect_docker_container()"
     },
     {
@@ -98,7 +98,7 @@
       "file_type": "rationale",
       "source_file": "examples\\python_sdk\\docker_container_debug.py",
       "source_location": "L9",
-      "community": 0,
+      "community": 1,
       "norm_label": "spawns a terminal, execs into a running docker container, and fetches the top pr",
       "id": "docker_container_debug_rationale_9"
     },
@@ -108,7 +108,7 @@
       "source_file": "examples\\python_sdk\\guardrailed_build.py",
       "source_location": "L1",
       "id": "examples_python_sdk_guardrailed_build_py",
-      "community": 0,
+      "community": 1,
       "norm_label": "guardrailed_build.py"
     },
     {
@@ -117,7 +117,7 @@
       "source_file": "examples\\python_sdk\\guardrailed_build.py",
       "source_location": "L7",
       "id": "guardrailed_build_run_risky_build",
-      "community": 0,
+      "community": 1,
       "norm_label": "run_risky_build()"
     },
     {
@@ -125,7 +125,7 @@
       "file_type": "rationale",
       "source_file": "examples\\python_sdk\\guardrailed_build.py",
       "source_location": "L8",
-      "community": 0,
+      "community": 1,
       "norm_label": "demonstrates the 'brick-proof' guardrails of vterm-rs.     uses the 'batch' api",
       "id": "guardrailed_build_rationale_8"
     },
@@ -135,7 +135,7 @@
       "source_file": "examples\\python_sdk\\terminal_fleet.py",
       "source_location": "L1",
       "id": "examples_python_sdk_terminal_fleet_py",
-      "community": 0,
+      "community": 1,
       "norm_label": "terminal_fleet.py"
     },
     {
@@ -144,7 +144,7 @@
       "source_file": "examples\\python_sdk\\terminal_fleet.py",
       "source_location": "L7",
       "id": "terminal_fleet_manage_terminal_fleet",
-      "community": 0,
+      "community": 1,
       "norm_label": "manage_terminal_fleet()"
     },
     {
@@ -152,7 +152,7 @@
       "file_type": "rationale",
       "source_file": "examples\\python_sdk\\terminal_fleet.py",
       "source_location": "L8",
-      "community": 0,
+      "community": 1,
       "norm_label": "demonstrates managing multiple terminal sessions simultaneously.     uses the 'b",
       "id": "terminal_fleet_rationale_8"
     },
@@ -162,7 +162,7 @@
       "source_file": "examples\\python_sdk\\tui_orchestration.py",
       "source_location": "L1",
       "id": "examples_python_sdk_tui_orchestration_py",
-      "community": 0,
+      "community": 1,
       "norm_label": "tui_orchestration.py"
     },
     {
@@ -171,7 +171,7 @@
       "source_file": "examples\\python_sdk\\tui_orchestration.py",
       "source_location": "L7",
       "id": "tui_orchestration_orchestrate_claude_tui",
-      "community": 0,
+      "community": 1,
       "norm_label": "orchestrate_claude_tui()"
     },
     {
@@ -179,7 +179,7 @@
       "file_type": "rationale",
       "source_file": "examples\\python_sdk\\tui_orchestration.py",
       "source_location": "L8",
-      "community": 0,
+      "community": 1,
       "norm_label": "demonstrates 'state machine inspection' using atomic batches.     we bundle the",
       "id": "tui_orchestration_rationale_8"
     },
@@ -189,7 +189,7 @@
       "source_file": "scripts\\claude_orchestrator.py",
       "source_location": "L1",
       "id": "scripts_claude_orchestrator_py",
-      "community": 3,
+      "community": 0,
       "norm_label": "claude_orchestrator.py"
     },
     {
@@ -198,7 +198,7 @@
       "source_file": "scripts\\claude_orchestrator.py",
       "source_location": "L4",
       "id": "claude_orchestrator_drive_claude_tui",
-      "community": 3,
+      "community": 0,
       "norm_label": "drive_claude_tui()"
     },
     {
@@ -207,7 +207,7 @@
       "source_file": "scripts\\fluent_fleet_demo.py",
       "source_location": "L1",
       "id": "scripts_fluent_fleet_demo_py",
-      "community": 0,
+      "community": 1,
       "norm_label": "fluent_fleet_demo.py"
     },
     {
@@ -216,7 +216,7 @@
       "source_file": "scripts\\fluent_fleet_demo.py",
       "source_location": "L4",
       "id": "fluent_fleet_demo_fluent_fleet_demo",
-      "community": 0,
+      "community": 1,
       "norm_label": "fluent_fleet_demo()"
     },
     {
@@ -225,7 +225,7 @@
       "source_file": "scripts\\generate_graph.ps1",
       "source_location": "L1",
       "id": "scripts_generate_graph_ps1",
-      "community": 15,
+      "community": 17,
       "norm_label": "generate_graph.ps1"
     },
     {
@@ -234,7 +234,7 @@
       "source_file": "scripts\\reality_check_claude.py",
       "source_location": "L1",
       "id": "scripts_reality_check_claude_py",
-      "community": 3,
+      "community": 0,
       "norm_label": "reality_check_claude.py"
     },
     {
@@ -243,7 +243,7 @@
       "source_file": "scripts\\reality_check_claude.py",
       "source_location": "L4",
       "id": "reality_check_claude_reality_check_claude",
-      "community": 3,
+      "community": 0,
       "norm_label": "reality_check_claude()"
     },
     {
@@ -252,7 +252,7 @@
       "source_file": "scripts\\terminal_bridge.py",
       "source_location": "L1",
       "id": "scripts_terminal_bridge_py",
-      "community": 3,
+      "community": 0,
       "norm_label": "terminal_bridge.py"
     },
     {
@@ -261,7 +261,7 @@
       "source_file": "scripts\\terminal_bridge.py",
       "source_location": "L5",
       "id": "terminal_bridge_terminal_bridge",
-      "community": 3,
+      "community": 0,
       "norm_label": "terminal_bridge()"
     },
     {
@@ -270,7 +270,7 @@
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L1",
       "id": "tests_python_sdk_test_fastmcp_py",
-      "community": 3,
+      "community": 7,
       "norm_label": "test_fastmcp.py"
     },
     {
@@ -279,7 +279,7 @@
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L11",
       "id": "test_fastmcp_terminal_spawn",
-      "community": 3,
+      "community": 7,
       "norm_label": "terminal_spawn()"
     },
     {
@@ -288,7 +288,7 @@
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L16",
       "id": "test_fastmcp_terminal_write",
-      "community": 3,
+      "community": 7,
       "norm_label": "terminal_write()"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L22",
       "id": "test_fastmcp_terminal_read",
-      "community": 3,
+      "community": 7,
       "norm_label": "terminal_read()"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L27",
       "id": "test_fastmcp_terminal_wait_until",
-      "community": 3,
+      "community": 7,
       "norm_label": "terminal_wait_until()"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L32",
       "id": "test_fastmcp_terminal_close",
-      "community": 3,
+      "community": 7,
       "norm_label": "terminal_close()"
     },
     {
@@ -323,7 +323,7 @@
       "file_type": "rationale",
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L12",
-      "community": 3,
+      "community": 7,
       "norm_label": "spawns a new terminal session. returns the terminal id.",
       "id": "test_fastmcp_rationale_12"
     },
@@ -332,7 +332,7 @@
       "file_type": "rationale",
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L17",
-      "community": 3,
+      "community": 7,
       "norm_label": "writes keystrokes (like <enter> or <up>) or text to a terminal.",
       "id": "test_fastmcp_rationale_17"
     },
@@ -341,7 +341,7 @@
       "file_type": "rationale",
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L23",
-      "community": 3,
+      "community": 7,
       "norm_label": "reads the current contents of the terminal screen.",
       "id": "test_fastmcp_rationale_23"
     },
@@ -350,7 +350,7 @@
       "file_type": "rationale",
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L28",
-      "community": 3,
+      "community": 7,
       "norm_label": "waits until a regex pattern appears on the screen.",
       "id": "test_fastmcp_rationale_28"
     },
@@ -359,7 +359,7 @@
       "file_type": "rationale",
       "source_file": "tests\\python_sdk\\test_fastmcp.py",
       "source_location": "L33",
-      "community": 3,
+      "community": 7,
       "norm_label": "closes a terminal session.",
       "id": "test_fastmcp_rationale_33"
     },
@@ -369,7 +369,7 @@
       "source_file": "tests\\python_sdk\\test_mcp.py",
       "source_location": "L1",
       "id": "tests_python_sdk_test_mcp_py",
-      "community": 13,
+      "community": 15,
       "norm_label": "test_mcp.py"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "tests\\python_sdk\\test_mcp.py",
       "source_location": "L12",
       "id": "test_mcp_main",
-      "community": 13,
+      "community": 15,
       "norm_label": "main()"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L1",
       "id": "vterm_src_app_rs",
-      "community": 1,
+      "community": 4,
       "norm_label": "app.rs"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L20",
       "id": "app_app",
-      "community": 1,
+      "community": 4,
       "norm_label": "app"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L27",
       "id": "app_owned",
-      "community": 1,
+      "community": 4,
       "norm_label": "owned"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L33",
       "id": "app_app_builder",
-      "community": 4,
+      "community": 2,
       "norm_label": ".builder()"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L36",
       "id": "app_app_spawn",
-      "community": 1,
+      "community": 4,
       "norm_label": ".spawn()"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L46",
       "id": "app_app_terminal",
-      "community": 1,
+      "community": 3,
       "norm_label": ".terminal()"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L55",
       "id": "app_app_list",
-      "community": 1,
+      "community": 4,
       "norm_label": ".list()"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L62",
       "id": "app_app_close",
-      "community": 1,
+      "community": 3,
       "norm_label": ".close()"
     },
     {
@@ -459,7 +459,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L71",
       "id": "app_app_close_all",
-      "community": 1,
+      "community": 4,
       "norm_label": ".close_all()"
     },
     {
@@ -468,7 +468,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L80",
       "id": "app_app_reap_owner",
-      "community": 1,
+      "community": 4,
       "norm_label": ".reap_owner()"
     },
     {
@@ -477,7 +477,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L86",
       "id": "app_app_snapshot_for_watchdog",
-      "community": 5,
+      "community": 4,
       "norm_label": ".snapshot_for_watchdog()"
     },
     {
@@ -486,7 +486,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L98",
       "id": "app_watchdogentry",
-      "community": 1,
+      "community": 4,
       "norm_label": "watchdogentry"
     },
     {
@@ -495,7 +495,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L108",
       "id": "app_appbuilder",
-      "community": 2,
+      "community": 0,
       "norm_label": "appbuilder"
     },
     {
@@ -504,7 +504,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L114",
       "id": "app_appbuilder_default_visible",
-      "community": 2,
+      "community": 0,
       "norm_label": ".default_visible()"
     },
     {
@@ -513,7 +513,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L115",
       "id": "app_appbuilder_prompt_regex",
-      "community": 2,
+      "community": 0,
       "norm_label": ".prompt_regex()"
     },
     {
@@ -522,7 +522,7 @@
       "source_file": "vterm\\src\\app.rs",
       "source_location": "L117",
       "id": "app_appbuilder_build",
-      "community": 2,
+      "community": 0,
       "norm_label": ".build()"
     },
     {
@@ -531,7 +531,7 @@
       "source_file": "vterm\\src\\client.rs",
       "source_location": "L1",
       "id": "vterm_src_client_rs",
-      "community": 2,
+      "community": 0,
       "norm_label": "client.rs"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "vterm\\src\\client.rs",
       "source_location": "L18",
       "id": "client_orchestratorclient",
-      "community": 2,
+      "community": 0,
       "norm_label": "orchestratorclient"
     },
     {
@@ -549,7 +549,7 @@
       "source_file": "vterm\\src\\client.rs",
       "source_location": "L24",
       "id": "client_orchestratorclient_connect",
-      "community": 2,
+      "community": 0,
       "norm_label": ".connect()"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "vterm\\src\\client.rs",
       "source_location": "L77",
       "id": "client_orchestratorclient_try_connect",
-      "community": 2,
+      "community": 0,
       "norm_label": ".try_connect()"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "vterm\\src\\client.rs",
       "source_location": "L86",
       "id": "client_orchestratorclient_execute",
-      "community": 2,
+      "community": 0,
       "norm_label": ".execute()"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "vterm\\src\\error.rs",
       "source_location": "L1",
       "id": "vterm_src_error_rs",
-      "community": 14,
+      "community": 16,
       "norm_label": "error.rs"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "vterm\\src\\error.rs",
       "source_location": "L15",
       "id": "error_error",
-      "community": 14,
+      "community": 16,
       "norm_label": "error"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "vterm\\src\\lib.rs",
       "source_location": "L1",
       "id": "vterm_src_lib_rs",
-      "community": 16,
+      "community": 18,
       "norm_label": "lib.rs"
     },
     {
@@ -711,7 +711,7 @@
       "source_file": "vterm\\src\\watchdog.rs",
       "source_location": "L1",
       "id": "vterm_src_watchdog_rs",
-      "community": 5,
+      "community": 0,
       "norm_label": "watchdog.rs"
     },
     {
@@ -720,7 +720,7 @@
       "source_file": "vterm\\src\\watchdog.rs",
       "source_location": "L12",
       "id": "watchdog_spawn",
-      "community": 5,
+      "community": 0,
       "norm_label": "spawn()"
     },
     {
@@ -774,7 +774,7 @@
       "source_file": "vterm\\src\\bin\\vterm-mcp.rs",
       "source_location": "L43",
       "id": "vterm_mcp_terminalserver",
-      "community": 0,
+      "community": 1,
       "norm_label": "terminalserver"
     },
     {
@@ -783,7 +783,7 @@
       "source_file": "vterm\\src\\bin\\vterm-mcp.rs",
       "source_location": "L50",
       "id": "vterm_mcp_terminalserver_terminal_spawn",
-      "community": 0,
+      "community": 1,
       "norm_label": ".terminal_spawn()"
     },
     {
@@ -792,7 +792,7 @@
       "source_file": "vterm\\src\\bin\\vterm-mcp.rs",
       "source_location": "L65",
       "id": "vterm_mcp_terminalserver_terminal_write",
-      "community": 0,
+      "community": 1,
       "norm_label": ".terminal_write()"
     },
     {
@@ -801,7 +801,7 @@
       "source_file": "vterm\\src\\bin\\vterm-mcp.rs",
       "source_location": "L73",
       "id": "vterm_mcp_terminalserver_terminal_read",
-      "community": 0,
+      "community": 1,
       "norm_label": ".terminal_read()"
     },
     {
@@ -819,7 +819,7 @@
       "source_file": "vterm\\src\\bin\\vterm-mcp.rs",
       "source_location": "L125",
       "id": "vterm_mcp_terminalserver_terminal_close",
-      "community": 0,
+      "community": 1,
       "norm_label": ".terminal_close()"
     },
     {
@@ -828,7 +828,7 @@
       "source_file": "vterm\\src\\bin\\vterm-mcp.rs",
       "source_location": "L137",
       "id": "vterm_mcp_main",
-      "community": 2,
+      "community": 9,
       "norm_label": "main()"
     },
     {
@@ -837,7 +837,7 @@
       "source_file": "vterm\\src\\bin\\vterm.rs",
       "source_location": "L1",
       "id": "vterm_src_bin_vterm_rs",
-      "community": 2,
+      "community": 0,
       "norm_label": "vterm.rs"
     },
     {
@@ -846,7 +846,7 @@
       "source_file": "vterm\\src\\bin\\vterm.rs",
       "source_location": "L34",
       "id": "vterm_args",
-      "community": 2,
+      "community": 0,
       "norm_label": "args"
     },
     {
@@ -855,7 +855,7 @@
       "source_file": "vterm\\src\\bin\\vterm.rs",
       "source_location": "L65",
       "id": "vterm_main",
-      "community": 2,
+      "community": 0,
       "norm_label": "main()"
     },
     {
@@ -864,7 +864,7 @@
       "source_file": "vterm\\src\\bin\\vterm.rs",
       "source_location": "L104",
       "id": "vterm_app_default_visible",
-      "community": 2,
+      "community": 0,
       "norm_label": "app_default_visible()"
     },
     {
@@ -873,7 +873,7 @@
       "source_file": "vterm\\src\\bin\\vterm.rs",
       "source_location": "L112",
       "id": "vterm_init_tracing",
-      "community": 2,
+      "community": 9,
       "norm_label": "init_tracing()"
     },
     {
@@ -882,7 +882,7 @@
       "source_file": "vterm\\src\\bin\\vterm.rs",
       "source_location": "L127",
       "id": "vterm_accept_loop",
-      "community": 2,
+      "community": 0,
       "norm_label": "accept_loop()"
     },
     {
@@ -891,7 +891,7 @@
       "source_file": "vterm\\src\\bin\\vterm.rs",
       "source_location": "L165",
       "id": "vterm_handle_connection",
-      "community": 2,
+      "community": 0,
       "norm_label": "handle_connection()"
     },
     {
@@ -900,7 +900,7 @@
       "source_file": "vterm\\src\\bin\\vterm.rs",
       "source_location": "L209",
       "id": "vterm_run_client",
-      "community": 2,
+      "community": 0,
       "norm_label": "run_client()"
     },
     {
@@ -909,7 +909,7 @@
       "source_file": "vterm\\src\\bin\\vterm.rs",
       "source_location": "L251",
       "id": "vterm_run_skill",
-      "community": 2,
+      "community": 0,
       "norm_label": "run_skill()"
     },
     {
@@ -918,7 +918,7 @@
       "source_file": "vterm\\src\\client\\windows.rs",
       "source_location": "L1",
       "id": "vterm_src_client_windows_rs",
-      "community": 2,
+      "community": 0,
       "norm_label": "windows.rs"
     },
     {
@@ -927,7 +927,7 @@
       "source_file": "vterm\\src\\client\\windows.rs",
       "source_location": "L6",
       "id": "windows_try_connect",
-      "community": 2,
+      "community": 0,
       "norm_label": "try_connect()"
     },
     {
@@ -936,7 +936,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L1",
       "id": "vterm_src_protocol_command_rs",
-      "community": 4,
+      "community": 2,
       "norm_label": "command.rs"
     },
     {
@@ -945,7 +945,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L23",
       "id": "command_request",
-      "community": 4,
+      "community": 2,
       "norm_label": "request"
     },
     {
@@ -954,7 +954,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L34",
       "id": "command_response",
-      "community": 4,
+      "community": 2,
       "norm_label": "response"
     },
     {
@@ -963,7 +963,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L45",
       "id": "command_response_error",
-      "community": 4,
+      "community": 2,
       "norm_label": ".error()"
     },
     {
@@ -972,7 +972,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L67",
       "id": "command_skillcommand",
-      "community": 4,
+      "community": 2,
       "norm_label": "skillcommand"
     },
     {
@@ -981,7 +981,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L85",
       "id": "command_default_close_target",
-      "community": 4,
+      "community": 2,
       "norm_label": "default_close_target()"
     },
     {
@@ -990,7 +990,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L90",
       "id": "command_skillcommand_variant_name",
-      "community": 4,
+      "community": 2,
       "norm_label": ".variant_name()"
     },
     {
@@ -999,7 +999,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L107",
       "id": "command_spawnargs",
-      "community": 4,
+      "community": 2,
       "norm_label": "spawnargs"
     },
     {
@@ -1008,7 +1008,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L116",
       "id": "command_batchargs",
-      "community": 4,
+      "community": 2,
       "norm_label": "batchargs"
     },
     {
@@ -1017,7 +1017,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L126",
       "id": "command_status",
-      "community": 4,
+      "community": 2,
       "norm_label": "status"
     },
     {
@@ -1026,7 +1026,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L133",
       "id": "command_commandresult",
-      "community": 1,
+      "community": 3,
       "norm_label": "commandresult"
     },
     {
@@ -1035,7 +1035,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L144",
       "id": "command_commandresult_ok",
-      "community": 2,
+      "community": 3,
       "norm_label": ".ok()"
     },
     {
@@ -1044,7 +1044,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L145",
       "id": "command_commandresult_err",
-      "community": 1,
+      "community": 3,
       "norm_label": ".err()"
     },
     {
@@ -1053,7 +1053,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L155",
       "id": "command_request_round_trip",
-      "community": 4,
+      "community": 2,
       "norm_label": "request_round_trip()"
     },
     {
@@ -1062,7 +1062,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L169",
       "id": "command_response_omits_none",
-      "community": 4,
+      "community": 2,
       "norm_label": "response_omits_none()"
     },
     {
@@ -1071,7 +1071,7 @@
       "source_file": "vterm\\src\\protocol\\command.rs",
       "source_location": "L176",
       "id": "command_batch_sub_results_serialize",
-      "community": 4,
+      "community": 2,
       "norm_label": "batch_sub_results_serialize()"
     },
     {
@@ -1080,7 +1080,7 @@
       "source_file": "vterm\\src\\protocol\\mod.rs",
       "source_location": "L1",
       "id": "vterm_src_protocol_mod_rs",
-      "community": 17,
+      "community": 19,
       "norm_label": "mod.rs"
     },
     {
@@ -1089,7 +1089,7 @@
       "source_file": "vterm\\src\\service\\correlation.rs",
       "source_location": "L1",
       "id": "vterm_src_service_correlation_rs",
-      "community": 10,
+      "community": 12,
       "norm_label": "correlation.rs"
     },
     {
@@ -1098,7 +1098,7 @@
       "source_file": "vterm\\src\\service\\correlation.rs",
       "source_location": "L19",
       "id": "correlation_correlationlayer",
-      "community": 10,
+      "community": 12,
       "norm_label": "correlationlayer"
     },
     {
@@ -1107,7 +1107,7 @@
       "source_file": "vterm\\src\\service\\correlation.rs",
       "source_location": "L23",
       "id": "correlation_correlationlayer_layer",
-      "community": 10,
+      "community": 12,
       "norm_label": ".layer()"
     },
     {
@@ -1116,7 +1116,7 @@
       "source_file": "vterm\\src\\service\\correlation.rs",
       "source_location": "L27",
       "id": "correlation_correlation",
-      "community": 10,
+      "community": 12,
       "norm_label": "correlation"
     },
     {
@@ -1125,7 +1125,7 @@
       "source_file": "vterm\\src\\service\\correlation.rs",
       "source_location": "L29",
       "id": "correlation_correlation_s",
-      "community": 7,
+      "community": 8,
       "norm_label": "correlation<s>"
     },
     {
@@ -1134,7 +1134,7 @@
       "source_file": "vterm\\src\\service\\correlation.rs",
       "source_location": "L39",
       "id": "correlation_correlation_s_poll_ready",
-      "community": 7,
+      "community": 8,
       "norm_label": ".poll_ready()"
     },
     {
@@ -1143,7 +1143,7 @@
       "source_file": "vterm\\src\\service\\correlation.rs",
       "source_location": "L43",
       "id": "correlation_correlation_s_call",
-      "community": 7,
+      "community": 8,
       "norm_label": ".call()"
     },
     {
@@ -1152,7 +1152,7 @@
       "source_file": "vterm\\src\\service\\dispatcher.rs",
       "source_location": "L1",
       "id": "vterm_src_service_dispatcher_rs",
-      "community": 1,
+      "community": 3,
       "norm_label": "dispatcher.rs"
     },
     {
@@ -1161,7 +1161,7 @@
       "source_file": "vterm\\src\\service\\dispatcher.rs",
       "source_location": "L23",
       "id": "dispatcher_dispatcher",
-      "community": 1,
+      "community": 3,
       "norm_label": "dispatcher"
     },
     {
@@ -1170,7 +1170,7 @@
       "source_file": "vterm\\src\\service\\dispatcher.rs",
       "source_location": "L29",
       "id": "dispatcher_dispatcher_new",
-      "community": 1,
+      "community": 3,
       "norm_label": ".new()"
     },
     {
@@ -1179,7 +1179,7 @@
       "source_file": "vterm\\src\\service\\dispatcher.rs",
       "source_location": "L39",
       "id": "dispatcher_dispatcher_poll_ready",
-      "community": 1,
+      "community": 3,
       "norm_label": ".poll_ready()"
     },
     {
@@ -1188,7 +1188,7 @@
       "source_file": "vterm\\src\\service\\dispatcher.rs",
       "source_location": "L43",
       "id": "dispatcher_dispatcher_call",
-      "community": 1,
+      "community": 3,
       "norm_label": ".call()"
     },
     {
@@ -1197,7 +1197,7 @@
       "source_file": "vterm\\src\\service\\dispatcher.rs",
       "source_location": "L59",
       "id": "dispatcher_execute",
-      "community": 1,
+      "community": 3,
       "norm_label": "execute()"
     },
     {
@@ -1206,7 +1206,7 @@
       "source_file": "vterm\\src\\service\\mod.rs",
       "source_location": "L1",
       "id": "vterm_src_service_mod_rs",
-      "community": 8,
+      "community": 10,
       "norm_label": "mod.rs"
     },
     {
@@ -1215,7 +1215,7 @@
       "source_file": "vterm\\src\\service\\mod.rs",
       "source_location": "L33",
       "id": "mod_pipeline",
-      "community": 8,
+      "community": 10,
       "norm_label": "pipeline()"
     },
     {
@@ -1224,7 +1224,7 @@
       "source_file": "vterm\\src\\service\\timing.rs",
       "source_location": "L1",
       "id": "vterm_src_service_timing_rs",
-      "community": 11,
+      "community": 13,
       "norm_label": "timing.rs"
     },
     {
@@ -1233,7 +1233,7 @@
       "source_file": "vterm\\src\\service\\timing.rs",
       "source_location": "L21",
       "id": "timing_timinglayer",
-      "community": 11,
+      "community": 13,
       "norm_label": "timinglayer"
     },
     {
@@ -1242,7 +1242,7 @@
       "source_file": "vterm\\src\\service\\timing.rs",
       "source_location": "L25",
       "id": "timing_timinglayer_layer",
-      "community": 11,
+      "community": 13,
       "norm_label": ".layer()"
     },
     {
@@ -1251,7 +1251,7 @@
       "source_file": "vterm\\src\\service\\timing.rs",
       "source_location": "L29",
       "id": "timing_timing",
-      "community": 11,
+      "community": 13,
       "norm_label": "timing"
     },
     {
@@ -1260,7 +1260,7 @@
       "source_file": "vterm\\src\\service\\timing.rs",
       "source_location": "L31",
       "id": "timing_timing_s",
-      "community": 7,
+      "community": 8,
       "norm_label": "timing<s>"
     },
     {
@@ -1269,7 +1269,7 @@
       "source_file": "vterm\\src\\service\\timing.rs",
       "source_location": "L41",
       "id": "timing_timing_s_poll_ready",
-      "community": 7,
+      "community": 8,
       "norm_label": ".poll_ready()"
     },
     {
@@ -1278,7 +1278,7 @@
       "source_file": "vterm\\src\\service\\timing.rs",
       "source_location": "L45",
       "id": "timing_timing_s_call",
-      "community": 7,
+      "community": 8,
       "norm_label": ".call()"
     },
     {
@@ -1287,7 +1287,7 @@
       "source_file": "vterm\\src\\service\\tracing_layer.rs",
       "source_location": "L1",
       "id": "vterm_src_service_tracing_layer_rs",
-      "community": 8,
+      "community": 10,
       "norm_label": "tracing_layer.rs"
     },
     {
@@ -1296,7 +1296,7 @@
       "source_file": "vterm\\src\\service\\tracing_layer.rs",
       "source_location": "L17",
       "id": "tracing_layer_tracinglayer",
-      "community": 8,
+      "community": 10,
       "norm_label": "tracinglayer"
     },
     {
@@ -1305,7 +1305,7 @@
       "source_file": "vterm\\src\\service\\tracing_layer.rs",
       "source_location": "L21",
       "id": "tracing_layer_tracinglayer_layer",
-      "community": 8,
+      "community": 10,
       "norm_label": ".layer()"
     },
     {
@@ -1314,7 +1314,7 @@
       "source_file": "vterm\\src\\service\\tracing_layer.rs",
       "source_location": "L25",
       "id": "tracing_layer_tracing",
-      "community": 8,
+      "community": 10,
       "norm_label": "tracing"
     },
     {
@@ -1323,7 +1323,7 @@
       "source_file": "vterm\\src\\service\\tracing_layer.rs",
       "source_location": "L27",
       "id": "tracing_layer_tracing_s",
-      "community": 7,
+      "community": 8,
       "norm_label": "tracing<s>"
     },
     {
@@ -1332,7 +1332,7 @@
       "source_file": "vterm\\src\\service\\tracing_layer.rs",
       "source_location": "L38",
       "id": "tracing_layer_tracing_s_poll_ready",
-      "community": 7,
+      "community": 8,
       "norm_label": ".poll_ready()"
     },
     {
@@ -1341,7 +1341,7 @@
       "source_file": "vterm\\src\\service\\tracing_layer.rs",
       "source_location": "L42",
       "id": "tracing_layer_tracing_s_call",
-      "community": 7,
+      "community": 8,
       "norm_label": ".call()"
     },
     {
@@ -1350,7 +1350,7 @@
       "source_file": "vterm\\src\\session\\mod.rs",
       "source_location": "L1",
       "id": "vterm_src_session_mod_rs",
-      "community": 4,
+      "community": 2,
       "norm_label": "mod.rs"
     },
     {
@@ -1359,7 +1359,7 @@
       "source_file": "vterm\\src\\session\\mod.rs",
       "source_location": "L13",
       "id": "mod_connectionid",
-      "community": 4,
+      "community": 2,
       "norm_label": "connectionid"
     },
     {
@@ -1368,7 +1368,7 @@
       "source_file": "vterm\\src\\session\\mod.rs",
       "source_location": "L16",
       "id": "mod_connectionid_new",
-      "community": 4,
+      "community": 2,
       "norm_label": ".new()"
     },
     {
@@ -1377,7 +1377,7 @@
       "source_file": "vterm\\src\\session\\mod.rs",
       "source_location": "L21",
       "id": "mod_connectionid_raw",
-      "community": 4,
+      "community": 2,
       "norm_label": ".raw()"
     },
     {
@@ -1386,7 +1386,7 @@
       "source_file": "vterm\\src\\session\\mod.rs",
       "source_location": "L25",
       "id": "mod_connectionid_default",
-      "community": 4,
+      "community": 2,
       "norm_label": ".default()"
     },
     {
@@ -1395,7 +1395,7 @@
       "source_file": "vterm\\src\\session\\mod.rs",
       "source_location": "L31",
       "id": "mod_connectionid_fmt",
-      "community": 2,
+      "community": 9,
       "norm_label": ".fmt()"
     },
     {
@@ -1404,7 +1404,7 @@
       "source_file": "vterm\\src\\session\\mod.rs",
       "source_location": "L37",
       "id": "mod_connectionguard",
-      "community": 4,
+      "community": 2,
       "norm_label": "connectionguard"
     },
     {
@@ -1413,7 +1413,7 @@
       "source_file": "vterm\\src\\session\\mod.rs",
       "source_location": "L43",
       "id": "mod_connectionguard_new",
-      "community": 4,
+      "community": 2,
       "norm_label": ".new()"
     },
     {
@@ -1422,7 +1422,7 @@
       "source_file": "vterm\\src\\session\\mod.rs",
       "source_location": "L49",
       "id": "mod_connectionguard_id",
-      "community": 4,
+      "community": 2,
       "norm_label": ".id()"
     },
     {
@@ -1440,7 +1440,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L1",
       "id": "vterm_src_terminal_instance_rs",
-      "community": 1,
+      "community": 5,
       "norm_label": "instance.rs"
     },
     {
@@ -1449,7 +1449,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L23",
       "id": "instance_sealed",
-      "community": 1,
+      "community": 5,
       "norm_label": "sealed"
     },
     {
@@ -1458,7 +1458,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L25",
       "id": "instance_state",
-      "community": 1,
+      "community": 5,
       "norm_label": "state"
     },
     {
@@ -1467,7 +1467,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L27",
       "id": "instance_spawning",
-      "community": 1,
+      "community": 5,
       "norm_label": "spawning"
     },
     {
@@ -1476,7 +1476,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L30",
       "id": "instance_ready",
-      "community": 1,
+      "community": 3,
       "norm_label": "ready"
     },
     {
@@ -1503,7 +1503,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L61",
       "id": "instance_terminal",
-      "community": 1,
+      "community": 5,
       "norm_label": "terminal"
     },
     {
@@ -1512,7 +1512,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L66",
       "id": "instance_terminal_s",
-      "community": 5,
+      "community": 4,
       "norm_label": "terminal<s>"
     },
     {
@@ -1521,7 +1521,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L67",
       "id": "instance_terminal_s_clone",
-      "community": 2,
+      "community": 0,
       "norm_label": ".clone()"
     },
     {
@@ -1530,7 +1530,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L72",
       "id": "instance_terminal_s_id",
-      "community": 5,
+      "community": 4,
       "norm_label": ".id()"
     },
     {
@@ -1539,7 +1539,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L73",
       "id": "instance_terminal_s_title",
-      "community": 5,
+      "community": 4,
       "norm_label": ".title()"
     },
     {
@@ -1548,7 +1548,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L74",
       "id": "instance_terminal_s_child_pid",
-      "community": 5,
+      "community": 3,
       "norm_label": ".child_pid()"
     },
     {
@@ -1557,7 +1557,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L75",
       "id": "instance_terminal_s_line_count",
-      "community": 5,
+      "community": 4,
       "norm_label": ".line_count()"
     },
     {
@@ -1566,7 +1566,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L76",
       "id": "instance_terminal_s_max_lines",
-      "community": 5,
+      "community": 4,
       "norm_label": ".max_lines()"
     },
     {
@@ -1575,7 +1575,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L77",
       "id": "instance_terminal_s_max_duration",
-      "community": 5,
+      "community": 4,
       "norm_label": ".max_duration()"
     },
     {
@@ -1584,7 +1584,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L78",
       "id": "instance_terminal_s_spawn_time",
-      "community": 5,
+      "community": 4,
       "norm_label": ".spawn_time()"
     },
     {
@@ -1629,7 +1629,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L97",
       "id": "instance_terminal_state_ready",
-      "community": 1,
+      "community": 3,
       "norm_label": "terminal<state::ready>"
     },
     {
@@ -1638,7 +1638,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L100",
       "id": "instance_terminal_state_ready_write",
-      "community": 1,
+      "community": 3,
       "norm_label": ".write()"
     },
     {
@@ -1647,7 +1647,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L108",
       "id": "instance_terminal_state_ready_read_screen",
-      "community": 1,
+      "community": 3,
       "norm_label": ".read_screen()"
     },
     {
@@ -1656,7 +1656,7 @@
       "source_file": "vterm\\src\\terminal\\instance.rs",
       "source_location": "L113",
       "id": "instance_terminal_state_ready_matches",
-      "community": 1,
+      "community": 3,
       "norm_label": ".matches()"
     },
     {
@@ -1665,7 +1665,7 @@
       "source_file": "vterm\\src\\terminal\\mod.rs",
       "source_location": "L1",
       "id": "vterm_src_terminal_mod_rs",
-      "community": 2,
+      "community": 0,
       "norm_label": "mod.rs"
     },
     {
@@ -1674,7 +1674,7 @@
       "source_file": "vterm\\src\\terminal\\mod.rs",
       "source_location": "L33",
       "id": "mod_spawn",
-      "community": 2,
+      "community": 0,
       "norm_label": "spawn()"
     },
     {
@@ -1683,7 +1683,7 @@
       "source_file": "vterm\\src\\terminal\\mod.rs",
       "source_location": "L99",
       "id": "mod_spawn_viewer_window",
-      "community": 2,
+      "community": 0,
       "norm_label": "spawn_viewer_window()"
     },
     {
@@ -1710,7 +1710,7 @@
       "source_file": "vterm\\src\\terminal\\pump.rs",
       "source_location": "L1",
       "id": "vterm_src_terminal_pump_rs",
-      "community": 3,
+      "community": 0,
       "norm_label": "pump.rs"
     },
     {
@@ -1719,7 +1719,7 @@
       "source_file": "vterm\\src\\terminal\\pump.rs",
       "source_location": "L26",
       "id": "pump_start",
-      "community": 3,
+      "community": 0,
       "norm_label": "start()"
     },
     {
@@ -1728,7 +1728,7 @@
       "source_file": "vterm\\src\\terminal\\pump.rs",
       "source_location": "L55",
       "id": "pump_pump_loop",
-      "community": 3,
+      "community": 0,
       "norm_label": "pump_loop()"
     },
     {
@@ -1737,7 +1737,7 @@
       "source_file": "vterm\\src\\terminal\\pump.rs",
       "source_location": "L118",
       "id": "pump_memchr_subseq",
-      "community": 3,
+      "community": 0,
       "norm_label": "memchr_subseq()"
     },
     {
@@ -1746,7 +1746,7 @@
       "source_file": "vterm\\src\\terminal\\pump.rs",
       "source_location": "L123",
       "id": "pump_viewer_loop",
-      "community": 3,
+      "community": 0,
       "norm_label": "viewer_loop()"
     },
     {
@@ -1755,7 +1755,7 @@
       "source_file": "vterm\\src\\window\\mod.rs",
       "source_location": "L1",
       "id": "vterm_src_window_mod_rs",
-      "community": 18,
+      "community": 20,
       "norm_label": "mod.rs"
     },
     {
@@ -1764,7 +1764,7 @@
       "source_file": "vterm\\src\\window\\stub.rs",
       "source_location": "L1",
       "id": "vterm_src_window_stub_rs",
-      "community": 1,
+      "community": 3,
       "norm_label": "stub.rs"
     },
     {
@@ -1773,7 +1773,7 @@
       "source_file": "vterm\\src\\window\\stub.rs",
       "source_location": "L5",
       "id": "stub_control",
-      "community": 1,
+      "community": 3,
       "norm_label": "control()"
     },
     {
@@ -1782,7 +1782,7 @@
       "source_file": "vterm\\src\\window\\windows.rs",
       "source_location": "L1",
       "id": "vterm_src_window_windows_rs",
-      "community": 1,
+      "community": 3,
       "norm_label": "windows.rs"
     },
     {
@@ -1791,7 +1791,7 @@
       "source_file": "vterm\\src\\window\\windows.rs",
       "source_location": "L9",
       "id": "windows_control",
-      "community": 1,
+      "community": 3,
       "norm_label": "control()"
     },
     {
@@ -1800,7 +1800,7 @@
       "source_file": "vterm\\src\\window\\windows.rs",
       "source_location": "L31",
       "id": "windows_find_hwnd_for_pid",
-      "community": 1,
+      "community": 3,
       "norm_label": "find_hwnd_for_pid()"
     },
     {
@@ -1809,7 +1809,7 @@
       "source_file": "vterm\\tests\\integration_test.rs",
       "source_location": "L1",
       "id": "vterm_tests_integration_test_rs",
-      "community": 2,
+      "community": 3,
       "norm_label": "integration_test.rs"
     },
     {
@@ -1818,7 +1818,7 @@
       "source_file": "vterm\\tests\\integration_test.rs",
       "source_location": "L12",
       "id": "integration_test_connect_with_retry",
-      "community": 2,
+      "community": 3,
       "norm_label": "connect_with_retry()"
     },
     {
@@ -1827,7 +1827,7 @@
       "source_file": "vterm\\tests\\integration_test.rs",
       "source_location": "L30",
       "id": "integration_test_send_request",
-      "community": 2,
+      "community": 3,
       "norm_label": "send_request()"
     },
     {
@@ -1836,7 +1836,7 @@
       "source_file": "vterm\\tests\\integration_test.rs",
       "source_location": "L39",
       "id": "integration_test_read_response",
-      "community": 2,
+      "community": 3,
       "norm_label": "read_response()"
     },
     {
@@ -1845,7 +1845,7 @@
       "source_file": "vterm\\tests\\integration_test.rs",
       "source_location": "L53",
       "id": "integration_test_test_supreme_orchestration",
-      "community": 2,
+      "community": 3,
       "norm_label": "test_supreme_orchestration()"
     },
     {
@@ -1854,7 +1854,7 @@
       "source_file": "vterm\\tests\\playbook_tests.ps1",
       "source_location": "L1",
       "id": "vterm_tests_playbook_tests_ps1",
-      "community": 12,
+      "community": 14,
       "norm_label": "playbook_tests.ps1"
     },
     {
@@ -1863,7 +1863,7 @@
       "source_file": "vterm\\tests\\playbook_tests.ps1",
       "source_location": "L42",
       "id": "playbook_tests_invoke_cmd",
-      "community": 12,
+      "community": 14,
       "norm_label": "invoke-cmd()"
     },
     {
@@ -1872,7 +1872,7 @@
       "source_file": "vterm\\tests\\playbook_tests.ps1",
       "source_location": "L60",
       "id": "playbook_tests_assert",
-      "community": 12,
+      "community": 14,
       "norm_label": "assert()"
     },
     {
@@ -1881,7 +1881,7 @@
       "source_file": "vterm\\tests\\protocol.rs",
       "source_location": "L1",
       "id": "vterm_tests_protocol_rs",
-      "community": 4,
+      "community": 2,
       "norm_label": "protocol.rs"
     },
     {
@@ -1890,7 +1890,7 @@
       "source_file": "vterm\\tests\\protocol.rs",
       "source_location": "L12",
       "id": "protocol_request_envelope_round_trip",
-      "community": 4,
+      "community": 2,
       "norm_label": "request_envelope_round_trip()"
     },
     {
@@ -1899,7 +1899,7 @@
       "source_file": "vterm\\tests\\protocol.rs",
       "source_location": "L20",
       "id": "protocol_request_without_req_id",
-      "community": 4,
+      "community": 2,
       "norm_label": "request_without_req_id()"
     },
     {
@@ -1908,7 +1908,7 @@
       "source_file": "vterm\\tests\\protocol.rs",
       "source_location": "L28",
       "id": "protocol_deeply_nested_batch_round_trip",
-      "community": 4,
+      "community": 2,
       "norm_label": "deeply_nested_batch_round_trip()"
     },
     {
@@ -1917,7 +1917,7 @@
       "source_file": "vterm\\tests\\protocol.rs",
       "source_location": "L51",
       "id": "protocol_response_carries_req_id_back",
-      "community": 4,
+      "community": 2,
       "norm_label": "response_carries_req_id_back()"
     },
     {
@@ -1926,7 +1926,7 @@
       "source_file": "vterm\\tests\\protocol.rs",
       "source_location": "L63",
       "id": "protocol_batch_aggregate_status_serialises",
-      "community": 4,
+      "community": 2,
       "norm_label": "batch_aggregate_status_serialises()"
     },
     {
@@ -1935,7 +1935,7 @@
       "source_file": "vterm\\tests\\protocol.rs",
       "source_location": "L83",
       "id": "protocol_shortcut_parser_handles_vim_quit",
-      "community": 4,
+      "community": 2,
       "norm_label": "shortcut_parser_handles_vim_quit()"
     },
     {
@@ -1944,7 +1944,7 @@
       "source_file": "vterm\\tests\\protocol.rs",
       "source_location": "L89",
       "id": "protocol_shortcut_parser_handles_ctrl_c",
-      "community": 4,
+      "community": 2,
       "norm_label": "shortcut_parser_handles_ctrl_c()"
     },
     {
@@ -1953,7 +1953,7 @@
       "source_file": "vterm\\tests\\protocol.rs",
       "source_location": "L95",
       "id": "protocol_variant_names_are_stable",
-      "community": 4,
+      "community": 2,
       "norm_label": "variant_names_are_stable()"
     },
     {
@@ -1962,7 +1962,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L1",
       "id": "vterm_python_src_lib_rs",
-      "community": 0,
+      "community": 3,
       "norm_label": "lib.rs"
     },
     {
@@ -1971,7 +1971,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L9",
       "id": "lib_vtermclient",
-      "community": 0,
+      "community": 1,
       "norm_label": "vtermclient"
     },
     {
@@ -1980,7 +1980,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L17",
       "id": "lib_vtermclient_new",
-      "community": 2,
+      "community": 0,
       "norm_label": ".new()"
     },
     {
@@ -1989,7 +1989,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L29",
       "id": "lib_vtermclient_spawn",
-      "community": 0,
+      "community": 1,
       "norm_label": ".spawn()"
     },
     {
@@ -1998,7 +1998,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L44",
       "id": "lib_vtermclient_spawn_op",
-      "community": 0,
+      "community": 1,
       "norm_label": ".spawn_op()"
     },
     {
@@ -2007,7 +2007,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L50",
       "id": "lib_vtermclient_write_op",
-      "community": 0,
+      "community": 1,
       "norm_label": ".write_op()"
     },
     {
@@ -2016,7 +2016,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L56",
       "id": "lib_vtermclient_read_op",
-      "community": 0,
+      "community": 1,
       "norm_label": ".read_op()"
     },
     {
@@ -2025,7 +2025,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L62",
       "id": "lib_vtermclient_wait_until_op",
-      "community": 0,
+      "community": 1,
       "norm_label": ".wait_until_op()"
     },
     {
@@ -2034,7 +2034,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L68",
       "id": "lib_vtermclient_close_op",
-      "community": 0,
+      "community": 1,
       "norm_label": ".close_op()"
     },
     {
@@ -2043,7 +2043,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L74",
       "id": "lib_vtermclient_write",
-      "community": 0,
+      "community": 1,
       "norm_label": ".write()"
     },
     {
@@ -2052,7 +2052,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L85",
       "id": "lib_vtermclient_read",
-      "community": 0,
+      "community": 1,
       "norm_label": ".read()"
     },
     {
@@ -2061,7 +2061,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L96",
       "id": "lib_vtermclient_wait_until",
-      "community": 0,
+      "community": 1,
       "norm_label": ".wait_until()"
     },
     {
@@ -2070,7 +2070,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L107",
       "id": "lib_vtermclient_close",
-      "community": 0,
+      "community": 1,
       "norm_label": ".close()"
     },
     {
@@ -2079,7 +2079,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L119",
       "id": "lib_vtermclient_execute",
-      "community": 0,
+      "community": 1,
       "norm_label": ".execute()"
     },
     {
@@ -2088,7 +2088,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L137",
       "id": "lib_vtermclient_batch",
-      "community": 0,
+      "community": 1,
       "norm_label": ".batch()"
     },
     {
@@ -2097,7 +2097,7 @@
       "source_file": "vterm-python\\src\\lib.rs",
       "source_location": "L166",
       "id": "lib_vterm_python",
-      "community": 0,
+      "community": 3,
       "norm_label": "vterm_python()"
     },
     {
@@ -2106,7 +2106,7 @@
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L1",
       "id": "vterm_python_vterm_python_server_py",
-      "community": 3,
+      "community": 11,
       "norm_label": "server.py"
     },
     {
@@ -2115,7 +2115,7 @@
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L10",
       "id": "server_spawn",
-      "community": 3,
+      "community": 0,
       "norm_label": "spawn()"
     },
     {
@@ -2124,7 +2124,7 @@
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L15",
       "id": "server_write",
-      "community": 3,
+      "community": 0,
       "norm_label": "write()"
     },
     {
@@ -2133,7 +2133,7 @@
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L21",
       "id": "server_read",
-      "community": 3,
+      "community": 0,
       "norm_label": "read()"
     },
     {
@@ -2142,7 +2142,7 @@
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L26",
       "id": "server_wait_until",
-      "community": 3,
+      "community": 0,
       "norm_label": "wait_until()"
     },
     {
@@ -2151,7 +2151,7 @@
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L32",
       "id": "server_batch",
-      "community": 0,
+      "community": 1,
       "norm_label": "batch()"
     },
     {
@@ -2160,16 +2160,34 @@
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L37",
       "id": "server_close",
-      "community": 0,
+      "community": 1,
       "norm_label": "close()"
+    },
+    {
+      "label": "get_architecture()",
+      "file_type": "code",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L43",
+      "id": "server_get_architecture",
+      "community": 11,
+      "norm_label": "get_architecture()"
+    },
+    {
+      "label": "architecture_resource()",
+      "file_type": "code",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L60",
+      "id": "server_architecture_resource",
+      "community": 11,
+      "norm_label": "architecture_resource()"
     },
     {
       "label": "main()",
       "file_type": "code",
       "source_file": "vterm-python\\vterm_python\\server.py",
-      "source_location": "L42",
+      "source_location": "L64",
       "id": "server_main",
-      "community": 3,
+      "community": 11,
       "norm_label": "main()"
     },
     {
@@ -2177,7 +2195,7 @@
       "file_type": "rationale",
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L11",
-      "community": 3,
+      "community": 0,
       "norm_label": "spawns a new terminal session. returns the terminal id.",
       "id": "server_rationale_11"
     },
@@ -2186,7 +2204,7 @@
       "file_type": "rationale",
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L16",
-      "community": 3,
+      "community": 0,
       "norm_label": "writes text to a terminal. supports <enter>, <c-c>, etc.",
       "id": "server_rationale_16"
     },
@@ -2195,7 +2213,7 @@
       "file_type": "rationale",
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L22",
-      "community": 3,
+      "community": 0,
       "norm_label": "reads the current screen state of a terminal.",
       "id": "server_rationale_22"
     },
@@ -2204,7 +2222,7 @@
       "file_type": "rationale",
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L27",
-      "community": 3,
+      "community": 0,
       "norm_label": "waits for a pattern to appear on the screen.",
       "id": "server_rationale_27"
     },
@@ -2213,7 +2231,7 @@
       "file_type": "rationale",
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L33",
-      "community": 0,
+      "community": 1,
       "norm_label": "executes a batch of commands atomically for high performance.",
       "id": "server_rationale_33"
     },
@@ -2222,9 +2240,27 @@
       "file_type": "rationale",
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L38",
-      "community": 0,
+      "community": 1,
       "norm_label": "closes a terminal session.",
       "id": "server_rationale_38"
+    },
+    {
+      "label": "Returns the architectural knowledge graph report for this codebase.",
+      "file_type": "rationale",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L44",
+      "id": "server_rationale_44",
+      "community": 11,
+      "norm_label": "returns the architectural knowledge graph report for this codebase."
+    },
+    {
+      "label": "The definitive architectural map of vterm-rs.",
+      "file_type": "rationale",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L61",
+      "id": "server_rationale_61",
+      "community": 11,
+      "norm_label": "the definitive architectural map of vterm-rs."
     },
     {
       "label": "__init__.py",
@@ -2232,7 +2268,7 @@
       "source_file": "vterm-python\\vterm_python\\__init__.py",
       "source_location": "L1",
       "id": "vterm_python_vterm_python_init_py",
-      "community": 19,
+      "community": 21,
       "norm_label": "__init__.py"
     }
   ],
@@ -7557,7 +7593,31 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "vterm-python\\vterm_python\\server.py",
-      "source_location": "L42",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "vterm_python_vterm_python_server_py",
+      "_tgt": "server_get_architecture",
+      "source": "vterm_python_vterm_python_server_py",
+      "target": "server_get_architecture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_src": "vterm_python_vterm_python_server_py",
+      "_tgt": "server_architecture_resource",
+      "source": "vterm_python_vterm_python_server_py",
+      "target": "server_architecture_resource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L64",
       "weight": 1.0,
       "_src": "vterm_python_vterm_python_server_py",
       "_tgt": "server_main",
@@ -7587,6 +7647,18 @@
       "_tgt": "server_write",
       "source": "server_write",
       "target": "server_rationale_16",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "server_get_architecture",
+      "_tgt": "server_read",
+      "source": "server_read",
+      "target": "server_get_architecture",
       "confidence_score": 1.0
     },
     {
@@ -7635,6 +7707,42 @@
       "_tgt": "server_close",
       "source": "server_close",
       "target": "server_rationale_38",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "server_architecture_resource",
+      "_tgt": "server_get_architecture",
+      "source": "server_get_architecture",
+      "target": "server_architecture_resource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "server_rationale_44",
+      "_tgt": "server_get_architecture",
+      "source": "server_get_architecture",
+      "target": "server_rationale_44",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "vterm-python\\vterm_python\\server.py",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_src": "server_rationale_61",
+      "_tgt": "server_architecture_resource",
+      "source": "server_architecture_resource",
+      "target": "server_rationale_61",
       "confidence_score": 1.0
     }
   ],

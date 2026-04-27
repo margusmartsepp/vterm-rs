@@ -9,11 +9,19 @@ pub async fn try_connect() -> Result<NamedPipeClient> {
             return Ok(client);
         }
         if i == 0 {
-            // Auto-spawn headless orchestrator if not found
-            std::process::Command::new("cargo")
-                .args(["run", "-p", "vterm-rs", "--bin", "vterm", "--", "--headless"])
+            // Auto-spawn headless orchestrator if not found.
+            // First try direct execution (if in PATH or local), then fallback to cargo in dev.
+            if std::process::Command::new("vterm.exe")
+                .arg("--headless")
                 .spawn()
-                .ok();
+                .is_err() 
+            {
+                if std::path::Path::new("Cargo.toml").exists() {
+                    let _ = std::process::Command::new("cargo")
+                        .args(["run", "-p", "vterm-rs", "--bin", "vterm", "--", "--headless"])
+                        .spawn();
+                }
+            }
         }
         sleep(Duration::from_millis(1000)).await;
     }

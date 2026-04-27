@@ -173,7 +173,7 @@ when editing.
 | Area              | State                                                  |
 | ----------------- | ------------------------------------------------------ |
 | Windows + ConPTY  | works                                                  |
-| Python Bridge     | works (v0.7.14, available via PyPI `vterm-rs-python-mcp`) |
+| Python Bridge     | works (v0.7.15, available via PyPI `vterm-rs-python-mcp`) |
 | Linux / macOS     | planned (v0.8.0)                                       |
 | Wire protocol     | unstable, will be pinned at v1.0                       |
 | Test coverage     | smoke (PowerShell) + Rust integration + Python FastMCP |

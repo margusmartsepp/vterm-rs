@@ -77,9 +77,16 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - name: Download all artifacts
+      - name: Download distributions
         uses: actions/download-artifact@v4
         with:
+          pattern: 'wheels-*'
+          path: dist
+          merge-multiple: true
+      - name: Download sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: sdist
           path: dist
           merge-multiple: true
       - name: Publish to PyPI

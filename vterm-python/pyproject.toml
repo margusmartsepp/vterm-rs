@@ -4,6 +4,13 @@ build-backend = "maturin"
 
 [project]
 name = "vterm-rs-python-mcp"
+version = "0.7.9"
+description = "High-performance Python SDK for the vterm-rs PTY orchestrator"
+readme = "../README.md"
+authors = [
+    { name = "Margus Martsepp", email = "margus@example.com" }
+]
+license = { text = "MIT" }
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Rust",

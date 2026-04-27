@@ -1,0 +1,24 @@
+# Rust artifacts
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Windows binaries and symbols
+*.exe
+*.pdb
+
+# vterm-rs runtime logs and test artifacts
+*.log
+/tests/test_results.md
+/scratch/

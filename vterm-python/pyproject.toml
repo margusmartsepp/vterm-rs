@@ -4,9 +4,9 @@ build-backend = "maturin"
 
 [project]
 name = "vterm-rs-python-mcp"
-version = "0.7.10"
+version = "0.7.11"
 description = "High-performance Python SDK for the vterm-rs PTY orchestrator"
-readme = "../README.md"
+readme = "README.md"
 authors = [
     { name = "Margus Martsepp", email = "margus@example.com" }
 ]
@@ -16,7 +16,6 @@ classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
 ]
-dynamic = ["version"]
 dependencies = [
     "fastmcp",
     "pydantic"

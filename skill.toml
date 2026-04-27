@@ -1,6 +1,6 @@
 name = "vterm-rs"
 description = "Professional-grade Rust PTY orchestrator for AI agents. Provides state-aware terminal snapshots, resource guardrails, and atomic batching."
-version = "0.7.9"
+version = "0.7.10"
 
 [tools]
 spawn          = { command = "target/release/vterm.exe", args = ["--skill", "Spawn"], description = "Spawns a new state-aware terminal session with optional resource guardrails (max_lines, timeout_ms)." }
@@ -16,7 +16,7 @@ batch          = { command = "target/release/vterm.exe", args = ["--skill", "Bat
 [[skills]]
 name = "vterm"
 description = "State-aware PTY orchestration for reliable agentic tool use."
-version = "0.7.9"
+version = "0.7.10"
 capabilities = ["stateful_read", "shortcut_input", "window_management", "resource_guardrails", "batch_execution"]
 
 [skills.config]

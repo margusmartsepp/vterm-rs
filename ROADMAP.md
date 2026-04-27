@@ -85,7 +85,7 @@ Status: **completed**.
 - [x] Streaming `screen_read` over MCP `notifications/progress`
 - [x] Reference Cowork plugin manifest
 
-### v0.7.9 — *State-Aware Orchestration* (this release)
+### v0.7.10 — *State-Aware Orchestration* (this release)
 
 Status: **completed**.
 

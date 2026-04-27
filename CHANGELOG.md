@@ -2,10 +2,13 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
-## v0.7.9 — AI Self-Maintenance
-- Integrated Graphify for codebase-to-graph architectural mapping.
-- Added `--graph` flag to `vterm.exe` to expose the architectural map.
-- Added `scripts/generate_graph.ps1` for automated map updates.
+## v0.7.10 — State-Aware Orchestration (Final)
+- **High-Performance Python SDK**: Native PyO3 bindings for near-zero orchestration latency.
+- **Atomic Batch API**: Orchestrate multiple terminals in a single round-trip with the `batch()` method.
+- **Fluent Operator API**: Added typed `_op` helpers (spawn_op, write_op, etc.) for intuitive batch construction.
+- **Plug-and-Play MCP**: Built-in FastMCP server in the Python package (`vterm-mcp`) with "one-click" Cursor integration.
+- **Architectural Mapping**: Integrated Graphify to export a 248-node knowledge graph for AI agent context.
+- **CI Hardening**: Refined PyPI metadata and artifact filtering for a clean distribution process.
 
 ## v0.7.8 — MCP Bridge
 - Fixed PyPI workflow (corrected artifact upload paths).

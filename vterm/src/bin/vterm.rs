@@ -15,14 +15,19 @@ use anyhow::{Context, Result};
 use clap::Parser;
 use crossterm::terminal as ct_term;
 use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
+
 #[cfg(windows)]
 use tokio::net::windows::named_pipe::{ClientOptions, NamedPipeServer, ServerOptions};
+
 use tower::{Service, ServiceExt};
 use tracing_subscriber::EnvFilter;
 
 use vterm_rs::{App, ConnectionGuard, Request, Response};
 
+#[cfg(windows)]
 const PIPE_NAME: &str = r"\\.\pipe\vterm-rs-skill";
+#[cfg(not(windows))]
+const PIPE_NAME: &str = "/tmp/vterm-rs-skill";
 
 #[derive(Parser, Debug)]
 #[command(name = "vterm", version, about = "PTY orchestrator for AI agents")]

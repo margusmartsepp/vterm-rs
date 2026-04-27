@@ -13,8 +13,10 @@ use std::sync::atomic::Ordering;
 
 use parking_lot::Mutex;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
 #[cfg(windows)]
 use tokio::net::windows::named_pipe;
+
 use tokio::sync::mpsc;
 
 use super::Inner;

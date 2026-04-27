@@ -53,6 +53,9 @@ impl Service<SkillCommand> for Dispatcher {
 
 /// Internal recursion target — used by `Batch` so sub-commands re-enter the same
 /// machinery without re-cloning the whole Tower stack.
+/// 
+/// rationale: Central dispatcher that routes SkillCommands to their implementation handlers.
+/// links: crate::App::spawn, crate::App::terminal, crate::terminal::Terminal::write, crate::terminal::Terminal::read_screen
 async fn execute(app: Arc<App>, owner: ConnectionId, cmd: SkillCommand) -> Result<CommandResult> {
     use SkillCommand::*;
     let mut r = CommandResult::ok();

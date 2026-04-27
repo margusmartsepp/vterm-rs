@@ -12,11 +12,20 @@ a Rust PTY host that lets AI agents drive real terminals (PowerShell now; bash, 
 
 `vterm.exe` is a long-lived **orchestrator** process. It owns a pool of pseudo-terminals
 (PTYs), parses each into an in-memory `vt100` screen grid, and exposes them over a single
-**named pipe** (`\\.\pipe\litellm-term-skill`) using newline-delimited JSON commands. A
-client — the AI, an MCP bridge, or a PowerShell test harness — connects, sends commands,
+**named pipe** (`\\.\pipe\litellm-term-skill`) using newline-delimited JSON commands. A client — the AI, an MCP bridge, or a PowerShell test harness — connects, sends commands,
 and reads back results that include `req_id` correlation, structured durations, and an
 aggregate status. Each connection owns the terminals it spawns and the orchestrator reaps
 them when the connection drops. Visible windows are **optional** — headless is first-class.
+
+---
+
+## 1.5. Agentic philosophy: Safety & Truth
+
+`vterm-rs` is built for **State Machine Inspection**, not blind string manipulation.
+
+1.  **Guardrails are Mandatory**: When running potentially high-volume commands (e.g., `cargo build`), agents MUST use `max_lines` and `max_duration`. This prevents the "Infinite Log Flood" that can brick a host system. (See `examples/python_sdk/guardrailed_build.py`).
+2.  **Visual Truth**: For complex TUIs (e.g., `htop`, `claude`), agents should use `screen_read` to inspect the grid and `wait_until` to assert on visual states. Avoid "Are we there yet?" polling. (See `examples/python_sdk/tui_orchestration.py`).
+3.  **Fleet Control**: One connection can manage a fleet of terminals. Use this to separate "Build," "Logs," and "Interactive" sessions. (See `examples/python_sdk/terminal_fleet.py`).
 
 ---
 

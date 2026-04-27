@@ -1,8 +1,11 @@
-//! Aspect: request → response `req_id` correlation.
-//!
-//! Outermost layer. Strips `req_id` from the inbound `Request`, hands the
-//! `SkillCommand` to the inner stack, and re-attaches `req_id` to the resulting
-//! `CommandResult` to form the outbound `Response`.
+// Aspect: request → response `req_id` correlation.
+//
+/// rationale: Part of the Observability community. Ensures request/response parity across the PTY fleet.
+/// links: crate::service::timing::Timing, crate::service::tracing::Tracing
+/// 
+/// Outermost layer. Strips `req_id` from the inbound `Request`, hands the
+/// `SkillCommand` to the inner stack, and re-attaches `req_id` to the resulting
+/// `CommandResult` to form the outbound `Response`.
 
 use std::future::Future;
 use std::pin::Pin;

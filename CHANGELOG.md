@@ -2,6 +2,11 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
+## v0.7.9 — AI Self-Maintenance
+- Integrated Graphify for codebase-to-graph architectural mapping.
+- Added `--graph` flag to `vterm.exe` to expose the architectural map.
+- Added `scripts/generate_graph.ps1` for automated map updates.
+
 ## v0.7.8 — MCP Bridge
 - Fixed PyPI workflow (corrected artifact upload paths).
 

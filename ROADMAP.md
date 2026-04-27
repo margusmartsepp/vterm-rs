@@ -80,26 +80,33 @@ no `cargo clippy -- -D warnings` errors.
 
 Status: **completed**.
 
-- [x] `vterm-mcp` binary built on [`rmcp`](https://crates.io/crates/rmcp), exposing every
-      `SkillCommand` as an MCP tool
+- [x] `vterm-mcp` binary built on [`rmcp`](https://crates.io/crates/rmcp), exposing every `SkillCommand` as an MCP tool
 - [x] `skill.toml` regenerated to point at the bridge
 - [x] Streaming `screen_read` over MCP `notifications/progress`
 - [x] Reference Cowork plugin manifest
 
-Exit criteria: a Claude Code / Cowork client can connect, drive a vim session through
-to `:wq`, and reap the PTY cleanly.
+### v0.7.9 — *State-Aware Orchestration* (this release)
 
-### v0.8 — *cross-platform*
+Status: **completed**.
 
-Status: **planned**.
+- [x] **PyO3 High-Performance Bridge**: Blazing fast Python SDK (`vterm-rs-python-mcp`)
+- [x] **Atomic Batch API**: Orchestrate fleets of terminals in a single round-trip
+- [x] **Operator Methods**: Fluent `_op` syntax for clean, typed batch construction
+- [x] **Plug-and-Play MCP Server**: Built-in server for Cursor/Claude Desktop integration
+- [x] **Graphify Integration**: Automatic architectural mapping and knowledge graph sync
 
-- [ ] `bash`/`zsh`/`fish` PTY launch on Linux + macOS
-- [ ] Unix-domain socket transport mirroring the named-pipe semantics
-- [ ] X11/Wayland window control behind the same `window::WindowHandle` trait,
-      `cfg(target_os)` switches
-- [ ] CI matrix: windows-latest, ubuntu-latest, macos-latest
+Exit criteria: An AI agent can drive a complex TUI (Claude Code), reason about visual states, and manage multiple sessions with near-zero latency.
 
-Exit criteria: the same playbook runs on all three OSes with no script changes.
+### v0.8 — *cross-platform foundations*
+
+Status: **in progress**.
+
+- [ ] **PTY Abstraction**: Replace ConPTY with `portable-pty` for Linux/macOS support
+- [ ] **UDS Transport**: Unix Domain Sockets mirroring the named-pipe semantics
+- [ ] **General Window Traits**: Abstract `WindowHandle` for X11/Wayland/Quartz
+- [ ] **CI Matrix**: windows-latest, ubuntu-latest, macos-latest
+
+Exit criteria: the same "Fluent Fleet" playbook runs on all three OSes with no script changes.
 
 ### v0.9 — *observability + replay*
 

@@ -1,9 +1,12 @@
-//! Aspect: per-call wall-clock measurement.
-//!
-//! Wraps any service whose response is a `CommandResult` and stamps `duration_ms`
-//! before forwarding the value outward. Generic over the request type — the same
-//! layer instruments `SkillCommand → CommandResult` (the inner wire) and would
-//! also instrument any future request type that returns `CommandResult`.
+// Aspect: per-call wall-clock measurement.
+//
+/// rationale: Part of the Observability community. Provides performance metrics for agentic loops.
+/// links: crate::service::correlation::Correlation, crate::service::tracing::Tracing
+/// 
+/// Wraps any service whose response is a `CommandResult` and stamps `duration_ms`
+/// before forwarding the value outward. Generic over the request type — the same
+/// layer instruments `SkillCommand → CommandResult` (the inner wire) and would
+/// also instrument any future request type that returns `CommandResult`.
 
 use std::future::Future;
 use std::pin::Pin;

@@ -15,9 +15,13 @@ dependencies = [
     "pydantic"
 ]
 
+[project.scripts]
+vterm-mcp = "vterm_python.server:main"
+
 [tool.maturin]
 features = ["pyo3/extension-module"]
-module-name = "vterm_python"
+python-source = "."
+module-name = "vterm_python.vterm_python"
 
 [dependency-groups]
 dev = [

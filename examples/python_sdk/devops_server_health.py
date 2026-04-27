@@ -7,28 +7,32 @@ client = vterm_python.VTermClient()
 @mcp.tool()
 def check_disk_space() -> str:
     """Spawns a terminal, checks system disk space, and returns the result."""
-    tid = client.spawn("disk_check", None, 5000, 500)
+    ops = [
+        client.spawn_op("disk_check", max_lines=500),
+        client.write_op(1, "Get-PSDrive -PSProvider FileSystem | Select-Object Name, Used, Free | Format-Table -AutoSize<Enter>"),
+        client.wait_until_op(1, "PS ", 10000),
+        client.read_op(1)
+    ]
     
-    # Send a cross-platform friendly command or Windows specific (since orchestrator defaults to PowerShell)
-    client.write(tid, "Get-PSDrive -PSProvider FileSystem | Select-Object Name, @{Name='Used(GB)';Expression={[math]::Round($_.Used/1GB,2)}}, @{Name='Free(GB)';Expression={[math]::Round($_.Free/1GB,2)}} | Format-Table -AutoSize\n")
-    
-    # Wait until PowerShell prompt returns
-    res = client.wait_until(tid, r"PS [A-Z]:\\.*>", 10000)
-    client.close(tid)
-    
-    return res
+    res = client.batch(ops)
+    screen = res["sub_results"][3]["content"]
+    client.close(1)
+    return screen
 
 @mcp.tool()
 def ping_internal_services() -> str:
     """Pings an internal service to verify network connectivity."""
-    tid = client.spawn("ping_test", None, 5000, 500)
+    ops = [
+        client.spawn_op("ping_test", max_lines=500),
+        client.write_op(1, "ping -n 4 8.8.8.8<Enter>"),
+        client.wait_until_op(1, "PS ", 15000),
+        client.read_op(1)
+    ]
     
-    client.write(tid, "ping -n 4 8.8.8.8\n")
-    # Wait until ping finishes and the prompt returns
-    res = client.wait_until(tid, r"PS [A-Z]:\\.*>", 15000)
-    client.close(tid)
-    
-    return res
+    res = client.batch(ops)
+    screen = res["sub_results"][3]["content"]
+    client.close(1)
+    return screen
 
 if __name__ == "__main__":
     mcp.run()

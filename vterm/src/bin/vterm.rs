@@ -55,12 +55,26 @@ struct Args {
     /// JSON payload for the skill (optional).
     #[arg(long)]
     payload: Option<String>,
+
+    /// Print the path to the Graphify architectural map and exit.
+    #[arg(long)]
+    graph: bool,
 }
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<()> {
     init_tracing();
     let args = Args::parse();
+
+    if args.graph {
+        let path = std::env::current_dir()?.join("graphify-out").join("graph.json");
+        if path.exists() {
+            println!("{}", path.display());
+            return Ok(());
+        } else {
+            anyhow::bail!("Graph not found. Run scripts/generate_graph.ps1 first.");
+        }
+    }
 
     if let Some(id) = args.client {
         return run_client(id).await;

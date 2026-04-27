@@ -2,7 +2,30 @@
 
 ## Components at a glance
 
+`vterm-rs` is a tiered system. The core Rust orchestrator manages the PTYs and parses the screen grid, while various bridge layers expose this power to AI agents.
 
+```mermaid
+graph TD
+    Client["AI Client<br/>(Claude / Cursor / Script)"]
+    
+    subgraph Consumption Layers
+        PySDK["Python SDK / PyO3<br/>(vterm-rs-python-mcp)"]
+        PyBridge["FastMCP Server<br/>(vterm-mcp-py)"]
+        RustBridge["Native MCP Server<br/>(vterm-mcp)"]
+    end
+    
+    Orchestrator["vterm.exe<br/>(The PTY Host)"]
+    
+    Client -- "Native PyO3" --> PySDK
+    Client -- "MCP (stdio)" --> PyBridge
+    Client -- "MCP (stdio)" --> RustBridge
+    
+    PySDK -- "Named Pipe" --> Orchestrator
+    PyBridge -- "Named Pipe" --> Orchestrator
+    RustBridge -- "Named Pipe" --> Orchestrator
+```
+
+## Internal Rust Architecture
 
 ```mermaid
 graph TD
@@ -11,7 +34,7 @@ graph TD
     PipeServer["Pipe server task<br/>one accept loop<br/>per-conn Reaper"]
     Pipeline["Tower pipeline<br/>Correlation<br/>Timing<br/>Tracing"]
     Dispatcher["Dispatcher"]
-
+    
     App --> Watchdog
     App --> PipeServer
     PipeServer -- "NDJSON" --> Pipeline

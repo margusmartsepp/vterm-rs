@@ -79,7 +79,8 @@ Recognised shortcuts in `text`:
 | `<C-d>` | `0x04`       | `<Down>`  | `\x1b[B`   |
 | `<Tab>` | `0x09`       | `<Right>` | `\x1b[C`   |
 | `<Enter>` | `\r\n`     | `<Left>`  | `\x1b[D`   |
-| `<Esc>` | `\x1b`       |           |            |
+| `<Esc>` | `\x1b`       | `<C-a>`   | `0x01`     |
+| `<C-e>` | `0x05`       |           |            |
 
 ### `ScreenRead`
 

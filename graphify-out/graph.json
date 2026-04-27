@@ -2249,18 +2249,18 @@
       "file_type": "rationale",
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L44",
-      "id": "server_rationale_44",
       "community": 11,
-      "norm_label": "returns the architectural knowledge graph report for this codebase."
+      "norm_label": "returns the architectural knowledge graph report for this codebase.",
+      "id": "server_rationale_44"
     },
     {
       "label": "The definitive architectural map of vterm-rs.",
       "file_type": "rationale",
       "source_file": "vterm-python\\vterm_python\\server.py",
       "source_location": "L61",
-      "id": "server_rationale_61",
       "community": 11,
-      "norm_label": "the definitive architectural map of vterm-rs."
+      "norm_label": "the definitive architectural map of vterm-rs.",
+      "id": "server_rationale_61"
     },
     {
       "label": "__init__.py",

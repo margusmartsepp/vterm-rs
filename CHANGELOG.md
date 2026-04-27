@@ -2,6 +2,9 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
+## v0.7.7 — MCP Bridge
+- Fixed watchdog compilation on Rust 2021 (removed let-chains).
+
 ## v0.7.6 — MCP Bridge
 - Fixed abi3 auto-detection (removed redundant CLI flag).
 - Downgraded to Rust edition 2021 for broader tooling compatibility.

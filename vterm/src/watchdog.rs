@@ -19,16 +19,16 @@ pub fn spawn(app: Arc<App>) -> tokio::task::JoinHandle<()> {
             let mut to_close: Vec<(crate::session::ConnectionId, u32)> = Vec::new();
 
             for entry in app.snapshot_for_watchdog() {
-                if let Some(max_d) = entry.max_duration
-                    && now.duration_since(entry.spawn_time) > max_d
-                {
-                    to_close.push((entry.owner, entry.id));
-                    continue;
+                if let Some(max_d) = entry.max_duration {
+                    if now.duration_since(entry.spawn_time) > max_d {
+                        to_close.push((entry.owner, entry.id));
+                        continue;
+                    }
                 }
-                if let Some(max_l) = entry.max_lines
-                    && entry.line_count > max_l
-                {
-                    to_close.push((entry.owner, entry.id));
+                if let Some(max_l) = entry.max_lines {
+                    if entry.line_count > max_l {
+                        to_close.push((entry.owner, entry.id));
+                    }
                 }
             }
 

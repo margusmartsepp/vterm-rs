@@ -2,12 +2,20 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
+## v0.7.5 — MCP Bridge
+- Fixed PyPI workflow (moved abi3 compatibility flag to command line).
+
+## v0.7.4 — MCP Bridge
+- Switched to CPython Stable ABI (abi3) for universal Python 3.10+ compatibility.
+- Dropped PyPy support to simplify cross-platform wheel builds.
+
 ## v0.7.3 — MCP Bridge
 - Fixed Python 3.14 compatibility in CI (ABI3 forward compatibility).
+- Modularized Windows networking for better platform isolation.
 
 ## v0.7.2 — MCP Bridge
-- Platform-safety fixes for Linux and macOS (modularized Windows networking).
 - Crates.io and PyPI coordinated release.
+- Added GitHub Trusted Publishing for the Python SDK.
 
 ## v0.7.1 — MCP Bridge (Internal)
 - Reorganized workspace structure (`vterm/` and `vterm-python/`).

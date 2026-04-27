@@ -18,7 +18,6 @@ dependencies = [
 [tool.maturin]
 features = ["pyo3/extension-module"]
 module-name = "vterm_python"
-compatibility = "abi3"
 
 [dependency-groups]
 dev = [

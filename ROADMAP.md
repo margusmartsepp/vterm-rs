@@ -78,13 +78,13 @@ no `cargo clippy -- -D warnings` errors.
 
 ### v0.7 — *MCP bridge*
 
-Status: **planned**.
+Status: **completed**.
 
-- [ ] `vterm-mcp` binary built on [`rmcp`](https://crates.io/crates/rmcp), exposing every
+- [x] `vterm-mcp` binary built on [`rmcp`](https://crates.io/crates/rmcp), exposing every
       `SkillCommand` as an MCP tool
-- [ ] `skill.toml` regenerated to point at the bridge
-- [ ] Streaming `screen_read` over MCP `notifications/progress`
-- [ ] Reference Cowork plugin manifest
+- [x] `skill.toml` regenerated to point at the bridge
+- [x] Streaming `screen_read` over MCP `notifications/progress`
+- [x] Reference Cowork plugin manifest
 
 Exit criteria: a Claude Code / Cowork client can connect, drive a vim session through
 to `:wq`, and reap the PTY cleanly.

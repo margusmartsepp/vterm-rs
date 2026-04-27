@@ -14,7 +14,7 @@ ConPTY, parses it through `vt100`, and lets you write keystrokes (including `Ctr
 │  IDE / MCP   │ ───────────────▶ │  vt100 parser │ ──────────▶ │    shell         │
 │  client      │ ◀─────────────── │  reaper       │ ◀────────── │                  │
 └──────────────┘  CommandResult   └───────────────┘  bytes      └──────────────────┘
-
+```
 ```mermaid
 graph LR
     Agent["AI agent<br/>(Claude/IDE/MCP)"]
@@ -26,7 +26,7 @@ graph LR
     Term -- "ConPTY" --> Shell
     Shell -- "bytes" --> Term
 ```
-```
+
 
 ## Why
 
@@ -89,12 +89,42 @@ Full spec: [`docs/protocol.md`](docs/protocol.md).
 
 ## Three ways to consume it
 
-1. **Raw pipe.** Connect, write JSON, read JSON. The PowerShell harness in
+1. **Python SDK & FastMCP Bridge (New!)**
+   Build custom MCP servers or automate terminal operations using the blazing fast Python PyO3 bindings.
+   
+   ```bash
+   # Modern python devs use uv
+   uv add vterm-rs-python-mcp
+   
+   # Or standard pip
+   pip install vterm-rs-python-mcp
+   ```
+
+   ```python
+   import vterm_python
+   from fastmcp import FastMCP
+   
+   mcp = FastMCP("vterm")
+   client = vterm_python.VTermClient()
+   
+   @mcp.tool()
+   def run_build() -> str:
+       tid = client.spawn("build", None, 5000, 500)
+       client.write(tid, "cargo build\n")
+       res = client.wait_until(tid, r"Finished `dev` profile", 30000)
+       client.close(tid)
+       return res
+   
+   if __name__ == "__main__":
+       mcp.run()
+   ```
+   **Examples**: Explore the [examples/python_sdk](examples/python_sdk) directory for typical DevOps and CI use cases.
+   **Tests**: To run the Python tests locally, navigate to `vterm-python` and run `uv run maturin develop`, followed by `uv run ../tests/python_sdk/test_mcp.py`.
+
+2. **Raw pipe.** Connect, write JSON, read JSON. The PowerShell harness in
    [`tests/playbook_tests.ps1`](tests/playbook_tests.ps1) is the canonical example.
-2. **Skill manifest.** [`skill.toml`](skill.toml) declares each command as an AI skill —
+3. **Skill manifest.** [`skill.toml`](skill.toml) declares each command as an AI skill —
    useful for non-MCP agents.
-3. **MCP server (planned, v0.7).** A `vterm-mcp` bridge will expose every command as an
-   MCP tool callable from Claude Code / Cowork / any MCP client. See [ROADMAP.md](ROADMAP.md).
 
 ## Project structure
 
@@ -106,11 +136,11 @@ when editing.
 | Area              | State                                                  |
 | ----------------- | ------------------------------------------------------ |
 | Windows + ConPTY  | works                                                  |
-| Linux / macOS     | planned (v0.8)                                         |
-| MCP bridge        | planned (v0.7)                                         |
+| Python Bridge     | works (v0.7.0, available via PyPI `vterm-rs-python-mcp`) |
+| Linux / macOS     | planned (v0.8.0)                                       |
 | Wire protocol     | unstable, will be pinned at v1.0                       |
-| Test coverage     | smoke (PowerShell) + Rust integration (v0.6)           |
+| Test coverage     | smoke (PowerShell) + Rust integration + Python FastMCP |
 
 ## License
 
-TBD.
+MIT

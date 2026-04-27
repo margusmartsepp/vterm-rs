@@ -16,7 +16,7 @@ async fn connect_with_retry(retries: u32) -> Result<named_pipe::NamedPipeClient>
                 if i == 0 {
                     // Try to start the manager
                     let _ = Command::new("cargo")
-                        .args(["run", "--", "--headless"])
+                        .args(["run", "--bin", "vterm", "--", "--headless"])
                         .spawn();
                 }
                 sleep(Duration::from_secs(2)).await;

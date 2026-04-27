@@ -1,4 +1,5 @@
 pub mod app;
+pub mod client;
 pub mod error;
 pub mod protocol;
 pub mod service;
@@ -9,6 +10,7 @@ pub mod watchdog;
 pub mod window;
 
 pub use app::App;
+pub use client::OrchestratorClient;
 pub use session::ConnectionGuard;
 pub use protocol::{Request, Response, SkillCommand, CommandResult, SpawnArgs, BatchArgs, Status};
 pub use error::{Error, Result};

@@ -2,7 +2,19 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
-## v0.6.0 — foundations *(in progress)*
+## v0.7.0 — MCP Bridge
+
+See [`docs/features/v0.7.md`](docs/features/v0.7.md) for the full changeset.
+
+### Added
+
+- Cargo Workspace Migration: Extracted `vterm` core to a reusable module and moved PyO3 bindings to a separate `vterm-python` crate.
+- High-Performance Python PyO3 Bindings (`vterm_python.VTermClient`) dropping the GIL for synchronous async operations.
+- Python `fastmcp` SDK integration (`vterm-rs-python-mcp` on PyPI) allowing any Python developer to build custom terminal tools.
+- Auto-spawning orchestration process if unavailable.
+- Examples demonstrating use cases for DevOps, GitHub CI, and Docker debugging.
+
+## v0.6.0 — foundations
 
 See [`docs/features/v0.6.md`](docs/features/v0.6.md) for the full changeset.
 

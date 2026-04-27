@@ -1,0 +1,15 @@
+[package]
+name = "vterm-python"
+version = "0.7.0"
+edition = "2024"
+
+[lib]
+name = "vterm_python"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module", "anyhow"] }
+vterm-rs = { path = "../vterm" }
+tokio = { version = "1.40", features = ["rt", "rt-multi-thread", "time"] }
+anyhow = "1.0"
+regex = "1.10"

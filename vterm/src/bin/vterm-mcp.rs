@@ -5,13 +5,7 @@ use rmcp::transport::io::stdio;
 use rmcp::handler::server::wrapper::Parameters;
 use schemars::JsonSchema;
 use serde::Deserialize;
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::Arc;
-use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
-use tokio::net::windows::named_pipe::{ClientOptions, NamedPipeClient};
-use tokio::sync::oneshot;
-use tokio::time::{sleep, Duration};
-use vterm_rs::{Request, Response, SkillCommand, CommandResult, Status, SpawnArgs, OrchestratorClient};
+use vterm_rs::{SkillCommand, SpawnArgs, OrchestratorClient};
 
 const PIPE_NAME: &str = r"\\.\pipe\vterm-rs-skill";
 

@@ -1,17 +1,11 @@
 # Tool: `write`
 
-Writes text or keystrokes to a terminal session.
+Writes text to a terminal. Supports <Enter>, <C-c>, etc.
 
 ## Metadata
+- **Status**: Stable
 - **Rust Endpoint**: `vterm-mcp`
 - **Python Endpoint**: `vterm_python.server`
-
-## Arguments
-
-| Argument | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `id` | `int` | The terminal ID to write to. | **Required** |
-| `text` | `string` | The text to write. Supports symbolic keys like `<Enter>`, `<Up>`, `<C-c>`. | **Required** |
 
 ## Example Tool Call
 
@@ -19,23 +13,22 @@ Writes text or keystrokes to a terminal session.
 {
   "name": "write",
   "arguments": {
-    "id": 1,
-    "text": "ls -la<Enter>"
+    "id": 6,
+    "text": "echo 123<Enter>"
   }
 }
 ```
 
 ## Verified Output
 
-```json
-{
-  "status": "success"
-}
+```text
+OK
 ```
 
-## Special Keys
-- `<Enter>`: Carriage return
-- `<Esc>`: Escape key
-- `<C-c>`: Ctrl+C (SIGINT)
-- `<Up>`, `<Down>`, `<Left>`, `<Right>`: Arrow keys
-- `<Tab>`: Tab key
+## Agent Reasoning & Use Cases
+
+- **Command Execution**: The fundamental way to run commands. Always include <Enter> if you want the shell to execute the line.
+- **TUI Navigation**: Use arrow keys and <Tab> to navigate menus in tools like htop, vim, or git log.
+- **Interrupting Processes**: Use <C-c> to stop long-running commands (like ping or tail) before starting a new task.
+- **Interactive Prompts**: Respond to y/n prompts or enter passwords (though use with caution as output might be echoed).
+

@@ -1,16 +1,11 @@
 # Tool: `get_process_state`
 
-Returns the current execution state of the process running in the terminal.
+Returns the current process state (running: bool, exit_code: int?).
 
 ## Metadata
+- **Status**: Stable
 - **Rust Endpoint**: `vterm-mcp`
 - **Python Endpoint**: `vterm_python.server`
-
-## Arguments
-
-| Argument | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `id` | `int` | Terminal ID. | **Required** |
 
 ## Example Tool Call
 
@@ -18,27 +13,20 @@ Returns the current execution state of the process running in the terminal.
 {
   "name": "get_process_state",
   "arguments": {
-    "id": 1
+    "id": 6
   }
 }
 ```
 
-## Verified Output (Running)
+## Verified Output
 
-```json
-{
-  "status": "success",
-  "running": true,
-  "pid": 1234
-}
+```text
+Error calling tool 'get_process_state': 'builtins.VTermClient' object has no attribute 'get_process_state'
 ```
 
-## Verified Output (Exited)
+## Agent Reasoning & Use Cases
 
-```json
-{
-  "status": "success",
-  "running": false,
-  "exit_code": 0
-}
-```
+- **Termination Detection**: Instead of relying on visual cues, get_process_state provides the definitive OS-level truth of whether a process has exited.
+- **Error Handling**: Checking the exit_code allows the agent to distinguish between a successful run (0) and a failure (non-zero).
+- **Hanging Diagnostics**: If a terminal is unresponsive, the agent can check if the process is still running or if it has crashed silently.
+

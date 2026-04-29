@@ -28,6 +28,15 @@ Evaluates a snippet of Rust code in a persistent REPL environment using `evcxr`.
 30
 ```
 
+}
+```
+
+## Agent Reasoning & Use Cases
+
+- **Complex Logic**: When a task requires math or data manipulation that is awkward in shell (e.g., parsing a complex JSON file and calculating a checksum), use `rust_eval`.
+- **System Probing**: Use Rust's standard library to check file permissions, network availability, or system entropy in a more structured way than `ls` or `netstat`.
+- **Performance**: For CPU-intensive tasks (e.g., processing a large log file), compiled Rust in the REPL will be significantly faster than interpreted Python or shell scripts.
+
 ## Prerequisites
 Requires `evcxr` to be installed on the host system:
 ```bash

@@ -1,17 +1,11 @@
 # Tool: `read`
 
-Reads the current contents of the terminal screen buffer.
+Reads the current contents of the terminal screen. Set history=True for full scrollback.
 
 ## Metadata
+- **Status**: Stable
 - **Rust Endpoint**: `vterm-mcp`
 - **Python Endpoint**: `vterm_python.server`
-
-## Arguments
-
-| Argument | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `id` | `int` | The terminal ID to read from. | **Required** |
-| `history` | `bool` | If true, returns the entire scrollback buffer instead of just the current screen. | `false` |
 
 ## Example Tool Call
 
@@ -19,17 +13,22 @@ Reads the current contents of the terminal screen buffer.
 {
   "name": "read",
   "arguments": {
-    "id": 1,
-    "history": false
+    "id": 6
   }
 }
 ```
 
 ## Verified Output
 
-```json
-{
-  "status": "success",
-  "content": "Microsoft Windows [Version 10.0.22631.3447]\r\n(c) Microsoft Corporation. All rights reserved.\r\n\r\nC:\\Users\\margu\\term-rs> dir\r\n Volume in drive C is Windows\r\n..."
-}
+```text
+PS C:\Users\margu> echo 'verified'
+verified
+PS C:\Users\margu>
 ```
+
+## Agent Reasoning & Use Cases
+
+- **Visual Verification**: The primary way to 'see' what the terminal is doing. Agents should read after a write to confirm the command was typed correctly and to see the initial response.
+- **TUI Interaction**: Essential for interacting with Text User Interfaces (like htop, vim, or custom CLI menus) where the current state is not just a sequence of lines but a 2D grid.
+- **Debugging**: If a wait_until timeout occurs, the agent should read the screen to understand what prevented the pattern from appearing (e.g., an unexpected password prompt or an error message).
+

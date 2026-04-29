@@ -35,3 +35,9 @@ Blocks until the terminal screen stops changing for a specified duration. Useful
   "content": "... [Current Screen Buffer] ..."
 }
 ```
+
+## Agent Reasoning & Use Cases
+
+- **Slow Renders**: Perfect for waiting for tools that don't produce a clear "Done" signal but redraw the screen frequently (e.g., `npm install` progress bars or `top` updates).
+- **Prompt Detection Fallback**: If the prompt regex is unreliable, waiting for the screen to stabilize is a solid fallback to ensure the command has stopped spitting out text.
+- **Visual Stability**: Ensures that a `read` or `screen_diff` captured immediately after will represent the final state of the operation.

@@ -40,7 +40,6 @@ vterm-rs/
 ├── ROADMAP.md                 # vision + milestones
 ├── CHANGELOG.md               # release notes
 ├── Cargo.toml                 # workspace manifest
-├── skill.toml                 # AI skill manifest
 ├── .github/workflows/         # CI/CD (crates.io & PyPI publish)
 ├── vterm/                     # core Rust orchestrator (vterm-rs crate)
 │   ├── Cargo.toml

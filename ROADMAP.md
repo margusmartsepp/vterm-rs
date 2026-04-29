@@ -33,7 +33,6 @@
                    ▼         ▼
             ┌──────────────────────┐
             │   vterm-mcp bridge   │  (planned v0.7)
-            │     skill.toml       │
             └──────────┬───────────┘
                        │  named pipe (NDJSON, req_id correlated)
                        ▼
@@ -47,7 +46,7 @@
 ```mermaid
 graph TD
     Client["AI client / IDE"]
-    Bridge["vterm-mcp bridge<br/>(planned v0.7)<br/>skill.toml"]
+    Bridge["vterm-mcp bridge<br/>(planned v0.7)"]
     Term["vterm.exe (this)<br/>PTY pool · vt100<br/>parser · reaper"]
 
     Client -- "MCP (rmcp/py)" --> Bridge
@@ -81,7 +80,7 @@ no `cargo clippy -- -D warnings` errors.
 Status: **completed**.
 
 - [x] `vterm-mcp` binary built on [`rmcp`](https://crates.io/crates/rmcp), exposing every `SkillCommand` as an MCP tool
-- [x] `skill.toml` regenerated to point at the bridge
+- [x] Documentation suite updated for verified MCP tools
 - [x] Streaming `screen_read` over MCP `notifications/progress`
 - [x] Reference Cowork plugin manifest
 

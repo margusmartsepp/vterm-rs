@@ -12,8 +12,8 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.22", features = ["extension-module", "anyhow", "abi3-py310"] }
-vterm-protocol = { path = "../vterm-protocol" }
-vterm-rs = { path = "../vterm" }
+vterm-protocol = { version = "0.7.22", path = "../vterm-protocol" }
+vterm-rs = { version = "0.7.22", path = "../vterm" }
 tokio = { version = "1.40", features = ["rt", "rt-multi-thread", "time"] }
 anyhow = "1.0"
 regex = "1.10"

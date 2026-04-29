@@ -1,24 +1,11 @@
 # Tool: `spawn`
 
-Spawns a new terminal session. This is the entry point for most terminal automation workflows.
+Spawns a new terminal session. Returns the terminal ID and any extracted data.
 
 ## Metadata
 - **Status**: Stable
-- **Orchestrator Version**: 0.7.20+
 - **Rust Endpoint**: `vterm-mcp`
 - **Python Endpoint**: `vterm_python.server`
-
-## Arguments
-
-| Argument | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `title` | `string` | A human-readable label for the terminal. | **Required** |
-| `command` | `string` | Initial command to execute (e.g., `powershell.exe`). | System Default |
-| `cols` | `int` | Terminal width in columns. | 80 |
-| `rows` | `int` | Terminal height in rows. | 24 |
-| `env` | `dict` | Environment variables for the session. | `{}` |
-| `wait` | `bool` | If true, blocks until the command completes or a prompt is found. | `false` |
-| `extract_pattern` | `string` | Regex with named groups to extract data from the initial output. | `null` |
 
 ## Example Tool Call
 
@@ -26,29 +13,27 @@ Spawns a new terminal session. This is the entry point for most terminal automat
 {
   "name": "spawn",
   "arguments": {
-    "title": "Build Process",
-    "command": "cargo build --release",
-    "wait": true
+    "title": "doc-gen-Python MCP",
+    "command": "echo 'verified'"
   }
 }
 ```
 
-## Verified Output (Success)
+## Verified Output
 
 ```json
 {
   "status": "success",
-  "id": 1,
-  "pid": 1234,
-  "title": "Build Process"
+  "duration_ms": 176,
+  "spawn_ms": 6,
+  "ready_ms": 169,
+  "id": 6
 }
 ```
 
-## Verified Output (Error)
+## Agent Reasoning & Use Cases
 
-```json
-{
-  "status": "error",
-  "error": "Failed to spawn process: The system cannot find the file specified. (os error 2)"
-}
-```
+- **Task Isolation**: Spawn a dedicated terminal for every major task (e.g., one for 'Server Logs', one for 'Build Commands', one for 'Git Operations'). This prevents output interleaving and makes state verification easier.
+- **Resource Guardrails**: Use max_lines and timeout_ms to prevent an agent from accidentally triggering an infinite loop of output that would exhaust tokens or crash the host.
+- **Environment Setup**: Use the env argument to set up specific project contexts (e.g., DATABASE_URL, NODE_ENV) without affecting the global machine state.
+

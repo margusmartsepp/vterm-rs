@@ -1,16 +1,11 @@
 # Tool: `batch`
 
-Executes a sequence of operations atomically. This is the most token-efficient way to drive complex workflows.
+Executes a batch of commands atomically for high performance.
 
 ## Metadata
+- **Status**: Stable
 - **Rust Endpoint**: `vterm-mcp`
 - **Python Endpoint**: `vterm_python.server`
-
-## Arguments
-
-| Argument | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `commands` | `list` | A list of command objects to execute in order. | **Required** |
 
 ## Example Tool Call
 
@@ -19,9 +14,12 @@ Executes a sequence of operations atomically. This is the most token-efficient w
   "name": "batch",
   "arguments": {
     "commands": [
-      { "type": "spawn", "title": "Check Version", "command": "rustc --version" },
-      { "type": "wait_until", "id": "$last", "pattern": "rustc" },
-      { "type": "extract", "id": "$last", "pattern": "rustc (?P<version>[\\d\\.]+)" }
+      {
+        "type": "Inspect",
+        "payload": {
+          "assurance": true
+        }
+      }
     ]
   }
 }
@@ -32,14 +30,24 @@ Executes a sequence of operations atomically. This is the most token-efficient w
 ```json
 {
   "status": "success",
+  "duration_ms": 234,
   "sub_results": [
-    { "status": "success", "id": 12 },
-    { "status": "success", "content": "rustc 1.78.0 ..." },
-    { "status": "success", "extracted": { "version": "1.78.0" } }
+    {
+      "status": "success",
+      "duration_ms": 234,
+      "version": "0.7.20",
+      "mem_usage_mb": 24,
+      "active_terminals": 1,
+      "pool_size": 5,
+      "max_terminals": 100
+    }
   ]
 }
 ```
 
-## Batch Directives
-- `$last`: Refers to the ID of the terminal created or used in the immediately preceding command.
-- Parallel execution: Commands without dependencies can be executed concurrently by the orchestrator.
+## Agent Reasoning & Use Cases
+
+- **Latency Minimization**: For workflows requiring multiple round-trips (spawn -> write -> wait -> extract), batch eliminates IPC overhead, reducing total execution time.
+- **Atomic Rollback**: If stop_on_error is set, the orchestrator stops at the first failure, preventing operations on an invalid state.
+- **Workflow Snapshots**: Perfect for 'Playbooks' — predefined sequences of commands that the agent can trigger with a single tool call.
+

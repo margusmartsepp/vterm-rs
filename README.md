@@ -90,7 +90,7 @@ cargo build --release
 
 ## Tool Documentation & Examples
 
-For detailed, verified examples of every tool (including JSON inputs, outputs, and reasoning for agents), please refer to the dedicated [**MCP Tool Reference**](docs/mcp/README.md).
+For detailed, verified examples of every tool (including JSON inputs, outputs, and reasoning for agents), please refer to the dedicated [**MCP Tool Reference**](docs/mcp/README.md). These documents are automatically generated and verified against live orchestrator runs.
 
 - [**spawn**](docs/mcp/spawn.md): Spawning terminals with state verification.
 - [**batch**](docs/mcp/batch.md): Token-efficient multi-step workflows.

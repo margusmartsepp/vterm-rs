@@ -1,18 +1,11 @@
 # Tool: `wait_until`
 
-Blocks until a specific regex pattern appears on the terminal screen.
+Blocks until a regex pattern appears on the terminal screen.
 
 ## Metadata
+- **Status**: Stable
 - **Rust Endpoint**: `vterm-mcp`
 - **Python Endpoint**: `vterm_python.server`
-
-## Arguments
-
-| Argument | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `id` | `int` | The terminal ID to watch. | **Required** |
-| `pattern` | `string` | Regex pattern to wait for. | **Required** |
-| `timeout_ms` | `int` | Maximum time to wait in milliseconds. | 10000 |
 
 ## Example Tool Call
 
@@ -20,21 +13,22 @@ Blocks until a specific regex pattern appears on the terminal screen.
 {
   "name": "wait_until",
   "arguments": {
-    "id": 1,
-    "pattern": "Successfully built",
-    "timeout_ms": 30000
+    "id": 6,
+    "pattern": "echo",
+    "timeout_ms": 5000
   }
 }
 ```
 
 ## Verified Output
 
-```json
-{
-  "status": "success",
-  "content": "Successfully built target(s) in 5.2s"
-}
+```text
+Pattern found
 ```
 
-## Implementation Note
-This tool provides real-time progress notifications to the AI client while waiting, allowing the agent to know it's still alive.
+## Agent Reasoning & Use Cases
+
+- **Synchronization**: The most reliable way to know when a command has finished and it's safe to send the next one (e.g., waiting for the shell prompt PS C:\>).
+- **Error Detection**: Use wait_until to catch specific error strings (e.g., Error: Build failed) as soon as they appear, rather than waiting for a full timeout.
+- **Boot Verification**: When starting a service (like a web server), use wait_until to watch for the 'Listening on port XXXX' message before proceeding with tests.
+

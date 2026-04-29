@@ -114,7 +114,7 @@ pub async fn spawn(
         max_lines: Mutex::new(args.max_lines),
         _scrollback: scrollback,
         max_duration: Mutex::new(args.timeout_ms.map(Duration::from_millis)),
-        spawn_time: Instant::now(),
+        spawn_time: Mutex::new(Instant::now()),
         notifier: tokio::sync::broadcast::channel(16).0,
         shm: match shm::ShmBuffer::new(&format!("vterm-rs-shm-{id}"), 4096) {
             Ok(s) => {

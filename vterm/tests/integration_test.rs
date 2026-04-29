@@ -185,7 +185,9 @@ async fn test_supreme_orchestration() -> Result<()> {
     send_request(&mut writer, 6, SkillCommand::List { all: false }).await?;
     let r_list = read_response(&mut buf_reader, 6).await?;
     let list_content = r_list.content.expect("List should have content");
-    assert!(!list_content.contains(&new_id.to_string()));
+    let terminals: Vec<vterm_rs::protocol::TerminalInfo> = serde_json::from_str(&list_content)?;
+    let found = terminals.iter().any(|t| t.id == new_id);
+    assert!(!found, "Terminal {} should have been reaped", new_id);
     println!("  ASSERT: SUCCESS");
 
     Ok(())

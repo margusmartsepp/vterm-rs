@@ -50,7 +50,7 @@ pub struct Inner {
     pub(crate) max_lines: Mutex<Option<u32>>,
     pub(crate) _scrollback: usize,
     pub(crate) max_duration: Mutex<Option<Duration>>,
-    pub(crate) spawn_time: Instant,
+    pub(crate) spawn_time: Mutex<Instant>,
     pub(crate) notifier: tokio::sync::broadcast::Sender<()>,
     pub(crate) shm: Option<super::shm::ShmBuffer>,
     pub(crate) last_content: Mutex<String>,
@@ -102,7 +102,7 @@ impl<S: State> Terminal<S> {
         *self.inner.max_duration.lock()
     }
     pub fn spawn_time(&self) -> Instant {
-        self.inner.spawn_time
+        *self.inner.spawn_time.lock()
     }
 
     /// Re-brand a pooled terminal.
@@ -115,6 +115,7 @@ impl<S: State> Terminal<S> {
         *self.inner.title.lock() = title;
         *self.inner.max_lines.lock() = max_lines;
         *self.inner.max_duration.lock() = timeout;
+        *self.inner.spawn_time.lock() = Instant::now();
     }
 
     /// Update the window title dynamically.

@@ -18,11 +18,16 @@ pub async fn wait(
     deadline: Duration,
 ) -> Result<Terminal<state::Ready>> {
     let started = Instant::now();
+    let mut rx = spawning.subscribe();
     while started.elapsed() < deadline {
-        if re.is_match(spawning.raw_screen().trim_end()) {
+        let screen = spawning.raw_screen();
+        if re.is_match(screen.trim_end()) {
+            tracing::info!(id = spawning.id(), "prompt found");
             return Ok(spawning.into_ready());
         }
-        tokio::time::sleep(Duration::from_millis(50)).await;
+        
+        // Wait for next screen update or a short timeout as fallback
+        let _ = tokio::time::timeout(Duration::from_millis(50), rx.recv()).await;
     }
     Err(Error::Timeout { what: "prompt", ms: deadline.as_millis() as u64 })
 }

@@ -7,7 +7,7 @@
 //! over a per-terminal named pipe.
 
 use std::fs::OpenOptions;
-use std::io::{BufWriter, Read, Write};
+use std::io::{Read, Write};
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
 
@@ -28,16 +28,14 @@ pub fn start(
     reader: Box<dyn Read + Send>,
     visible_viewer: bool,
 ) {
-    let (tx, rx) = mpsc::channel::<Vec<u8>>(1024);
+    let (tx, rx) = mpsc::channel::<Vec<u8>>(65536); // Large buffer to avoid deadlocks during slow viewer startup
 
-    let parser = Arc::clone(&inner.parser);
-    let writer = Arc::clone(&inner.writer);
-    let line_count = Arc::clone(&inner.line_count);
     let id = inner.id;
+    let inner_for_pump = Arc::clone(&inner);
 
     std::thread::Builder::new()
         .name(format!("pty-pump-{id}"))
-        .spawn(move || pump_loop(id, reader, parser, writer, line_count, tx))
+        .spawn(move || pump_loop(inner_for_pump, reader, tx))
         .expect("spawn pty-pump");
 
     if visible_viewer {
@@ -53,27 +51,28 @@ pub fn start(
 }
 
 fn pump_loop(
-    id: u32,
+    inner: Arc<Inner>,
     mut reader: Box<dyn Read + Send>,
-    parser: Arc<Mutex<vt100::Parser>>,
-    writer: Arc<Mutex<Box<dyn Write + Send>>>,
-    line_count: Arc<std::sync::atomic::AtomicU32>,
     tx: mpsc::Sender<Vec<u8>>,
 ) {
+    let id = inner.id;
+    let parser = Arc::clone(&inner.parser);
+    let writer = Arc::clone(&inner.writer);
+    let line_count = Arc::clone(&inner.line_count);
+    let notifier = inner.notifier.clone();
+
     let mut log = OpenOptions::new()
         .create(true).append(true)
         .open(format!("vterm-rs_{id}.log"))
-        .ok()
-        .map(BufWriter::new);
+        .ok();
 
     let mut buf = [0u8; 8192];
-    while match reader.read(&mut buf) {
-        Ok(0) => {
-            tracing::debug!(id, "pump_loop: read 0 bytes (EOF)");
-            false
-        }
-        Ok(n) => {
-            let chunk = &buf[..n];
+    while let Ok(n) = reader.read(&mut buf) {
+        if n == 0 { break; }
+        let chunk = &buf[..n];
+
+        // Process in a block to ensure mutexes are dropped before potential blocking I/O
+        {
             line_count.fetch_add(
                 chunk.iter().filter(|&&b| b == b'\n').count() as u32,
                 Ordering::Relaxed,
@@ -91,31 +90,51 @@ fn pump_loop(
                 let _ = w.flush();
             }
 
+            // Notify listeners that the screen state has changed
+            let _ = notifier.send(());
+
+            // Sync to SHM if enabled
+            if let Some(shm) = &inner.shm {
+                let screen = parser.lock().screen().clone();
+                let contents = screen.contents();
+                
+                // 1. Detect screen clear (heuristic: content size dropped significantly or is empty)
+                if contents.trim().is_empty() {
+                    shm.clear_bloom();
+                }
+
+                // 2. Tokenize and update Bloom filter (post-parser rendered content)
+                // We hash alphanumeric tokens to avoid ANSI noise and punctuation junk
+                for token in contents.split(|c: char| !c.is_alphanumeric()) {
+                    if token.len() > 1 {
+                        shm.insert_token(token);
+                    }
+                }
+
+                // 3. Update screen buffer and sequence
+                shm.write_screen(contents.as_bytes());
+                shm.update_header();
+            }
+
             if let Some(log) = log.as_mut() {
                 let _ = log.write_all(chunk);
                 let _ = log.flush();
             }
 
-            // `blocking_send` parks this OS thread when the channel is full, which is
-            // exactly the back-pressure we want.
-            if tx.blocking_send(chunk.to_vec()).is_err() { 
-                tracing::debug!(id, "pump_loop: blocking_send failed");
-                false 
-            } else {
-                true
-            }
+            // Also append to the in-memory history buffer
+            let mut history = inner.full_history.lock();
+            history.push_str(&String::from_utf8_lossy(chunk));
         }
-        Err(e) => {
-            tracing::warn!(id, error = %e, "pump_loop: read error");
-            false
-        }
-    } {}
-    tracing::debug!(id, "pump_loop exiting");
+
+        // Forward to viewer. If channel is full, we drop bytes (the viewer is too slow).
+        let _ = tx.try_send(chunk.to_vec());
+    }
+    let _ = notifier.send(()); // Final notify on EOF
+    tracing::debug!(id, "pty-pump thread exiting");
 }
 
-/// Cheap byte-subsequence search. Avoids pulling in `memchr` for one site.
-#[inline]
 fn memchr_subseq(haystack: &[u8], needle: &[u8]) -> bool {
+    if needle.is_empty() { return true; }
     haystack.windows(needle.len()).any(|w| w == needle)
 }
 
@@ -123,34 +142,34 @@ fn memchr_subseq(haystack: &[u8], needle: &[u8]) -> bool {
 async fn viewer_loop(
     id: u32,
     mut rx: mpsc::Receiver<Vec<u8>>,
-    writer: Arc<Mutex<Box<dyn Write + Send>>>,
+    writer: Arc<Mutex<Box<dyn std::io::Write + Send>>>,
 ) {
     let pipe_name = format!(r"\\.\pipe\vterm-rs-client-{id}");
     let server = match named_pipe::ServerOptions::new()
         .first_pipe_instance(true)
-        .create(&pipe_name)
+        .create(&pipe_name) 
     {
         Ok(s) => s,
-        Err(e) => {
-            tracing::warn!(id, error = %e, "viewer pipe create failed");
-            return;
-        }
+        Err(e) => { tracing::error!(id, error = %e, "pipe create failed"); return; }
     };
 
-    if server.connect().await.is_err() {
+    tracing::debug!(id, "viewer_loop waiting for connection on {pipe_name}");
+    if let Err(e) = server.connect().await {
+        tracing::error!(id, error = %e, "pipe connect failed");
         return;
     }
-    let (mut client_reader, mut client_writer) = tokio::io::split(server);
 
-    // PTY → viewer
+    let (mut client_reader, mut client_writer) = tokio::io::split(server);
+    
+    // Pump from PTY to viewer
     let to_viewer = tokio::spawn(async move {
-        while let Some(data) = rx.recv().await {
-            if client_writer.write_all(&data).await.is_err() { break; }
+        while let Some(chunk) = rx.recv().await {
+            if client_writer.write_all(&chunk).await.is_err() { break; }
             let _ = client_writer.flush().await;
         }
     });
 
-    // viewer → PTY (so the user typing in the viewer reaches the underlying shell)
+    // Pump from viewer to PTY
     let mut buf = [0u8; 1024];
     while let Ok(n) = client_reader.read(&mut buf).await {
         if n == 0 { break; }

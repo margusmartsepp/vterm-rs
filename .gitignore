@@ -33,3 +33,6 @@ ENV/
 build/
 dist/
 *.egg-info/
+
+# Graphify
+graphify-out/cache/

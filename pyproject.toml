@@ -1,0 +1,19 @@
+[project]
+name = "term-rs-dev"
+version = "0.1.0"
+description = "Development environment for vterm-rs"
+requires-python = ">=3.13"
+dependencies = [
+    "vterm-rs-python-mcp",
+    "fastmcp",
+    "pydantic",
+]
+
+[tool.uv.sources]
+vterm-rs-python-mcp = { path = "./vterm-python", editable = true }
+
+[tool.uv]
+dev-dependencies = [
+    "maturin",
+    "pytest",
+]

@@ -10,7 +10,46 @@ If you use [Cursor](https://cursor.com), you can install the MCP server directly
 
 To add `vterm-rs` to your Claude Desktop client, edit your `%APPDATA%\Claude\claude_desktop_config.json` file:
 
-### Option 1: Via PyPI (Recommended)
+### Option 0: Native Rust Binary (Highest Performance)
+This is the highest performance option and uses the pure-Rust bridge directly. It has zero overhead and minimal dependencies.
+
+#### A. Pre-built / Installed
+```json
+{
+  "mcpServers": {
+    "vterm": {
+      "command": "vterm-mcp"
+    }
+  }
+}
+```
+> [!TIP]
+> To use this, run `cargo install vterm-rs`. Ensure the cargo bin directory is in your `PATH`.
+
+#### B. Local Development
+Use this if you are developing `vterm-rs` and want to test changes to the Rust bridge.
+```json
+{
+  "mcpServers": {
+    "vterm-local": {
+      "command": "cargo",
+      "args": [
+        "run",
+        "--release",
+        "--bin",
+        "vterm-mcp",
+        "--manifest-path",
+        "C:\\Users\\YOUR_USER\\path\\to\\term-rs\\vterm\\Cargo.toml"
+      ]
+    }
+  }
+}
+```
+
+### Option 1: Python SDK (Recommended for Python Developers)
+Ideal if you want to extend the MCP server using Python or leverage existing Python libraries.
+
+#### A. Via PyPI
 This uses `uvx` to automatically handle dependencies and updates.
 
 ```json
@@ -24,13 +63,13 @@ This uses `uvx` to automatically handle dependencies and updates.
 }
 ```
 
-### Option 2: Local Development
-Use this if you are developing `vterm-rs` and want to test local changes.
+#### B. Local Development
+Use this if you are developing the Python SDK or want to run from source.
 
 ```json
 {
   "mcpServers": {
-    "vterm-local": {
+    "vterm-python-local": {
       "command": "uv",
       "args": [
         "--directory",
@@ -44,6 +83,7 @@ Use this if you are developing `vterm-rs` and want to test local changes.
   }
 }
 ```
+
 
 ## Validated Examples
 

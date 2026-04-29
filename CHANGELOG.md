@@ -2,6 +2,11 @@
 
 All notable changes are documented here. The wire protocol is unstable until v1.0.
 
+## v0.7.20 — Documentation & Brand Refresh
+- **Google-Grade README**: Overhauled the root `README.md` with professional aesthetics, visual feature grids, and a streamlined quick-start guide.
+- **Version Synchronization**: Unified versions across the Rust orchestrator (`vterm-rs`) and Python SDK (`vterm-rs-python-mcp`) to `v0.7.20`.
+- **Improved Integration Guides**: Refined Claude Desktop integration documentation with localized development paths for developers.
+
 ## v0.7.16 — State-Aware Orchestration (Final)
 - **High-Performance Python SDK**: Native PyO3 bindings for near-zero orchestration latency.
 - **Atomic Batch API**: Orchestrate multiple terminals in a single round-trip with the `batch()` method.

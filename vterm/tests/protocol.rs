@@ -10,10 +10,10 @@ use vterm_rs::protocol::{
 
 #[test]
 fn request_envelope_round_trip() {
-    let json = r#"{"req_id":42,"type":"Wait","payload":{"ms":250}}"#;
+    let json = r#"{"req_id":42,"type":"Wait","payload":{"timeout_ms":250}}"#;
     let req: Request = serde_json::from_str(json).unwrap();
     assert_eq!(req.req_id, Some(42));
-    assert!(matches!(req.command, SkillCommand::Wait { ms: 250 }));
+    assert!(matches!(req.command, SkillCommand::Wait { timeout_ms: 250 }));
 }
 
 #[test]
@@ -101,5 +101,9 @@ fn variant_names_are_stable() {
     assert_eq!(
         SkillCommand::Batch(BatchArgs::default()).variant_name(),
         "batch",
+    );
+    assert_eq!(
+        SkillCommand::Takeover { version: "1.0.0".into() }.variant_name(),
+        "takeover",
     );
 }

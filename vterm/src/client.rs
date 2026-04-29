@@ -2,8 +2,8 @@ use anyhow::Result;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
-use tokio::sync::oneshot;
-use crate::{Request, Response, SkillCommand, CommandResult, Status};
+use tokio::sync::{oneshot, broadcast};
+use vterm_protocol::{Request, Response, SkillCommand, CommandResult, Status, Event};
 
 #[cfg(windows)]
 mod windows;
@@ -17,13 +17,15 @@ pub const PIPE_NAME: &str = "/tmp/vterm-rs-skill";
 #[derive(Clone)]
 pub struct OrchestratorClient {
     req_tx: tokio::sync::mpsc::Sender<(Request, oneshot::Sender<Response>)>,
+    event_tx: broadcast::Sender<Event>,
     next_id: Arc<AtomicU64>,
 }
 
 impl OrchestratorClient {
     pub async fn connect() -> Result<Self> {
         let client = Self::try_connect().await?;
-        let (req_tx, mut req_rx): (tokio::sync::mpsc::Sender<(Request, oneshot::Sender<Response>)>, tokio::sync::mpsc::Receiver<(Request, oneshot::Sender<Response>)>) = tokio::sync::mpsc::channel(32);
+        let (req_tx, mut req_rx) = tokio::sync::mpsc::channel::<(Request, oneshot::Sender<Response>)>(32);
+        let (event_tx, _) = broadcast::channel(128);
         
         let (reader, writer) = tokio::io::split(client);
         let mut buf_reader = BufReader::new(reader);
@@ -32,6 +34,7 @@ impl OrchestratorClient {
         // Map from req_id -> oneshot channel
         let pending = Arc::new(dashmap::DashMap::<u64, oneshot::Sender<Response>>::new());
         let pending_clone = pending.clone();
+        let event_tx_clone = event_tx.clone();
         
         // Write loop
         tokio::spawn(async move {
@@ -55,6 +58,14 @@ impl OrchestratorClient {
                 if buf_reader.read_line(&mut line).await.unwrap_or(0) == 0 {
                     break;
                 }
+                
+                // Try parsing as Event first (OOB)
+                if let Ok(event) = serde_json::from_str::<Event>(&line) {
+                    let _ = event_tx_clone.send(event);
+                    continue;
+                }
+
+                // Fallback to Response
                 if let Ok(res) = serde_json::from_str::<Response>(&line) {
                     if let Some(id) = res.req_id {
                         if let Some((_, tx)) = pending_clone.remove(&id) {
@@ -65,7 +76,7 @@ impl OrchestratorClient {
             }
         });
         
-        let client = Self { req_tx, next_id: Arc::new(AtomicU64::new(1)) };
+        let client = Self { req_tx, event_tx, next_id: Arc::new(AtomicU64::new(1)) };
         
         // Auto-handshake with orchestrator
         client.execute(SkillCommand::Hello { client_version: "vterm-client".into() }).await?;
@@ -83,9 +94,17 @@ impl OrchestratorClient {
         anyhow::bail!("Orchestrator connection is only supported on Windows in v0.7.2")
     }
 
+    pub fn events(&self) -> broadcast::Receiver<Event> {
+        self.event_tx.subscribe()
+    }
+
     pub async fn execute(&self, command: SkillCommand) -> Result<CommandResult> {
+        self.execute_full(command, None).await
+    }
+
+    pub async fn execute_full(&self, command: SkillCommand, progress_token: Option<String>) -> Result<CommandResult> {
         let req_id = self.next_id.fetch_add(1, Ordering::Relaxed);
-        let req = Request { req_id: Some(req_id), command };
+        let req = Request { req_id: Some(req_id), progress_token, command };
         let (tx, rx) = oneshot::channel();
         self.req_tx.send((req, tx)).await?;
         let res = rx.await?;

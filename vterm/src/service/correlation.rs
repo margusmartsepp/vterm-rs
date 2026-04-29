@@ -13,7 +13,7 @@ use std::task::{Context, Poll};
 
 use tower::{Layer, Service};
 
-use crate::protocol::{CommandResult, Request, Response, SkillCommand};
+use crate::protocol::{CommandResult, Request, Response};
 
 #[derive(Clone, Default)]
 pub struct CorrelationLayer;
@@ -28,7 +28,7 @@ pub struct Correlation<S> { inner: S }
 
 impl<S> Service<Request> for Correlation<S>
 where
-    S: Service<SkillCommand, Response = CommandResult> + Clone + Send + 'static,
+    S: Service<Request, Response = CommandResult> + Clone + Send + 'static,
     S::Future: Send + 'static,
     S::Error: Send + 'static,
 {
@@ -42,7 +42,7 @@ where
 
     fn call(&mut self, req: Request) -> Self::Future {
         let req_id = req.req_id;
-        let fut = self.inner.call(req.command);
+        let fut = self.inner.call(req);
         Box::pin(async move {
             let result = fut.await?;
             Ok(Response { req_id, result })

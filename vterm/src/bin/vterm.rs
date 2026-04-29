@@ -59,6 +59,14 @@ struct Args {
     /// Print the path to the Graphify architectural map and exit.
     #[arg(long)]
     graph: bool,
+
+    /// Admission Control: Maximum concurrent terminals allowed (default: 100).
+    #[arg(long, default_value = "100")]
+    max_terminals: u32,
+
+    /// Admission Control: Maximum memory usage in MB for the orchestrator process.
+    #[arg(long)]
+    max_mem_mb: Option<u64>,
 }
 
 #[tokio::main(flavor = "multi_thread")]
@@ -84,11 +92,16 @@ async fn main() -> Result<()> {
         return run_skill(variant, args.payload).await;
     }
 
-    let app = App::builder()
+    let mut builder = App::builder()
         .default_visible(!args.headless)
         .prompt_regex(&args.prompt_regex)
-        .build()
-        .context("App::build")?;
+        .max_terminals(args.max_terminals);
+    
+    if let Some(m) = args.max_mem_mb {
+        builder = builder.max_mem_mb(m);
+    }
+
+    let app = builder.build().context("App::build")?;
 
     let _watchdog = vterm_rs::watchdog::spawn(Arc::clone(&app));
 
@@ -125,35 +138,86 @@ fn init_tracing() {
 
 #[cfg(windows)]
 async fn accept_loop(app: Arc<App>) -> Result<()> {
+    let (shutdown_tx, mut shutdown_rx) = tokio::sync::watch::channel(false);
+
     let mut first = true;
     loop {
         let mut opts = ServerOptions::new();
-        if first {
-            opts.first_pipe_instance(true);
-        }
-        let server = opts.create(PIPE_NAME).map_err(|e| {
-            if first {
-                anyhow::anyhow!(
-                    "another orchestrator is already bound to {PIPE_NAME}: {e}"
-                )
-            } else {
-                anyhow::anyhow!("pipe create failed: {e}")
+        opts.first_pipe_instance(first);
+        
+        let server = match opts.create(PIPE_NAME) {
+            Ok(s) => {
+                first = false;
+                s
             }
-        })?;
-        first = false;
-
-        if let Err(e) = server.connect().await {
-            tracing::warn!(error = %e, "accept failed");
-            continue;
-        }
-
-        let app = Arc::clone(&app);
-        tokio::spawn(async move {
-            if let Err(e) = handle_connection(app, server).await {
-                tracing::warn!(error = %e, "connection ended with error");
+            Err(e) if (e.kind() == std::io::ErrorKind::AlreadyExists || e.raw_os_error() == Some(5)) && first => {
+                tracing::info!("pipe already bound (os error 5), attempting takeover...");
+                if let Err(te) = attempt_takeover().await {
+                    anyhow::bail!("takeover failed: {te}");
+                }
+                tokio::time::sleep(Duration::from_millis(500)).await;
+                continue;
             }
-        });
+            Err(e) => anyhow::bail!("pipe create failed: {e}"),
+        };
+
+        tracing::info!(pipe = PIPE_NAME, "waiting for connection");
+
+        tokio::select! {
+            res = server.connect() => {
+                if let Err(e) = res {
+                    tracing::warn!(error = %e, "accept failed");
+                    continue;
+                }
+                
+                let app = Arc::clone(&app);
+                let shutdown_tx = shutdown_tx.clone();
+                tokio::spawn(async move {
+                    if let Err(e) = handle_connection(app, server, shutdown_tx).await {
+                        tracing::warn!(error = %e, "connection ended with error");
+                    }
+                });
+            }
+            _ = shutdown_rx.changed() => {
+                if *shutdown_rx.borrow() {
+                    tracing::info!("shutdown signal received, closing orchestrator");
+                    break Ok(());
+                }
+            }
+        }
     }
+}
+
+#[cfg(windows)]
+async fn attempt_takeover() -> Result<()> {
+    use vterm_rs::protocol::SkillCommand;
+    let client = ClientOptions::new()
+        .open(PIPE_NAME)
+        .context("failed to connect for takeover")?;
+    
+    let (reader, mut writer) = tokio::io::split(client);
+    let mut br = BufReader::new(reader);
+
+    let req = Request {
+        req_id: Some(999),
+        progress_token: None,
+        command: SkillCommand::Takeover { version: env!("CARGO_PKG_VERSION").into() },
+    };
+    let json = serde_json::to_string(&req)?;
+    
+    writer.write_all(json.as_bytes()).await?;
+    writer.write_all(b"\n").await?;
+    writer.flush().await?;
+
+    let mut response = String::new();
+    if br.read_line(&mut response).await? > 0 {
+        let res = serde_json::from_str::<Response>(&response)?;
+        if res.result.content == Some("takeover_accepted".into()) {
+            tracing::info!("takeover accepted by remote instance");
+            return Ok(());
+        }
+    }
+    anyhow::bail!("takeover rejected or timed out")
 }
 
 #[cfg(not(windows))]
@@ -162,32 +226,83 @@ async fn accept_loop(_app: Arc<App>) -> Result<()> {
 }
 
 #[cfg(windows)]
-async fn handle_connection(app: Arc<App>, conn: NamedPipeServer) -> Result<()> {
+async fn handle_connection(
+    app: Arc<App>, 
+    conn: NamedPipeServer, 
+    shutdown_tx: tokio::sync::watch::Sender<bool>
+) -> Result<()> {
     let guard = ConnectionGuard::new(Arc::clone(&app));
     let owner = guard.id();
+    tracing::info!(owner = %owner, "handling new connection");
 
-    let mut svc = vterm_rs::service::pipeline(app, owner);
+    let (event_tx, mut event_rx) = tokio::sync::mpsc::unbounded_channel();
+    let mut svc = vterm_rs::service::pipeline(app, owner, event_tx);
     let (reader, writer) = tokio::io::split(conn);
     let writer = Arc::new(tokio::sync::Mutex::new(writer));
     let mut br = BufReader::new(reader);
 
+    // Event handling task
+    let writer_clone = Arc::clone(&writer);
+    tokio::spawn(async move {
+        while let Some(event) = event_rx.recv().await {
+            if let Ok(json) = serde_json::to_string(&event) {
+                let mut w = writer_clone.lock().await;
+                let _ = w.write_all(json.as_bytes()).await;
+                let _ = w.write_all(b"\n").await;
+                let _ = w.flush().await;
+            }
+        }
+    });
+
     let mut line = String::new();
     while br.read_line(&mut line).await? > 0 {
         let raw = line.trim();
+        tracing::trace!(raw = %raw, "incoming request");
         if raw.is_empty() {
             line.clear();
             continue;
         }
 
-        // `svc` is `Service<Error = Infallible>`, so both `.ready()` and `.call()`
-        // are guaranteed not to fail — `.unwrap()` here panics only on bug, never on
-        // user input.
         let response = match serde_json::from_str::<Request>(raw) {
             Ok(req) => {
-                let ready = svc.ready().await.unwrap();
-                ready.call(req).await.unwrap()
+                let variant = req.command.variant_name();
+                let started = std::time::Instant::now();
+                
+                let res = match svc.ready().await {
+                    Ok(ready) => match ready.call(req).await {
+                        Ok(mut r) => {
+                            r.result.duration_ms = started.elapsed().as_millis() as u64;
+                            r
+                        }
+                        Err(e) => Response::error(None, format!("execute: {e}")),
+                    },
+                    Err(e) => Response::error(None, format!("service: {e}")),
+                };
+
+                // Persist metrics
+                if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open("vterm_metrics.jsonl") {
+                    use std::io::Write as _;
+                    let entry = serde_json::json!({
+                        "ts": chrono::Utc::now().to_rfc3339(),
+                        "type": variant,
+                        "duration_ms": res.result.duration_ms,
+                        "status": format!("{:?}", res.result.status).to_lowercase(),
+                        "id": res.result.id,
+                    });
+                    let _ = writeln!(f, "{}", entry.to_string());
+                }
+                res
             }
-            Err(e) => Response::error(None, format!("parse: {e}")),
+            Err(e) => {
+                tracing::warn!(error = %e, raw = %raw, "parse failure");
+                Response::error(None, format!("parse: {e}"))
+            }
+        };
+
+        let is_takeover_accepted = if let Ok(req) = serde_json::from_str::<Request>(raw) {
+            req.command.variant_name() == "takeover" && response.result.content == Some("takeover_accepted".into())
+        } else {
+            false
         };
 
         let json = serde_json::to_string(&response)?;
@@ -196,6 +311,11 @@ async fn handle_connection(app: Arc<App>, conn: NamedPipeServer) -> Result<()> {
         w.write_all(b"\n").await?;
         w.flush().await?;
         drop(w);
+
+        if is_takeover_accepted {
+            let _ = shutdown_tx.send(true);
+            break; // Exit the loop
+        }
 
         line.clear();
     }

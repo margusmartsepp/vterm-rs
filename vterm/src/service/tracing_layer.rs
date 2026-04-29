@@ -11,7 +11,7 @@ use std::task::{Context, Poll};
 use tower::{Layer, Service};
 use tracing::Instrument;
 
-use crate::protocol::SkillCommand;
+use crate::protocol::Request;
 
 #[derive(Clone, Default)]
 pub struct TracingLayer;
@@ -24,9 +24,9 @@ impl<S> Layer<S> for TracingLayer {
 #[derive(Clone)]
 pub struct Tracing<S> { inner: S }
 
-impl<S> Service<SkillCommand> for Tracing<S>
+impl<S> Service<Request> for Tracing<S>
 where
-    S: Service<SkillCommand> + Clone + Send + 'static,
+    S: Service<Request> + Clone + Send + 'static,
     S::Future: Send + 'static,
     S::Response: Send + 'static,
     S::Error: Send + 'static,
@@ -39,8 +39,8 @@ where
         self.inner.poll_ready(cx)
     }
 
-    fn call(&mut self, req: SkillCommand) -> Self::Future {
-        let span = tracing::info_span!("cmd", kind = req.variant_name());
+    fn call(&mut self, req: Request) -> Self::Future {
+        let span = tracing::info_span!("cmd", kind = req.command.variant_name(), req_id = req.req_id);
         Box::pin(self.inner.call(req).instrument(span))
     }
 }

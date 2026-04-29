@@ -1,183 +1,130 @@
 # vterm-rs
 
+<div align="center">
+
 [![Crates.io](https://img.shields.io/crates/v/vterm-rs.svg)](https://crates.io/crates/vterm-rs)
 [![PyPI](https://img.shields.io/pypi/v/vterm-rs-python-mcp.svg)](https://pypi.org/project/vterm-rs-python-mcp/)
 [![CI](https://github.com/margusmartsepp/vterm-rs/actions/workflows/rust-ci.yml/badge.svg)](https://github.com/margusmartsepp/vterm-rs/actions)
-[<img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Install in Cursor" height="20">](https://cursor.com/en/install-mcp?name=vterm-rs&config=eyJjb21tYW5kIjoidXZ4IiwiaW5zdGFsbCI6InZ0ZXJtLXJzLXB5dGhvbi1tY3AiLCJhcmdzIjpbInZ0ZXJtLXJzLXB5dGhvbi1tY3AiXX0%3D)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<br/>
+[<img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Install in Cursor" height="30">](https://cursor.com/en/install-mcp?name=vterm-rs&config=eyJjb21tYW5kIjoidXZ4IiwiaW5zdGFsbCI6InZ0ZXJtLXJzLXB5dGhvbi1tY3AiLCJhcmdzIjpbInZ0ZXJtLXJzLXB5dGhvbi1tY3AiXX0%3D)
 
-> **The High-Performance Rust PTY Orchestrator for AI Agents.**
+### **High-Performance Rust PTY Orchestrator for AI Agents**
+*Transforming the terminal from a blind black box into a verifiable State Machine.*
 
-`vterm-rs` is a state-aware terminal host built specifically for AI agents (and the humans who build them). It transforms the terminal from a "blind black box" into a **State Machine** that agents can inspect, reason about, and control fluently.
+</div>
 
-## Why vterm-rs?
+---
 
-*   **Safety (Guardrails)**: Prevent "Infinite Log Floods" with `max_lines` and `max_duration` limits.
-*   **Truth (State Machine)**: Don't guess if a command finished. Use `wait_until` and `screen_read` to inspect the visual grid.
-*   **Fluent Fleet**: Orchestrate multiple terminals atomically with the high-performance `batch()` API.
-*   **Headless-First**: Designed for CI/CD and AI backends, with optional `--visible` mode for debugging.
+## Key Features
 
-## Quick Start (Python SDK)
+| Feature | Description |
+| :--- | :--- |
+| **Token Efficiency** | Drastically reduces context saturation and tool-call overhead. Execute complex multi-step workflows in a single atomic batch, minimizing input/output tokens. |
+| **Universal Execution** | Adds production-grade code and terminal execution capabilities to any LLM project, including local personal setups that lack a heavy application layer. |
+| **Dynamic Discovery** | The **OpenGraph Architecture** endpoint allows agents to self-discover tools and capabilities, even if the orchestrator was not in their training data. |
+| **Verifiable Truth** | Real-time screen grid inspection via `wait_until` and `screen_read` eliminates the "hallucination gap" in terminal automation. |
+| **Zero-Latency Pool** | Near-zero startup time using pre-warmed terminal sessions and sub-millisecond pattern detection via Bloom Filters. |
+| **Headless-First** | Native support for CI/CD and AI backends with a toggleable visual debug mode for human inspection. |
 
-```python
-import vterm_python
-
-client = vterm_python.VTermClient()
-
-# The "Fluent Fleet" way: Atomically set up your session
-ops = [
-    client.spawn_op("Build", visible=True),
-    client.write_op(1, "cargo build<Enter>"),
-    client.wait_until_op(1, "Finished", timeout_ms=30000)
-]
-
-result = client.batch(ops)
-print(f"Build status: {result['sub_results'][2]['status']}")
-```
+## Architecture
 
 ```mermaid
-graph LR
-    Agent["AI agent<br/>(Claude/IDE/MCP)"]
-    Term["vterm.exe<br/>(PTY pool, vt100, reaper)"]
-    Shell["powershell.exe<br/>(your real shell)"]
+graph TD
+    subgraph AI Client
+        LLM["AI Agent / Local LLM"]
+    end
 
-    Agent -- "NDJSON over named pipe" --> Term
-    Term -- "CommandResult" --> Agent
-    Term -- "ConPTY" --> Shell
-    Shell -- "bytes" --> Term
+    subgraph vterm-rs Orchestrator
+        Logic["PTY Pool & VT100 State Machine"]
+        Graph["OpenGraph Knowledge Base"]
+        Batch["Atomic Batch Engine"]
+    end
+
+    subgraph Operating System
+        PTY["ConPTY (Windows) / Pseudo-terminals"]
+        Shell["Shell / Binaries / Tools"]
+    end
+
+    LLM -- "Efficient Batched Commands" --> Batch
+    Batch -- "Token-Efficient State" --> LLM
+    LLM -- "Dynamic Tool Discovery" --> Graph
+    Logic -- "Low-Latency IPC" --> PTY
+    PTY <--> Shell
 ```
 
+## Quick Start
 
-## Why
+### 1. One-Click Integration (Cursor)
+Click the badge above or use the Cursor MCP settings to add `vterm-rs` instantly.
 
-Existing tools either capture command output (no interactivity, no signals, no TUI) or
-embed a shell as a library (no real PTY semantics, no parity with what a user sees).
-`vterm-rs` is neither — it's the actual terminal, scriptable.
+### 2. Manual Integration (Claude Desktop)
+Add the following to your `%APPDATA%\Claude\claude_desktop_config.json`:
 
-What you can do that you couldn't before:
+```json
+{
+  "mcpServers": {
+    "vterm": {
+      "command": "uvx",
+      "args": ["vterm-rs-python-mcp"]
+    }
+  }
+}
+```
 
-- Tell an agent *"the build is hung, send Ctrl-C and try again"* and have it work.
-- Have an agent exit `vim` for you. `:wq`, problem solved.
-- Boot a microservice fleet — Redis, Postgres, three services, one log-tailer — in
-  one command. Reap the whole tree with one disconnect.
-- Run the same playbook headlessly in CI that you ran with visible windows locally.
-
-## Quickstart
-
+### 3. Local Development (Rust)
 ```powershell
-# 1. Build
+# Build the orchestrator
 cargo build --release
 
-# 2. Start the orchestrator (visible windows by default)
-.\target\release\vterm.exe
-
-# 2. Or start it headless, no windows ever appear
+# Start headless (production mode)
 .\target\release\vterm.exe --headless
 
-# 3. From another shell, drive it
+# Run integration tests
 .\tests\playbook_tests.ps1 -Headless
 ```
 
-## The protocol in 30 seconds
+## Ecosystem & SDKs
 
-Every line on the pipe is one JSON command. Every command produces exactly one response.
-Both sides may include a `req_id` for correlation.
+### Python SDK (FastMCP)
+Build custom MCP servers or automate terminals using blazing-fast PyO3 bindings.
 
-```json
-// → request
-{"req_id": 7, "type": "Spawn", "payload": {"title": "build", "visible": false}}
-
-// ← response
-{"req_id": 7, "status": "success", "duration_ms": 11, "id": 1}
+```bash
+pip install vterm-rs-python-mcp
 ```
 
-Composite work uses `Batch`, which returns one aggregate response, not N+1 lines:
+```python
+import vterm_python
+client = vterm_python.VTermClient()
 
-```json
-// → request
-{"req_id": 8, "type": "Batch", "payload": {"commands": [
-  {"type": "ScreenWrite", "payload": {"id": 1, "text": "cargo build<Enter>"}},
-  {"type": "WaitUntil",   "payload": {"id": 1, "pattern": "Compiling", "timeout_ms": 30000}},
-  {"type": "ScreenRead",  "payload": {"id": 1}}
-]}}
-
-// ← response
-{"req_id": 8, "status": "success", "duration_ms": 1247, "sub_results": [ … ]}
+# Atomic "Fluent Fleet" operation: saves tokens by batching logic
+res = client.batch([
+    client.spawn_op("build", max_lines=500),
+    client.write_op(1, "cargo build<Enter>"),
+    client.wait_until_op(1, "Finished", timeout_ms=30000)
+])
 ```
 
-Full spec: [`docs/protocol.md`](docs/protocol.md).
+### Native Rust Bridge
+For maximum performance, use the native Rust MCP binary directly. It includes advanced tools like `rust_eval` (using [evcxr](https://github.com/evcxr/evcxr)) and the architecture discovery endpoint.
 
-## Three ways to consume it
+```bash
+cargo run --release --bin vterm-mcp
+```
 
-1. **Python SDK & FastMCP Bridge (New!)**
-   Build custom MCP servers or automate terminal operations using the blazing fast Python PyO3 bindings.
-   
-   ```bash
-   pip install vterm-rs-python-mcp
-   ```
+## Project Status
 
-   ```python
-   import vterm_python
-   from fastmcp import FastMCP
-   
-   mcp = FastMCP("vterm")
-   client = vterm_python.VTermClient()
-   
-   @mcp.tool()
-   def run_build() -> str:
-       # Using the new atomic batch API
-       ops = [
-           client.spawn_op("build", max_lines=500),
-           client.write_op(1, "cargo build<Enter>"),
-           client.wait_until_op(1, "Finished", timeout_ms=30000)
-       ]
-       res = client.batch(ops)
-       return "Build triggered" if res["status"] == "success" else "Error"
-   ```
+| Area | Status | Target |
+| :--- | :--- | :--- |
+| **Windows + ConPTY** | Stable | v0.7.0 |
+| **Python SDK** | Stable (v0.7.20) | v0.7.0 |
+| **Linux / macOS** | In Progress | v0.8.0 |
+| **Wire Protocol** | Unstable | v1.0.0 |
+| **Test Coverage** | Improving | Ongoing |
 
-2. **Direct MCP Server (Plug-and-Play)**
-   Use it directly in your AI client (like Claude Desktop) without writing code.
-
-   ```json
-   {
-     "mcpServers": {
-       "vterm": {
-         "command": "vterm-mcp"
-       }
-     }
-   }
-   ```
-
-3. **Rust Native MCP Server**
-   For maximum performance, use the native Rust MCP binary.
-   ```bash
-   cargo run --bin vterm-mcp
-   ```
-
-**Examples**: Explore the [examples/python_sdk](examples/python_sdk) directory for typical DevOps and CI use cases.
-
-**Tests**: To run the Python tests locally, navigate to `vterm-python` and run `uv run maturin develop`, followed by `uv run ../tests/python_sdk/test_mcp.py`.
-
-4. **Raw pipe.**
-   Connect, write JSON, read JSON. The PowerShell harness in [`tests/playbook_tests.ps1`](tests/playbook_tests.ps1) is the canonical example.
-
-5. **Skill manifest.**
-   [`skill.toml`](skill.toml) declares each command as an AI skill — useful for non-MCP agents.
-
-## Project structure
-
-See [`AGENTS.md`](AGENTS.md) for the layout, code style, and invariants you must respect
-when editing.
-
-## Status
-
-| Area              | State                                                  |
-| ----------------- | ------------------------------------------------------ |
-| Windows + ConPTY  | works                                                  |
-| Python Bridge     | works (v0.7.16, available via PyPI `vterm-rs-python-mcp`) |
-| Linux / macOS     | planned (v0.8.0)                                       |
-| Wire protocol     | unstable, will be pinned at v1.0                       |
-| Test coverage     | smoke (PowerShell) + Rust integration + Python FastMCP |
+---
 
 ## License
+MIT License. See [AGENTS.md](AGENTS.md) for contribution guidelines and project invariants.
 
-MIT
+---

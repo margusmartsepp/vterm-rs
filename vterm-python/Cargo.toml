@@ -1,6 +1,6 @@
 [package]
 name = "vterm-python"
-version = "0.7.16"
+version = "0.7.20"
 edition = "2021"
 
 [lib]
@@ -9,6 +9,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.22", features = ["extension-module", "anyhow", "abi3-py310"] }
+vterm-protocol = { path = "../vterm-protocol" }
 vterm-rs = { path = "../vterm" }
 tokio = { version = "1.40", features = ["rt", "rt-multi-thread", "time"] }
 anyhow = "1.0"

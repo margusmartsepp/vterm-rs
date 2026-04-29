@@ -1,0 +1,1247 @@
+{
+  "handshake_request": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+      "client_version": {
+        "type": "string"
+      },
+      "session_id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "workspace_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "client_version",
+      "workspace_id"
+    ],
+    "title": "HandshakeRequest",
+    "type": "object"
+  },
+  "handshake_response": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+      "server_version": {
+        "type": "string"
+      },
+      "session_id": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "server_version",
+      "session_id",
+      "status"
+    ],
+    "title": "HandshakeResponse",
+    "type": "object"
+  },
+  "request": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+      "BatchArgs": {
+        "properties": {
+          "commands": {
+            "items": {
+              "$ref": "#/definitions/SkillCommand"
+            },
+            "type": "array"
+          },
+          "parallel": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "stop_on_error": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "visible": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "commands"
+        ],
+        "type": "object"
+      },
+      "SkillCommand": {
+        "oneOf": [
+          {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "client_version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "client_version"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "Hello"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "$ref": "#/definitions/SpawnArgs"
+              },
+              "type": {
+                "enum": [
+                  "Spawn"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "id": {
+                    "format": "uint32",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "text"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "ScreenWrite"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "history": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "id": {
+                    "format": "uint32",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "ScreenRead"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "action": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "format": "uint32",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "action",
+                  "id"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "ScreenControl"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "id": {
+                    "default": null,
+                    "format": "uint32",
+                    "minimum": 0.0,
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "target": {
+                    "default": "single",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "ScreenClose"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "List"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "timeout_ms": {
+                    "format": "uint64",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "timeout_ms"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "Wait"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "id": {
+                    "format": "uint32",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  },
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "timeout_ms": {
+                    "format": "uint64",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "pattern",
+                  "timeout_ms"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "WaitUntil"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "Blocks until the screen buffer remains unchanged for `stable_ms`.",
+            "properties": {
+              "payload": {
+                "properties": {
+                  "id": {
+                    "format": "uint32",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  },
+                  "stable_ms": {
+                    "format": "uint64",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  },
+                  "timeout_ms": {
+                    "format": "uint64",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "stable_ms",
+                  "timeout_ms"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "WaitUntilStable"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "Returns only the visual delta since the last observation for this terminal.",
+            "properties": {
+              "payload": {
+                "properties": {
+                  "id": {
+                    "format": "uint32",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "ScreenDiff"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "$ref": "#/definitions/BatchArgs"
+              },
+              "type": {
+                "enum": [
+                  "Batch"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "id": {
+                    "format": "uint32",
+                    "minimum": 0.0,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "GetProcessState"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "pattern": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "pattern"
+                ],
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "MatchAll"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "Returns topological and resource metadata for the entire session.",
+            "properties": {
+              "payload": {
+                "properties": {
+                  "assurance": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              },
+              "type": {
+                "enum": [
+                  "Inspect"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "payload",
+              "type"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "SpawnArgs": {
+        "properties": {
+          "cols": {
+            "format": "uint16",
+            "minimum": 0.0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "command": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "env": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "max_lines": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "rows": {
+            "format": "uint16",
+            "minimum": 0.0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "timeout_ms": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "visible": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "type": "object"
+      }
+    },
+    "oneOf": [
+      {
+        "properties": {
+          "payload": {
+            "properties": {
+              "client_version": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "client_version"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "Hello"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "$ref": "#/definitions/SpawnArgs"
+          },
+          "type": {
+            "enum": [
+              "Spawn"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "properties": {
+              "id": {
+                "format": "uint32",
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "text"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "ScreenWrite"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "properties": {
+              "history": {
+                "default": false,
+                "type": "boolean"
+              },
+              "id": {
+                "format": "uint32",
+                "minimum": 0.0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "ScreenRead"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "properties": {
+              "action": {
+                "type": "string"
+              },
+              "id": {
+                "format": "uint32",
+                "minimum": 0.0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "action",
+              "id"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "ScreenControl"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "properties": {
+              "id": {
+                "default": null,
+                "format": "uint32",
+                "minimum": 0.0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "target": {
+                "default": "single",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "ScreenClose"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "List"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "properties": {
+              "timeout_ms": {
+                "format": "uint64",
+                "minimum": 0.0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "timeout_ms"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "Wait"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "properties": {
+              "id": {
+                "format": "uint32",
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              "pattern": {
+                "type": "string"
+              },
+              "timeout_ms": {
+                "format": "uint64",
+                "minimum": 0.0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "pattern",
+              "timeout_ms"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "WaitUntil"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "description": "Blocks until the screen buffer remains unchanged for `stable_ms`.",
+        "properties": {
+          "payload": {
+            "properties": {
+              "id": {
+                "format": "uint32",
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              "stable_ms": {
+                "format": "uint64",
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              "timeout_ms": {
+                "format": "uint64",
+                "minimum": 0.0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "stable_ms",
+              "timeout_ms"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "WaitUntilStable"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "description": "Returns only the visual delta since the last observation for this terminal.",
+        "properties": {
+          "payload": {
+            "properties": {
+              "id": {
+                "format": "uint32",
+                "minimum": 0.0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "ScreenDiff"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "$ref": "#/definitions/BatchArgs"
+          },
+          "type": {
+            "enum": [
+              "Batch"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "properties": {
+              "id": {
+                "format": "uint32",
+                "minimum": 0.0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "GetProcessState"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "properties": {
+          "payload": {
+            "properties": {
+              "pattern": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "pattern"
+            ],
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "MatchAll"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "description": "Returns topological and resource metadata for the entire session.",
+        "properties": {
+          "payload": {
+            "properties": {
+              "assurance": {
+                "default": false,
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "Inspect"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "payload",
+          "type"
+        ],
+        "type": "object"
+      }
+    ],
+    "properties": {
+      "req_id": {
+        "format": "uint64",
+        "minimum": 0.0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      }
+    },
+    "title": "Request",
+    "type": "object"
+  },
+  "response": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+      "CommandResult": {
+        "properties": {
+          "content": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "duration_ms": {
+            "default": 0,
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exit_code": {
+            "format": "int32",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "handle_count": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "id": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "matches": {
+            "items": {
+              "$ref": "#/definitions/MatchEntry"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "mem_usage_mb": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "running": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "stall_index": {
+            "format": "float",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "status": {
+            "$ref": "#/definitions/Status"
+          },
+          "sub_results": {
+            "items": {
+              "$ref": "#/definitions/CommandResult"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "MatchEntry": {
+        "properties": {
+          "certain": {
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "matched": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "certain",
+          "id",
+          "matched"
+        ],
+        "type": "object"
+      },
+      "Status": {
+        "enum": [
+          "success",
+          "error"
+        ],
+        "type": "string"
+      }
+    },
+    "properties": {
+      "content": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "duration_ms": {
+        "default": 0,
+        "format": "uint64",
+        "minimum": 0.0,
+        "type": "integer"
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "exit_code": {
+        "format": "int32",
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "handle_count": {
+        "format": "uint32",
+        "minimum": 0.0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "id": {
+        "format": "uint32",
+        "minimum": 0.0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "matches": {
+        "items": {
+          "$ref": "#/definitions/MatchEntry"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "mem_usage_mb": {
+        "format": "uint64",
+        "minimum": 0.0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "req_id": {
+        "format": "uint64",
+        "minimum": 0.0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "running": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "stall_index": {
+        "format": "float",
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "status": {
+        "$ref": "#/definitions/Status"
+      },
+      "sub_results": {
+        "items": {
+          "$ref": "#/definitions/CommandResult"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "status"
+    ],
+    "title": "Response",
+    "type": "object"
+  }
+}

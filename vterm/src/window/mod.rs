@@ -10,6 +10,6 @@ mod windows;
 mod stub;
 
 #[cfg(windows)]
-pub use self::windows::control;
+pub use self::windows::{control, set_title, show};
 #[cfg(not(windows))]
-pub use self::stub::control;
+pub use self::stub::{control, set_title, show};

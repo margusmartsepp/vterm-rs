@@ -1,0 +1,59 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test and Lint
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+          
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check Formatting
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --workspace -- -D warnings
+
+      - name: Build Workspace
+        run: cargo build --workspace
+
+      - name: Run Workspace Tests
+        run: cargo test --workspace --exclude vterm-python
+
+      - name: Run MCP Parity Tests
+        run: |
+          $vterm = Start-Process ".\target\debug\vterm.exe" -ArgumentList "--headless" -NoNewWindow -PassThru
+          Start-Sleep -Seconds 5
+          try {
+            cargo test --test mcp_parity -- --nocapture
+          } finally {
+            if ($vterm) { Stop-Process $vterm.Id -Force }
+          }
+
+  python-test:
+    name: Python SDK Integration
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      - name: Build and Test Python SDK
+        run: |
+          cd vterm-python
+          uv run maturin develop
+          uv run ../tests/python_sdk/test_mcp.py

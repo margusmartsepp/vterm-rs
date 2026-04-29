@@ -97,6 +97,17 @@ Status: **completed**.
 
 Exit criteria: An AI agent can drive a complex TUI (Claude Code), reason about visual states, and manage multiple sessions with near-zero latency.
 
+### v0.7.20 — *The Enterprise Foundation* (current)
+
+Status: **in progress**.
+
+- [x] **Python Supervisor (`vterm-ctrl`)**: Lifecycle management and resource telemetry.
+- [x] **Unified Protocol Crate**: Single source of truth with JSON Schema generation.
+- [x] **WaitUntilStable & ScreenDiff**: Optimized agentic interop primitives.
+- [/] **MCP Progress Notifications**: Real-time progress updates for long-running batch tasks.
+- [ ] **Admission Control**: Throttling and resource monitoring to prevent system saturation.
+- [ ] **Pipe Takeover (Hotswapping)**: Zero-downtime orchestrator upgrades.
+
 ### v0.8 — *cross-platform foundations*
 
 Status: **in progress**.

@@ -19,7 +19,7 @@ use std::sync::Arc;
 use tower::ServiceBuilder;
 
 use crate::App;
-use crate::protocol::{Request, Response};
+use crate::protocol::{Request, Response, Event};
 use crate::session::ConnectionId;
 
 pub use dispatcher::Dispatcher;
@@ -30,9 +30,12 @@ pub use correlation::CorrelationLayer;
 /// Build the standard pipeline. Returns a `Service` that maps `Request → Response`
 /// with `Error = Infallible` (every failure surfaces in the response body, never as
 /// a service-level error).
+use tokio::sync::mpsc;
+
 pub fn pipeline(
     app: Arc<App>,
     owner: ConnectionId,
+    event_tx: mpsc::UnboundedSender<Event>,
 ) -> impl tower::Service<
     Request,
     Response = Response,
@@ -43,5 +46,5 @@ pub fn pipeline(
         .layer(CorrelationLayer)
         .layer(TimingLayer)
         .layer(TracingLayer)
-        .service(Dispatcher::new(app, owner))
+        .service(Dispatcher::new(app, owner, event_tx))
 }

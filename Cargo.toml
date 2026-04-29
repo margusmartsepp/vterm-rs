@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "vterm",
+    "vterm", "vterm-protocol",
     "vterm-python"
 ]
 resolver = "2"

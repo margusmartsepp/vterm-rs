@@ -3,7 +3,6 @@ use anyhow::Result;
 use tokio::io::{AsyncBufRead, AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::net::windows::named_pipe;
 use vterm_rs::{SkillCommand, SkillRequest, CommandResult, SpawnArgs, BatchArgs, Status, Response};
-use std::process::Command;
 use std::time::Duration;
 use tokio::time::sleep;
 
@@ -15,8 +14,7 @@ async fn connect_with_retry(retries: u32) -> Result<named_pipe::NamedPipeClient>
             Ok(client) => return Ok(client),
             Err(_) => {
                 if i == 0 {
-                    // Try to start the manager
-                    let _ = Command::new("cargo")
+                    let _ = std::process::Command::new("cargo")
                         .args(["run", "--bin", "vterm", "--", "--headless"])
                         .spawn();
                 }
@@ -28,8 +26,9 @@ async fn connect_with_retry(retries: u32) -> Result<named_pipe::NamedPipeClient>
 }
 
 async fn send_request(writer: &mut (impl AsyncWriteExt + Unpin), req_id: u64, cmd: SkillCommand) -> Result<()> {
-    let req = SkillRequest { req_id: Some(req_id), command: cmd };
+    let req = SkillRequest { req_id: Some(req_id), command: cmd, progress_token: None };
     let json = serde_json::to_string(&req)?;
+    println!("  -> SEND: {}", json);
     writer.write_all(json.as_bytes()).await?;
     writer.write_all(b"\n").await?;
     writer.flush().await?;
@@ -42,9 +41,10 @@ async fn read_response<R: AsyncBufRead + Unpin>(reader: &mut R, expected_id: u64
         line.clear();
         reader.read_line(&mut line).await?;
         if line.is_empty() { return Err(anyhow::anyhow!("Connection closed")); }
-        let res: Response = serde_json::from_str(&line)?;
-        if res.req_id == Some(expected_id) {
-            return Ok(res.result);
+        if let Ok(res) = serde_json::from_str::<Response>(&line) {
+            if res.req_id == Some(expected_id) {
+                return Ok(res.result);
+            }
         }
     }
 }
@@ -66,10 +66,8 @@ async fn test_supreme_orchestration() -> Result<()> {
     println!("\n[TEST 1: Ping Interruption]");
     send_request(&mut writer, 2, SkillCommand::Spawn(SpawnArgs { 
         title: "Test 1: Ping".into(), 
-        command: None, 
-        timeout_ms: None, 
-        max_lines: None, 
-        visible: Some(false) 
+        visible: Some(false),
+        ..Default::default() 
     })).await?;
     let r_spawn = read_response(&mut buf_reader, 2).await?;
     let term_id = r_spawn.id.expect("Spawn should return ID");
@@ -78,10 +76,10 @@ async fn test_supreme_orchestration() -> Result<()> {
         commands: vec![
             SkillCommand::ScreenWrite { id: term_id, text: "ping google.com -n 2<Enter>".into() },
             SkillCommand::WaitUntil { id: term_id, pattern: "Ping statistics".into(), timeout_ms: 15000 },
-            SkillCommand::ScreenRead { id: term_id },
+            SkillCommand::ScreenRead { id: term_id, history: false },
         ],
         stop_on_error: Some(true),
-        visible: None,
+        ..Default::default()
     });
     send_request(&mut writer, 3, playbook1).await?;
     let r_batch = read_response(&mut buf_reader, 3).await?;
@@ -97,13 +95,12 @@ async fn test_supreme_orchestration() -> Result<()> {
     let playbook2 = SkillCommand::Batch(BatchArgs {
         commands: vec![
             SkillCommand::ScreenWrite { id: term_id, text: "whoami<Enter>".into() },
-            SkillCommand::Wait { ms: 500 },
+            SkillCommand::Wait { timeout_ms: 500 },
             SkillCommand::ScreenWrite { id: term_id, text: "<Up>".into() },
-            SkillCommand::Wait { ms: 500 },
-            SkillCommand::ScreenRead { id: term_id },
+            SkillCommand::Wait { timeout_ms: 500 },
+            SkillCommand::ScreenRead { id: term_id, history: false },
         ],
-        stop_on_error: None,
-        visible: None,
+        ..Default::default()
     });
     send_request(&mut writer, 4, playbook2).await?;
     let r_batch2 = read_response(&mut buf_reader, 4).await?;
@@ -120,10 +117,9 @@ async fn test_supreme_orchestration() -> Result<()> {
     println!("\n[TEST 3: Destructor]");
     send_request(&mut writer, 5, SkillCommand::Spawn(SpawnArgs { 
         title: "Test: Destructor".into(), 
-        command: None, 
         timeout_ms: Some(2000), 
-        max_lines: None, 
-        visible: Some(false) 
+        visible: Some(false),
+        ..Default::default() 
     })).await?;
     let r_spawn3 = read_response(&mut buf_reader, 5).await?;
     let new_id = r_spawn3.id.expect("Spawn should return ID");

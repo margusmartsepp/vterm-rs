@@ -4,6 +4,8 @@ import os
 import sys
 
 # Create the MCP server
+# Create the MCP server
+os.environ["FASTMCP_LOG_LEVEL"] = "WARN"
 mcp = FastMCP("vterm")
 
 _client = None
@@ -31,22 +33,60 @@ def get_info() -> dict:
     return client.get_info()
 
 @mcp.tool()
-def spawn(title: str, max_lines: int = 1000, visible: bool = False, cols: int = 80, rows: int = 24, env: dict = None) -> int:
-    """
-    Spawns a new terminal session.
-    - cols/rows: Set terminal dimensions (e.g., 120, 40)
-    - env: Dictionary of environment variables to inject
-    """
+def list_terminals() -> list:
+    """Returns a list of all active terminal IDs and their titles."""
     client = get_client()
-    if not client: return tool_error()
-    return client.spawn(title, max_lines=max_lines, visible=visible, cols=cols, rows=rows, env=env)
+    if not client: return []
+    res = client.execute({"type": "List", "payload": {}})
+    import json
+    try:
+        return json.loads(res.get("content", "[]"))
+    except:
+        return []
+
+@mcp.tool()
+def spawn(title: str, command: str = None, wait: bool = False, semantic: bool = False, extract_pattern: str = None, max_lines: int = 1000, visible: bool = False, cols: int = 80, rows: int = 24, env: dict = None) -> dict:
+    """Spawns a new terminal session. Returns the terminal ID and any extracted data."""
+    client = get_client()
+    if not client: return {"error": tool_error()}
+    
+    # Use execute() for robust argument passing
+    res = client.execute({
+        "type": "Spawn",
+        "payload": {
+            "title": title,
+            "command": command,
+            "wait": wait,
+            "semantic": semantic,
+            "extract_pattern": extract_pattern,
+            "max_lines": max_lines,
+            "visible": visible,
+            "cols": cols,
+            "rows": rows,
+            "env": env
+        }
+    })
+    
+    if res.get("status") == "error":
+        return {"error": f"Spawn failed: {res.get('error')}"}
+    return res
 
 @mcp.tool()
 def wait_until(id: int, pattern: str, timeout_ms: int = 10000) -> str:
     """Blocks until a regex pattern appears on the terminal screen."""
     client = get_client()
     if not client: return tool_error()
-    return client.wait_until(id, pattern, timeout_ms=timeout_ms)
+    res = client.execute({
+        "type": "WaitUntil",
+        "payload": {
+            "id": id,
+            "pattern": pattern,
+            "timeout_ms": timeout_ms
+        }
+    })
+    if res.get("status") == "error":
+        return f"ERROR: WaitUntil failed: {res.get('error')}"
+    return res.get("content", "Pattern found")
 
 @mcp.tool()
 def get_process_state(id: int) -> dict:
@@ -60,7 +100,15 @@ def write(id: int, text: str) -> str:
     """Writes text to a terminal. Supports <Enter>, <C-c>, etc."""
     client = get_client()
     if not client: return tool_error()
-    client.write(id, text)
+    res = client.execute({
+        "type": "ScreenWrite",
+        "payload": {
+            "id": id,
+            "text": text
+        }
+    })
+    if res.get("status") == "error":
+        return f"ERROR: Write failed: {res.get('error')}"
     return "OK"
 
 @mcp.tool()
@@ -68,7 +116,16 @@ def read(id: int, history: bool = False) -> str:
     """Reads the current contents of the terminal screen. Set history=True for full scrollback."""
     client = get_client()
     if not client: return tool_error()
-    return client.read(id, history=history)
+    res = client.execute({
+        "type": "ScreenRead",
+        "payload": {
+            "id": id,
+            "history": history
+        }
+    })
+    if res.get("status") == "error":
+        return f"ERROR: Read failed: {res.get('error')}"
+    return res.get("content", "")
 
 @mcp.tool()
 def batch(commands: list) -> dict:
@@ -82,8 +139,23 @@ def close(id: int) -> str:
     """Closes a terminal session."""
     client = get_client()
     if not client: return tool_error()
-    client.close(id)
+    res = client.execute({
+        "type": "ScreenClose",
+        "payload": {
+            "id": id,
+            "target": "single"
+        }
+    })
+    if res.get("status") == "error":
+        return f"ERROR: Close failed: {res.get('error')}"
     return "Closed"
+
+@mcp.tool()
+def inspect(assurance: bool = True) -> dict:
+    """Returns architectural and resource metadata for the entire session."""
+    client = get_client()
+    if not client: return {"error": tool_error()}
+    return client.execute({"type": "Inspect", "payload": {"assurance": assurance}})
 
 @mcp.tool()
 def get_architecture() -> str:

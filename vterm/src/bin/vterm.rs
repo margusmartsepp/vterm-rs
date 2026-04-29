@@ -301,7 +301,7 @@ async fn handle_connection(
                         "status": format!("{:?}", res.result.status).to_lowercase(),
                         "id": res.result.id,
                     });
-                    let _ = writeln!(f, "{}", entry.to_string());
+                    let _ = writeln!(f, "{}", entry);
                 }
                 res
             }

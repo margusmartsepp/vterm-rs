@@ -1,3 +1,4 @@
+#![allow(clippy::too_many_arguments, clippy::useless_conversion)]
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use std::collections::HashMap;

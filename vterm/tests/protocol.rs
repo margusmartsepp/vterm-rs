@@ -101,7 +101,7 @@ fn shortcut_parser_handles_ctrl_c() {
 
 #[test]
 fn variant_names_are_stable() {
-    assert_eq!(SkillCommand::List {}.variant_name(), "list");
+    assert_eq!(SkillCommand::List { all: true }.variant_name(), "list");
     assert_eq!(
         SkillCommand::Spawn(SpawnArgs {
             title: "x".into(),

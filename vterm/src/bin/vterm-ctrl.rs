@@ -127,7 +127,6 @@ async fn main() -> Result<()> {
                 // Legacy streaming loop for human users
                 println!("Streaming output for terminal {}...", id);
                 let shm_name = format!("vterm-rs-shm-{}", id);
-                let mut last_content = String::new();
 
                 let mut shm = None;
                 for _ in 0..10 {

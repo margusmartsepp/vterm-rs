@@ -251,28 +251,25 @@ impl TerminalServer {
         let event_handle = tokio::spawn(async move {
             if let Some(token) = token_clone {
                 while let Ok(event) = events.recv().await {
-                    match event {
-                        vterm_rs::protocol::Event::Progress {
+                    if let vterm_rs::protocol::Event::Progress {
                             token: ev_token,
                             percentage,
                             msg,
                             ..
-                        } => {
-                            let token_str = serde_json::to_string(&token)
-                                .unwrap_or_default()
-                                .replace("\"", "");
-                            if ev_token == Some(token_str) {
-                                let _ = peer_clone
-                                    .notify_progress(rmcp::model::ProgressNotificationParam {
-                                        progress_token: token.clone(),
-                                        progress: percentage as f64,
-                                        total: Some(100.0),
-                                        message: Some(msg),
-                                    })
-                                    .await;
-                            }
+                        } = event {
+                        let token_str = serde_json::to_string(&token)
+                            .unwrap_or_default()
+                            .replace("\"", "");
+                        if ev_token == Some(token_str) {
+                            let _ = peer_clone
+                                .notify_progress(rmcp::model::ProgressNotificationParam {
+                                    progress_token: token.clone(),
+                                    progress: percentage as f64,
+                                    total: Some(100.0),
+                                    message: Some(msg),
+                                })
+                                .await;
                         }
-                        _ => {}
                     }
                 }
             }
@@ -343,28 +340,25 @@ impl TerminalServer {
         let event_handle = tokio::spawn(async move {
             if let Some(token) = token_clone {
                 while let Ok(event) = events.recv().await {
-                    match event {
-                        vterm_rs::protocol::Event::Progress {
+                    if let vterm_rs::protocol::Event::Progress {
                             token: ev_token,
                             percentage,
                             msg,
                             ..
-                        } => {
-                            let token_str = serde_json::to_string(&token)
-                                .unwrap_or_default()
-                                .replace("\"", "");
-                            if ev_token == Some(token_str) {
-                                let _ = peer_clone
-                                    .notify_progress(rmcp::model::ProgressNotificationParam {
-                                        progress_token: token.clone(),
-                                        progress: percentage as f64,
-                                        total: Some(100.0),
-                                        message: Some(msg),
-                                    })
-                                    .await;
-                            }
+                        } = event {
+                        let token_str = serde_json::to_string(&token)
+                            .unwrap_or_default()
+                            .replace("\"", "");
+                        if ev_token == Some(token_str) {
+                            let _ = peer_clone
+                                .notify_progress(rmcp::model::ProgressNotificationParam {
+                                    progress_token: token.clone(),
+                                    progress: percentage as f64,
+                                    total: Some(100.0),
+                                    message: Some(msg),
+                                })
+                                .await;
                         }
-                        _ => {}
                     }
                 }
             }
@@ -424,18 +418,19 @@ impl TerminalServer {
         use tokio::io::AsyncWriteExt;
         use tokio::process::Command;
 
-        let mut child =
-            match Command::new("evcxr")
-                .stdin(Stdio::piped())
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped())
-                .spawn()
-            {
-                Ok(c) => c,
-                Err(e) => return format!(
+        let mut child = match Command::new("evcxr")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+        {
+            Ok(c) => c,
+            Err(e) => {
+                return format!(
                     "Error: Failed to spawn evcxr. Ensure it is installed and in your PATH. ({e})"
-                ),
-            };
+                )
+            }
+        };
 
         let mut stdin = child.stdin.take().unwrap();
         let code = format!("{}\n:quit\n", args.0.code);

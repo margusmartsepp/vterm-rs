@@ -207,7 +207,7 @@ impl App {
         tracing::trace!(count = terminals.len(), ?owner, "listing terminals");
         terminals
             .iter()
-            .filter(|(_, o)| owner.map_or(true, |id| o.owner == id))
+            .filter(|(_, o)| owner.is_none_or(|id| o.owner == id))
             .map(|(id, o)| crate::protocol::TerminalInfo {
                 id: *id,
                 title: o.terminal.title(),

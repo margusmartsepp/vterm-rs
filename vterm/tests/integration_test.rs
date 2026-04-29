@@ -181,7 +181,7 @@ async fn test_supreme_orchestration() -> Result<()> {
 
     sleep(Duration::from_secs(4)).await;
 
-    send_request(&mut writer, 6, SkillCommand::List {}).await?;
+    send_request(&mut writer, 6, SkillCommand::List { all: false }).await?;
     let r_list = read_response(&mut buf_reader, 6).await?;
     let list_content = r_list.content.expect("List should have content");
     assert!(!list_content.contains(&new_id.to_string()));

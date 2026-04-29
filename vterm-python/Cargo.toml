@@ -1,6 +1,6 @@
 [package]
 name = "vterm-python"
-version = "0.7.20"
+version = "0.7.22"
 edition = "2021"
 description = "High-performance Python SDK for the vterm-rs PTY orchestrator"
 license = "MIT"

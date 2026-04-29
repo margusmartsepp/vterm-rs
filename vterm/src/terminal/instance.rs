@@ -9,8 +9,8 @@
 //! from the map and drops the `Arc`s) automatically kills the underlying PowerShell.
 
 use std::marker::PhantomData;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use parking_lot::Mutex;
@@ -20,15 +20,19 @@ use crate::Result;
 
 /// Sealed type-state markers. Downstream crates can read them but can't add new ones.
 pub mod state {
-    mod private { pub trait Sealed {} }
+    mod private {
+        pub trait Sealed {}
+    }
 
     pub trait State: private::Sealed {}
 
     pub struct Spawning;
-    impl private::Sealed for Spawning {} impl State for Spawning {}
+    impl private::Sealed for Spawning {}
+    impl State for Spawning {}
 
     pub struct Ready;
-    impl private::Sealed for Ready {} impl State for Ready {}
+    impl private::Sealed for Ready {}
+    impl State for Ready {}
 }
 pub use state::State;
 
@@ -69,21 +73,45 @@ pub struct Terminal<S: State = state::Ready> {
 }
 
 impl<S: State> Clone for Terminal<S> {
-    fn clone(&self) -> Self { Self { inner: Arc::clone(&self.inner), _state: PhantomData } }
+    fn clone(&self) -> Self {
+        Self {
+            inner: Arc::clone(&self.inner),
+            _state: PhantomData,
+        }
+    }
 }
 
 // Methods available in any state.
 impl<S: State> Terminal<S> {
-    pub fn id(&self) -> u32 { self.inner.id }
-    pub fn title(&self) -> String { self.inner.title.lock().clone() }
-    pub fn child_pid(&self) -> u32 { self.inner.child_pid }
-    pub fn line_count(&self) -> u32 { self.inner.line_count.load(Ordering::Relaxed) }
-    pub fn max_lines(&self) -> Option<u32> { *self.inner.max_lines.lock() }
-    pub fn max_duration(&self) -> Option<Duration> { *self.inner.max_duration.lock() }
-    pub fn spawn_time(&self) -> Instant { self.inner.spawn_time }
+    pub fn id(&self) -> u32 {
+        self.inner.id
+    }
+    pub fn title(&self) -> String {
+        self.inner.title.lock().clone()
+    }
+    pub fn child_pid(&self) -> u32 {
+        self.inner.child_pid
+    }
+    pub fn line_count(&self) -> u32 {
+        self.inner.line_count.load(Ordering::Relaxed)
+    }
+    pub fn max_lines(&self) -> Option<u32> {
+        *self.inner.max_lines.lock()
+    }
+    pub fn max_duration(&self) -> Option<Duration> {
+        *self.inner.max_duration.lock()
+    }
+    pub fn spawn_time(&self) -> Instant {
+        self.inner.spawn_time
+    }
 
     /// Re-brand a pooled terminal.
-    pub(crate) fn set_metadata(&self, title: String, max_lines: Option<u32>, timeout: Option<Duration>) {
+    pub(crate) fn set_metadata(
+        &self,
+        title: String,
+        max_lines: Option<u32>,
+        timeout: Option<Duration>,
+    ) {
         *self.inner.title.lock() = title;
         *self.inner.max_lines.lock() = max_lines;
         *self.inner.max_duration.lock() = timeout;
@@ -101,7 +129,9 @@ impl<S: State> Terminal<S> {
         crate::terminal::spawn_viewer_window(self.inner.id, &self.title());
         Ok(())
     }
-    pub(crate) fn raw_screen(&self) -> String { self.inner.parser.lock().screen().contents() }
+    pub(crate) fn raw_screen(&self) -> String {
+        self.inner.parser.lock().screen().contents()
+    }
 
     /// Subscribe to screen update notifications.
     pub fn subscribe(&self) -> tokio::sync::broadcast::Receiver<()> {
@@ -118,7 +148,7 @@ impl<S: State> Terminal<S> {
                 if !shm.check_bloom(pattern) {
                     return (false, true); // Definitive NO
                 }
-                // Bloom hit - could be false positive. 
+                // Bloom hit - could be false positive.
                 // Let's do a fast substring check on the SHM screen buffer if possible.
                 let screen = self.raw_screen();
                 if screen.contains(pattern) {
@@ -126,7 +156,7 @@ impl<S: State> Terminal<S> {
                 }
                 return (true, false); // Probabilistic YES (false positive in Bloom or stale)
             }
-            
+
             // For complex patterns, fallback to full screen search (but still fast since it's SHM)
             let screen = self.raw_screen();
             if screen.contains(pattern) {
@@ -140,14 +170,20 @@ impl<S: State> Terminal<S> {
 // Spawning-only methods.
 impl Terminal<state::Spawning> {
     pub(crate) fn new(inner: Arc<Inner>) -> Self {
-        Self { inner, _state: PhantomData }
+        Self {
+            inner,
+            _state: PhantomData,
+        }
     }
 
     /// Promote to `Ready`. The transition is the only public way to obtain a
     /// `Terminal<Ready>` from `Spawning` — meaning callers physically cannot read or
     /// write before the prompt has been observed.
     pub(crate) fn into_ready(self) -> Terminal<state::Ready> {
-        Terminal { inner: self.inner, _state: PhantomData }
+        Terminal {
+            inner: self.inner,
+            _state: PhantomData,
+        }
     }
 }
 
@@ -174,7 +210,7 @@ impl Terminal<state::Ready> {
         };
 
         let trimmed = content.trim_end().to_string();
-        
+
         if !history {
             *self.inner.last_content.lock() = trimmed.clone();
         }
@@ -186,7 +222,7 @@ impl Terminal<state::Ready> {
     pub fn read_diff(&self) -> String {
         let current = self.read_screen(false);
         let last = self.inner.last_content.lock().clone();
-        
+
         if current == last {
             return String::new();
         }
@@ -194,7 +230,7 @@ impl Terminal<state::Ready> {
         // Simple line-based diff
         let current_lines: Vec<&str> = current.lines().collect();
         let last_lines: Vec<&str> = last.lines().collect();
-        
+
         let mut diff = String::new();
         for (i, line) in current_lines.iter().enumerate() {
             if i >= last_lines.len() || *line != last_lines[i] {
@@ -202,14 +238,19 @@ impl Terminal<state::Ready> {
                 diff.push('\n');
             }
         }
-        
+
         *self.inner.last_content.lock() = current;
         diff.trim_end().to_string()
     }
 
     /// Cheap substring match against the rendered screen.
     pub fn matches(&self, pattern: &str) -> bool {
-        self.inner.parser.lock().screen().contents().contains(pattern)
+        self.inner
+            .parser
+            .lock()
+            .screen()
+            .contents()
+            .contains(pattern)
     }
 
     /// Returns (running, exit_code)
@@ -245,13 +286,11 @@ pub(crate) fn strip_ansi_and_normalize(raw: &str) -> String {
                     last_was_cr = false;
                 }
             }
-            1 => {
-                match c {
-                    '[' => state = 2,
-                    ']' => state = 3,
-                    _ => state = 0,
-                }
-            }
+            1 => match c {
+                '[' => state = 2,
+                ']' => state = 3,
+                _ => state = 0,
+            },
             2 => {
                 // CSI: Ends with a letter [a-zA-Z] or '@' (64)
                 if c.is_ascii_alphabetic() || c == '@' {
@@ -265,7 +304,7 @@ pub(crate) fn strip_ansi_and_normalize(raw: &str) -> String {
             }
             3 => {
                 if c == '\x07' || c == '\x1b' {
-                    // BEL or next ESC ends OSC. 
+                    // BEL or next ESC ends OSC.
                     state = 0;
                 }
             }

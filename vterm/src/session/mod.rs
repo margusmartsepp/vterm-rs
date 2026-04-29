@@ -5,8 +5,8 @@
 //! pipe error, panic — it tells the [`crate::App`] to reap every terminal owned by
 //! that connection. No zombie `powershell.exe` processes.
 
-use std::sync::Arc;
 use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::Arc;
 
 /// A monotonically-increasing identifier for one client connection.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -18,7 +18,9 @@ impl ConnectionId {
         Self(NEXT.fetch_add(1, Ordering::Relaxed))
     }
 
-    pub fn raw(self) -> u64 { self.0 }
+    pub fn raw(self) -> u64 {
+        self.0
+    }
 }
 
 impl Default for ConnectionId {
@@ -46,7 +48,9 @@ impl ConnectionGuard {
         Self { id, app }
     }
 
-    pub fn id(&self) -> ConnectionId { self.id }
+    pub fn id(&self) -> ConnectionId {
+        self.id
+    }
 }
 
 impl Drop for ConnectionGuard {

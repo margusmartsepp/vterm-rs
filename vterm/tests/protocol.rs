@@ -13,7 +13,10 @@ fn request_envelope_round_trip() {
     let json = r#"{"req_id":42,"type":"Wait","payload":{"timeout_ms":250}}"#;
     let req: Request = serde_json::from_str(json).unwrap();
     assert_eq!(req.req_id, Some(42));
-    assert!(matches!(req.command, SkillCommand::Wait { timeout_ms: 250 }));
+    assert!(matches!(
+        req.command,
+        SkillCommand::Wait { timeout_ms: 250 }
+    ));
 }
 
 #[test]
@@ -41,7 +44,9 @@ fn deeply_nested_batch_round_trip() {
         }
     }"#;
     let req: Request = serde_json::from_str(json).unwrap();
-    let SkillCommand::Batch(b) = req.command else { panic!("expected Batch") };
+    let SkillCommand::Batch(b) = req.command else {
+        panic!("expected Batch")
+    };
     assert_eq!(b.commands.len(), 3);
     assert_eq!(b.stop_on_error, Some(true));
     assert_eq!(b.visible, Some(false));
@@ -51,7 +56,10 @@ fn deeply_nested_batch_round_trip() {
 fn response_carries_req_id_back() {
     let r = Response {
         req_id: Some(99),
-        result: CommandResult { id: Some(1), ..CommandResult::default() },
+        result: CommandResult {
+            id: Some(1),
+            ..CommandResult::default()
+        },
     };
     let s = serde_json::to_string(&r).unwrap();
     assert!(s.contains(r#""req_id":99"#));
@@ -95,7 +103,11 @@ fn shortcut_parser_handles_ctrl_c() {
 fn variant_names_are_stable() {
     assert_eq!(SkillCommand::List {}.variant_name(), "list");
     assert_eq!(
-        SkillCommand::Spawn(SpawnArgs { title: "x".into(), ..SpawnArgs::default() }).variant_name(),
+        SkillCommand::Spawn(SpawnArgs {
+            title: "x".into(),
+            ..SpawnArgs::default()
+        })
+        .variant_name(),
         "spawn",
     );
     assert_eq!(
@@ -103,7 +115,10 @@ fn variant_names_are_stable() {
         "batch",
     );
     assert_eq!(
-        SkillCommand::Takeover { version: "1.0.0".into() }.variant_name(),
+        SkillCommand::Takeover {
+            version: "1.0.0".into()
+        }
+        .variant_name(),
         "takeover",
     );
 }

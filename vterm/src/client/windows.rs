@@ -1,7 +1,7 @@
+use crate::client::PIPE_NAME;
 use anyhow::Result;
 use tokio::net::windows::named_pipe::{ClientOptions, NamedPipeClient};
 use tokio::time::{sleep, Duration};
-use crate::client::PIPE_NAME;
 
 pub async fn try_connect() -> Result<NamedPipeClient> {
     for i in 0..10 {
@@ -16,10 +16,18 @@ pub async fn try_connect() -> Result<NamedPipeClient> {
                 .stdout(std::process::Stdio::null())
                 .stderr(std::process::Stdio::null())
                 .spawn();
-            
+
             if std::path::Path::new("Cargo.toml").exists() {
                 let _ = std::process::Command::new("cargo")
-                    .args(["run", "-p", "vterm-rs", "--bin", "vterm", "--", "--headless"])
+                    .args([
+                        "run",
+                        "-p",
+                        "vterm-rs",
+                        "--bin",
+                        "vterm",
+                        "--",
+                        "--headless",
+                    ])
                     .stdout(std::process::Stdio::null())
                     .stderr(std::process::Stdio::null())
                     .spawn();

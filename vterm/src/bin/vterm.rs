@@ -75,7 +75,9 @@ async fn main() -> Result<()> {
     let args = Args::parse();
 
     if args.graph {
-        let path = std::env::current_dir()?.join("graphify-out").join("graph.json");
+        let path = std::env::current_dir()?
+            .join("graphify-out")
+            .join("graph.json");
         if path.exists() {
             println!("{}", path.display());
             return Ok(());
@@ -96,7 +98,7 @@ async fn main() -> Result<()> {
         .default_visible(!args.headless)
         .prompt_regex(&args.prompt_regex)
         .max_terminals(args.max_terminals);
-    
+
     if let Some(m) = args.max_mem_mb {
         builder = builder.max_mem_mb(m);
     }
@@ -116,9 +118,9 @@ async fn main() -> Result<()> {
 
 fn app_default_visible(headless: bool, visible: bool) -> &'static str {
     match (headless, visible) {
-        (true, _)  => "false (--headless)",
-        (_, true)  => "true (--visible)",
-        _          => "true (default)",
+        (true, _) => "false (--headless)",
+        (_, true) => "true (--visible)",
+        _ => "true (default)",
     }
 }
 
@@ -144,13 +146,17 @@ async fn accept_loop(app: Arc<App>) -> Result<()> {
     loop {
         let mut opts = ServerOptions::new();
         opts.first_pipe_instance(first);
-        
+
         let server = match opts.create(PIPE_NAME) {
             Ok(s) => {
                 first = false;
                 s
             }
-            Err(e) if (e.kind() == std::io::ErrorKind::AlreadyExists || e.raw_os_error() == Some(5)) && first => {
+            Err(e)
+                if (e.kind() == std::io::ErrorKind::AlreadyExists
+                    || e.raw_os_error() == Some(5))
+                    && first =>
+            {
                 tracing::info!("pipe already bound (os error 5), attempting takeover...");
                 if let Err(te) = attempt_takeover().await {
                     anyhow::bail!("takeover failed: {te}");
@@ -169,7 +175,7 @@ async fn accept_loop(app: Arc<App>) -> Result<()> {
                     tracing::warn!(error = %e, "accept failed");
                     continue;
                 }
-                
+
                 let app = Arc::clone(&app);
                 let shutdown_tx = shutdown_tx.clone();
                 tokio::spawn(async move {
@@ -194,17 +200,19 @@ async fn attempt_takeover() -> Result<()> {
     let client = ClientOptions::new()
         .open(PIPE_NAME)
         .context("failed to connect for takeover")?;
-    
+
     let (reader, mut writer) = tokio::io::split(client);
     let mut br = BufReader::new(reader);
 
     let req = Request {
         req_id: Some(999),
         progress_token: None,
-        command: SkillCommand::Takeover { version: env!("CARGO_PKG_VERSION").into() },
+        command: SkillCommand::Takeover {
+            version: env!("CARGO_PKG_VERSION").into(),
+        },
     };
     let json = serde_json::to_string(&req)?;
-    
+
     writer.write_all(json.as_bytes()).await?;
     writer.write_all(b"\n").await?;
     writer.flush().await?;
@@ -227,9 +235,9 @@ async fn accept_loop(_app: Arc<App>) -> Result<()> {
 
 #[cfg(windows)]
 async fn handle_connection(
-    app: Arc<App>, 
-    conn: NamedPipeServer, 
-    shutdown_tx: tokio::sync::watch::Sender<bool>
+    app: Arc<App>,
+    conn: NamedPipeServer,
+    shutdown_tx: tokio::sync::watch::Sender<bool>,
 ) -> Result<()> {
     let guard = ConnectionGuard::new(Arc::clone(&app));
     let owner = guard.id();
@@ -267,7 +275,7 @@ async fn handle_connection(
             Ok(req) => {
                 let variant = req.command.variant_name();
                 let started = std::time::Instant::now();
-                
+
                 let res = match svc.ready().await {
                     Ok(ready) => match ready.call(req).await {
                         Ok(mut r) => {
@@ -280,7 +288,11 @@ async fn handle_connection(
                 };
 
                 // Persist metrics
-                if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open("vterm_metrics.jsonl") {
+                if let Ok(mut f) = std::fs::OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open("vterm_metrics.jsonl")
+                {
                     use std::io::Write as _;
                     let entry = serde_json::json!({
                         "ts": chrono::Utc::now().to_rfc3339(),
@@ -300,7 +312,8 @@ async fn handle_connection(
         };
 
         let is_takeover_accepted = if let Ok(req) = serde_json::from_str::<Request>(raw) {
-            req.command.variant_name() == "takeover" && response.result.content == Some("takeover_accepted".into())
+            req.command.variant_name() == "takeover"
+                && response.result.content == Some("takeover_accepted".into())
         } else {
             false
         };
@@ -343,7 +356,9 @@ async fn run_client(id: u32) -> Result<()> {
         let mut stdout = std::io::stdout();
         let mut buf = [0u8; 8192];
         while let Ok(n) = pipe_reader.read(&mut buf).await {
-            if n == 0 { break; }
+            if n == 0 {
+                break;
+            }
             let _ = stdout.write_all(&buf[..n]);
             let _ = stdout.flush();
         }
@@ -352,8 +367,12 @@ async fn run_client(id: u32) -> Result<()> {
     let mut buf = [0u8; 1024];
     let mut stdin = tokio::io::stdin();
     while let Ok(n) = stdin.read(&mut buf).await {
-        if n == 0 { break; }
-        if pipe_writer.write_all(&buf[..n]).await.is_err() { break; }
+        if n == 0 {
+            break;
+        }
+        if pipe_writer.write_all(&buf[..n]).await.is_err() {
+            break;
+        }
         let _ = pipe_writer.flush().await;
     }
 
@@ -372,13 +391,13 @@ async fn run_skill(variant: String, payload: Option<String>) -> Result<()> {
     let client = ClientOptions::new()
         .open(PIPE_NAME)
         .context("failed to connect to orchestrator")?;
-    
+
     let (reader, mut writer) = tokio::io::split(client);
     let mut br = BufReader::new(reader);
 
     let raw_payload = payload.unwrap_or_else(|| "{}".to_string());
     let json = format!(r#"{{"type":"{}","payload":{}}}"#, variant, raw_payload);
-    
+
     writer.write_all(json.as_bytes()).await?;
     writer.write_all(b"\n").await?;
     writer.flush().await?;

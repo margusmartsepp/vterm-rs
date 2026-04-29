@@ -4,12 +4,12 @@
 //! `GetWindowThreadProcessId` — robust against shell title changes (a frequent v0.5
 //! bug source). Non-Windows targets compile to a stub that returns a typed error.
 
-#[cfg(windows)]
-mod windows;
 #[cfg(not(windows))]
 mod stub;
-
 #[cfg(windows)]
-pub use self::windows::{control, set_title, show};
+mod windows;
+
 #[cfg(not(windows))]
 pub use self::stub::{control, set_title, show};
+#[cfg(windows)]
+pub use self::windows::{control, set_title, show};

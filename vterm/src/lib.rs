@@ -11,9 +11,9 @@ pub mod window;
 
 pub use app::App;
 pub use client::OrchestratorClient;
-pub use session::ConnectionGuard;
-pub use protocol::{Request, Response, SkillCommand, CommandResult, SpawnArgs, BatchArgs, Status};
 pub use error::{Error, Result};
+pub use protocol::{BatchArgs, CommandResult, Request, Response, SkillCommand, SpawnArgs, Status};
+pub use session::ConnectionGuard;
 
 /// Alias for [`Request`] to keep compatibility with older test harnesses.
 pub type SkillRequest = Request;

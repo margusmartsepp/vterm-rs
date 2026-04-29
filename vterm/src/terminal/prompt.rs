@@ -9,7 +9,7 @@ use std::time::{Duration, Instant};
 
 use regex::Regex;
 
-use super::{Terminal, state};
+use super::{state, Terminal};
 use crate::{Error, Result};
 
 pub async fn wait(
@@ -25,9 +25,12 @@ pub async fn wait(
             tracing::info!(id = spawning.id(), "prompt found");
             return Ok(spawning.into_ready());
         }
-        
+
         // Wait for next screen update or a short timeout as fallback
         let _ = tokio::time::timeout(Duration::from_millis(50), rx.recv()).await;
     }
-    Err(Error::Timeout { what: "prompt", ms: deadline.as_millis() as u64 })
+    Err(Error::Timeout {
+        what: "prompt",
+        ms: deadline.as_millis() as u64,
+    })
 }

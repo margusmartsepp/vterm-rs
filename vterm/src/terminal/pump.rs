@@ -8,8 +8,8 @@
 
 use std::fs::OpenOptions;
 use std::io::{Read, Write};
-use std::sync::Arc;
 use std::sync::atomic::Ordering;
+use std::sync::Arc;
 
 use parking_lot::Mutex;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -23,11 +23,7 @@ use super::Inner;
 
 /// Start the pump for a terminal. Spawns one OS thread (the pump) and one tokio task
 /// (the viewer drain).
-pub fn start(
-    inner: Arc<Inner>,
-    reader: Box<dyn Read + Send>,
-    visible_viewer: bool,
-) {
+pub fn start(inner: Arc<Inner>, reader: Box<dyn Read + Send>, visible_viewer: bool) {
     let (tx, rx) = mpsc::channel::<Vec<u8>>(65536); // Large buffer to avoid deadlocks during slow viewer startup
 
     let id = inner.id;
@@ -50,11 +46,7 @@ pub fn start(
     }
 }
 
-fn pump_loop(
-    inner: Arc<Inner>,
-    mut reader: Box<dyn Read + Send>,
-    tx: mpsc::Sender<Vec<u8>>,
-) {
+fn pump_loop(inner: Arc<Inner>, mut reader: Box<dyn Read + Send>, tx: mpsc::Sender<Vec<u8>>) {
     let id = inner.id;
     let parser = Arc::clone(&inner.parser);
     let writer = Arc::clone(&inner.writer);
@@ -62,13 +54,16 @@ fn pump_loop(
     let notifier = inner.notifier.clone();
 
     let mut log = OpenOptions::new()
-        .create(true).append(true)
+        .create(true)
+        .append(true)
         .open(format!("vterm-rs_{id}.log"))
         .ok();
 
     let mut buf = [0u8; 8192];
     while let Ok(n) = reader.read(&mut buf) {
-        if n == 0 { break; }
+        if n == 0 {
+            break;
+        }
         let chunk = &buf[..n];
 
         // Process in a block to ensure mutexes are dropped before potential blocking I/O
@@ -97,7 +92,7 @@ fn pump_loop(
             if let Some(shm) = &inner.shm {
                 let screen = parser.lock().screen().clone();
                 let contents = screen.contents();
-                
+
                 // 1. Detect screen clear (heuristic: content size dropped significantly or is empty)
                 if contents.trim().is_empty() {
                     shm.clear_bloom();
@@ -134,7 +129,9 @@ fn pump_loop(
 }
 
 fn memchr_subseq(haystack: &[u8], needle: &[u8]) -> bool {
-    if needle.is_empty() { return true; }
+    if needle.is_empty() {
+        return true;
+    }
     haystack.windows(needle.len()).any(|w| w == needle)
 }
 
@@ -147,10 +144,13 @@ async fn viewer_loop(
     let pipe_name = format!(r"\\.\pipe\vterm-rs-client-{id}");
     let server = match named_pipe::ServerOptions::new()
         .first_pipe_instance(true)
-        .create(&pipe_name) 
+        .create(&pipe_name)
     {
         Ok(s) => s,
-        Err(e) => { tracing::error!(id, error = %e, "pipe create failed"); return; }
+        Err(e) => {
+            tracing::error!(id, error = %e, "pipe create failed");
+            return;
+        }
     };
 
     tracing::debug!(id, "viewer_loop waiting for connection on {pipe_name}");
@@ -160,11 +160,13 @@ async fn viewer_loop(
     }
 
     let (mut client_reader, mut client_writer) = tokio::io::split(server);
-    
+
     // Pump from PTY to viewer
     let to_viewer = tokio::spawn(async move {
         while let Some(chunk) = rx.recv().await {
-            if client_writer.write_all(&chunk).await.is_err() { break; }
+            if client_writer.write_all(&chunk).await.is_err() {
+                break;
+            }
             let _ = client_writer.flush().await;
         }
     });
@@ -172,7 +174,9 @@ async fn viewer_loop(
     // Pump from viewer to PTY
     let mut buf = [0u8; 1024];
     while let Ok(n) = client_reader.read(&mut buf).await {
-        if n == 0 { break; }
+        if n == 0 {
+            break;
+        }
         let mut w = writer.lock();
         let _ = w.write_all(&buf[..n]);
         let _ = w.flush();

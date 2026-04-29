@@ -1,8 +1,8 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use comfy_table::{Table, Color, Attribute, Cell};
-use vterm_rs::OrchestratorClient;
+use comfy_table::{Attribute, Cell, Color, Table};
 use vterm_protocol::{SkillCommand, SpawnArgs};
+use vterm_rs::OrchestratorClient;
 
 #[derive(Parser)]
 #[command(name = "vterm-ctrl")]
@@ -85,25 +85,38 @@ async fn main() -> Result<()> {
     let client = OrchestratorClient::connect().await?;
 
     match cli.command {
-        Commands::Run { cmd, title, max_lines, timeout, keep, semantic, json } => {
-            let res = client.execute(SkillCommand::Spawn(SpawnArgs {
-                title: title.unwrap_or_else(|| cmd.split_whitespace().next().unwrap_or("run").into()),
-                command: Some(cmd.clone()),
-                max_lines: Some(max_lines),
-                timeout_ms: Some(timeout),
-                visible: Some(false),
-                wait: Some(true), // We always wait for 'Run' now at the orchestrator level
-                semantic: Some(semantic),
-                ..Default::default()
-            })).await?;
+        Commands::Run {
+            cmd,
+            title,
+            max_lines,
+            timeout,
+            keep,
+            semantic,
+            json,
+        } => {
+            let res = client
+                .execute(SkillCommand::Spawn(SpawnArgs {
+                    title: title
+                        .unwrap_or_else(|| cmd.split_whitespace().next().unwrap_or("run").into()),
+                    command: Some(cmd.clone()),
+                    max_lines: Some(max_lines),
+                    timeout_ms: Some(timeout),
+                    visible: Some(false),
+                    wait: Some(true), // We always wait for 'Run' now at the orchestrator level
+                    semantic: Some(semantic),
+                    ..Default::default()
+                }))
+                .await?;
 
             if json {
                 println!("{}", serde_json::to_string_pretty(&res)?);
                 return Ok(());
             }
 
-            let id = res.id.ok_or_else(|| anyhow::anyhow!("Failed to get terminal ID"))?;
-            
+            let id = res
+                .id
+                .ok_or_else(|| anyhow::anyhow!("Failed to get terminal ID"))?;
+
             if semantic {
                 if let Some(summary) = res.summary {
                     println!("\n--- SEMANTIC SUMMARY ---");
@@ -115,10 +128,12 @@ async fn main() -> Result<()> {
                 println!("Streaming output for terminal {}...", id);
                 let shm_name = format!("vterm-rs-shm-{}", id);
                 let mut last_content = String::new();
-                
+
                 let mut shm = None;
                 for _ in 0..10 {
-                    if let Ok(s) = vterm_rs::terminal::shm::ShmBuffer::open_existing(&shm_name, 4096) {
+                    if let Ok(s) =
+                        vterm_rs::terminal::shm::ShmBuffer::open_existing(&shm_name, 4096)
+                    {
                         shm = Some(s);
                         break;
                     }
@@ -131,9 +146,17 @@ async fn main() -> Result<()> {
                 println!("{}", shm.read_screen());
             }
 
-            println!("\nProcess exited with code: {:?}", res.exit_code.unwrap_or(-1));
+            println!(
+                "\nProcess exited with code: {:?}",
+                res.exit_code.unwrap_or(-1)
+            );
             if !keep {
-                client.execute(SkillCommand::ScreenClose { id: Some(id), target: "terminal".into() }).await?;
+                client
+                    .execute(SkillCommand::ScreenClose {
+                        id: Some(id),
+                        target: "terminal".into(),
+                    })
+                    .await?;
             }
         }
 
@@ -141,13 +164,19 @@ async fn main() -> Result<()> {
             let res = client.execute(SkillCommand::List { all: true }).await?;
             if let Some(content) = res.content {
                 let list: Vec<vterm_protocol::TerminalInfo> = serde_json::from_str(&content)?;
-                
+
                 let mut table = Table::new();
                 table.set_header(vec![
-                    Cell::new("ID").add_attribute(Attribute::Bold).fg(Color::Cyan),
+                    Cell::new("ID")
+                        .add_attribute(Attribute::Bold)
+                        .fg(Color::Cyan),
                     Cell::new("Title").add_attribute(Attribute::Bold),
-                    Cell::new("PID").add_attribute(Attribute::Bold).fg(Color::Yellow),
-                    Cell::new("Owner").add_attribute(Attribute::Bold).fg(Color::DarkGrey),
+                    Cell::new("PID")
+                        .add_attribute(Attribute::Bold)
+                        .fg(Color::Yellow),
+                    Cell::new("Owner")
+                        .add_attribute(Attribute::Bold)
+                        .fg(Color::DarkGrey),
                 ]);
 
                 for entry in list {
@@ -163,23 +192,41 @@ async fn main() -> Result<()> {
         }
 
         Commands::Spawn { title, cmd } => {
-            let res = client.execute(SkillCommand::Spawn(SpawnArgs {
-                title: title.unwrap_or_else(|| "cli-spawned".into()),
-                command: cmd,
-                ..Default::default()
-            })).await?;
+            let res = client
+                .execute(SkillCommand::Spawn(SpawnArgs {
+                    title: title.unwrap_or_else(|| "cli-spawned".into()),
+                    command: cmd,
+                    ..Default::default()
+                }))
+                .await?;
             println!("Terminal spawned successfully. ID: {}", res.id.unwrap_or(0));
-            println!("Timings: spawn={}ms, ready={}ms", res.spawn_ms.unwrap_or(0), res.ready_ms.unwrap_or(0));
+            println!(
+                "Timings: spawn={}ms, ready={}ms",
+                res.spawn_ms.unwrap_or(0),
+                res.ready_ms.unwrap_or(0)
+            );
         }
 
         Commands::Write { id, text } => {
-            client.execute(SkillCommand::ScreenWrite { id, text }).await?;
+            client
+                .execute(SkillCommand::ScreenWrite { id, text })
+                .await?;
             println!("Input sent to terminal {}", id);
         }
 
-        Commands::Wait { id, pattern, timeout } => {
+        Commands::Wait {
+            id,
+            pattern,
+            timeout,
+        } => {
             println!("Waiting for pattern '{}' in terminal {}...", pattern, id);
-            let res = client.execute(SkillCommand::WaitUntil { id, pattern, timeout_ms: timeout }).await?;
+            let res = client
+                .execute(SkillCommand::WaitUntil {
+                    id,
+                    pattern,
+                    timeout_ms: timeout,
+                })
+                .await?;
             println!("Pattern matched in {}ms.", res.duration_ms);
         }
 
@@ -190,7 +237,11 @@ async fn main() -> Result<()> {
                     println!("{}", shm.read_screen());
                 }
                 Err(e) => {
-                    anyhow::bail!("Failed to open SHM for terminal {}: {}. Is it running?", id, e);
+                    anyhow::bail!(
+                        "Failed to open SHM for terminal {}: {}. Is it running?",
+                        id,
+                        e
+                    );
                 }
             }
         }
@@ -205,7 +256,9 @@ async fn main() -> Result<()> {
         }
 
         Commands::Top => {
-            let res = client.execute(SkillCommand::Inspect { assurance: true }).await?;
+            let res = client
+                .execute(SkillCommand::Inspect { assurance: true })
+                .await?;
             println!("Orchestrator Resource Health:");
             if let Some(mem) = res.mem_usage_mb {
                 println!("  Memory Usage: {} MB", mem);

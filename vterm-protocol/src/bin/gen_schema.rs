@@ -1,6 +1,6 @@
-use vterm_protocol::{Request, Response, HandshakeRequest, HandshakeResponse};
 use schemars::schema_for;
 use std::fs;
+use vterm_protocol::{HandshakeRequest, HandshakeResponse, Request, Response};
 
 fn main() {
     let schema_req = schema_for!(Request);
@@ -15,6 +15,10 @@ fn main() {
         "handshake_response": schema_hs_res,
     });
 
-    fs::write("docs/schema.json", serde_json::to_string_pretty(&output).unwrap()).unwrap();
+    fs::write(
+        "docs/schema.json",
+        serde_json::to_string_pretty(&output).unwrap(),
+    )
+    .unwrap();
     println!("Schema written to docs/schema.json");
 }

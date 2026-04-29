@@ -14,10 +14,10 @@ use std::time::{Duration, Instant};
 
 use tower::Service;
 
-use tokio::sync::mpsc;
-use crate::App;
-use crate::protocol::{BatchArgs, CommandResult, Request, SkillCommand, Status, Event};
+use crate::protocol::{BatchArgs, CommandResult, Event, Request, SkillCommand, Status};
 use crate::session::ConnectionId;
+use crate::App;
+use tokio::sync::mpsc;
 
 #[derive(Clone)]
 pub struct Dispatcher {
@@ -28,14 +28,19 @@ pub struct Dispatcher {
 
 impl Dispatcher {
     pub fn new(app: Arc<App>, owner: ConnectionId, event_tx: mpsc::UnboundedSender<Event>) -> Self {
-        Self { app, owner, event_tx }
+        Self {
+            app,
+            owner,
+            event_tx,
+        }
     }
 }
 
 impl Service<Request> for Dispatcher {
     type Response = CommandResult;
     type Error = Infallible;
-    type Future = Pin<Box<dyn Future<Output = std::result::Result<CommandResult, Infallible>> + Send>>;
+    type Future =
+        Pin<Box<dyn Future<Output = std::result::Result<CommandResult, Infallible>> + Send>>;
 
     fn poll_ready(&mut self, _: &mut Context<'_>) -> Poll<std::result::Result<(), Infallible>> {
         Poll::Ready(Ok(()))
@@ -46,15 +51,23 @@ impl Service<Request> for Dispatcher {
         let owner = self.owner;
         let event_tx = self.event_tx.clone();
         Box::pin(async move {
-            let res: crate::Result<CommandResult> = execute(app, owner, req.command, req.req_id, req.progress_token, event_tx).await;
+            let res: crate::Result<CommandResult> = execute(
+                app,
+                owner,
+                req.command,
+                req.req_id,
+                req.progress_token,
+                event_tx,
+            )
+            .await;
             Ok(res.unwrap_or_else(|e| CommandResult::err(e.to_string())))
         })
     }
 }
 
 async fn execute(
-    app: Arc<App>, 
-    owner: ConnectionId, 
+    app: Arc<App>,
+    owner: ConnectionId,
     cmd: SkillCommand,
     req_id: Option<u64>,
     progress_token: Option<String>,
@@ -100,7 +113,7 @@ async fn execute(
                         r.error = Some("timeout waiting for completion".into());
                         break;
                     }
-                    
+
                     // Wait for next terminal event or timeout
                     let _ = tokio::time::timeout(Duration::from_millis(100), rx.recv()).await;
                 }
@@ -112,7 +125,12 @@ async fn execute(
                 // ── Post-process Spawn: bundle extraction if requested ──────────────────────
                 if let Some(pattern) = extract_pattern {
                     let history = term.read_screen(true);
-                    tracing::info!(id, history_len = history.len(), pattern, "performing bundled extraction");
+                    tracing::info!(
+                        id,
+                        history_len = history.len(),
+                        pattern,
+                        "performing bundled extraction"
+                    );
                     r.extracted = Some(perform_extraction(&history, &pattern)?);
                 }
             }
@@ -153,7 +171,11 @@ async fn execute(
 
         Wait { timeout_ms } => tokio::time::sleep(Duration::from_millis(timeout_ms)).await,
 
-        WaitUntil { id, pattern, timeout_ms } => {
+        WaitUntil {
+            id,
+            pattern,
+            timeout_ms,
+        } => {
             let term = app.terminal(owner, id)?;
             let original_title = term.title();
             let _ = term.set_title(&format!("[AI WAITING: {}] {}", pattern, original_title));
@@ -162,10 +184,13 @@ async fn execute(
             let started = Instant::now();
             let deadline = Duration::from_millis(timeout_ms);
             let mut rx = term.subscribe();
-            
+
             let res = loop {
                 if started.elapsed() >= deadline {
-                    break Err(crate::Error::Timeout { what: "wait_until", ms: timeout_ms });
+                    break Err(crate::Error::Timeout {
+                        what: "wait_until",
+                        ms: timeout_ms,
+                    });
                 }
                 if term.matches(&pattern) {
                     break Ok(r);
@@ -188,17 +213,24 @@ async fn execute(
             return res;
         }
 
-        WaitUntilStable { id, stable_ms, timeout_ms } => {
+        WaitUntilStable {
+            id,
+            stable_ms,
+            timeout_ms,
+        } => {
             let term = app.terminal(owner, id)?;
             r.id = Some(id);
             let started = Instant::now();
             let deadline = Duration::from_millis(timeout_ms);
             let mut rx = term.subscribe();
             let mut last_change = Instant::now();
-            
+
             loop {
                 if started.elapsed() >= deadline {
-                    return Err(crate::Error::Timeout { what: "wait_until_stable", ms: timeout_ms });
+                    return Err(crate::Error::Timeout {
+                        what: "wait_until_stable",
+                        ms: timeout_ms,
+                    });
                 }
 
                 if let Some(token) = &progress_token {
@@ -207,10 +239,13 @@ async fn execute(
                         req_id,
                         token: Some(token.clone()),
                         percentage: (elapsed / timeout_ms as f64 * 100.0).min(99.0) as f32,
-                        msg: format!("waiting for stability ({}ms stable)...", last_change.elapsed().as_millis()),
+                        msg: format!(
+                            "waiting for stability ({}ms stable)...",
+                            last_change.elapsed().as_millis()
+                        ),
                     });
                 }
-                
+
                 // If no changes for stable_ms, we are stable.
                 if last_change.elapsed() >= Duration::from_millis(stable_ms) {
                     r.content = Some(term.read_screen(false));
@@ -218,7 +253,8 @@ async fn execute(
                 }
 
                 // Wait for a change or the next stability check
-                if let Ok(Ok(_)) = tokio::time::timeout(Duration::from_millis(200), rx.recv()).await {
+                if let Ok(Ok(_)) = tokio::time::timeout(Duration::from_millis(200), rx.recv()).await
+                {
                     last_change = Instant::now();
                 }
             }
@@ -249,7 +285,7 @@ async fn execute(
                 use sysinfo::System;
                 let mut sys = System::new_all();
                 sys.refresh_all();
-                
+
                 let pid = sysinfo::Pid::from_u32(std::process::id());
                 if let Some(proc) = sys.process(pid) {
                     r.mem_usage_mb = Some(proc.memory() / 1024 / 1024);
@@ -284,47 +320,68 @@ async fn execute(
             }
         }
 
-        Batch(BatchArgs { commands, stop_on_error, parallel, .. }) => {
+        Batch(BatchArgs {
+            commands,
+            stop_on_error,
+            parallel,
+            ..
+        }) => {
             let total = commands.len();
             let mut subs = Vec::with_capacity(total);
             let stop = stop_on_error.unwrap_or(false);
             let is_parallel = parallel.unwrap_or(false);
 
             if is_parallel {
-                let futures: Vec<_> = commands.into_iter().enumerate().map(|(idx, sub_cmd)| {
-                    let app = Arc::clone(&app);
-                    let event_tx = event_tx.clone();
-                    let progress_token = progress_token.clone();
-                    Box::pin(async move {
-                        let started = Instant::now();
-                        let mut sub_r = match execute(app, owner, sub_cmd, req_id, None, event_tx.clone()).await {
-                            Ok(r) => r,
-                            Err(e) => CommandResult::err(e.to_string()),
-                        };
-                        sub_r.duration_ms = started.elapsed().as_millis() as u64;
-                        
-                        let pct = (idx + 1) as f32 / total as f32 * 100.0;
-                        let _ = event_tx.send(Event::Progress {
-                            req_id,
-                            token: progress_token,
-                            percentage: pct,
-                            msg: format!("Completed {}/{}", idx + 1, total),
-                        });
+                let futures: Vec<_> = commands
+                    .into_iter()
+                    .enumerate()
+                    .map(|(idx, sub_cmd)| {
+                        let app = Arc::clone(&app);
+                        let event_tx = event_tx.clone();
+                        let progress_token = progress_token.clone();
+                        Box::pin(async move {
+                            let started = Instant::now();
+                            let mut sub_r =
+                                match execute(app, owner, sub_cmd, req_id, None, event_tx.clone())
+                                    .await
+                                {
+                                    Ok(r) => r,
+                                    Err(e) => CommandResult::err(e.to_string()),
+                                };
+                            sub_r.duration_ms = started.elapsed().as_millis() as u64;
 
-                        sub_r
+                            let pct = (idx + 1) as f32 / total as f32 * 100.0;
+                            let _ = event_tx.send(Event::Progress {
+                                req_id,
+                                token: progress_token,
+                                percentage: pct,
+                                msg: format!("Completed {}/{}", idx + 1, total),
+                            });
+
+                            sub_r
+                        })
                     })
-                }).collect();
+                    .collect();
 
                 subs = futures_util::future::join_all(futures).await;
             } else {
                 for (idx, sub_cmd) in commands.into_iter().enumerate() {
                     let started = Instant::now();
-                    let mut sub_r = match Box::pin(execute(Arc::clone(&app), owner, sub_cmd, req_id, None, event_tx.clone())).await {
+                    let mut sub_r = match Box::pin(execute(
+                        Arc::clone(&app),
+                        owner,
+                        sub_cmd,
+                        req_id,
+                        None,
+                        event_tx.clone(),
+                    ))
+                    .await
+                    {
                         Ok(r) => r,
                         Err(e) => CommandResult::err(e.to_string()),
                     };
                     sub_r.duration_ms = started.elapsed().as_millis() as u64;
-                    
+
                     let pct = (idx + 1) as f32 / total as f32 * 100.0;
                     let _ = event_tx.send(Event::Progress {
                         req_id,
@@ -335,7 +392,9 @@ async fn execute(
 
                     let failed = sub_r.status == Status::Error;
                     subs.push(sub_r);
-                    if failed && stop { break; }
+                    if failed && stop {
+                        break;
+                    }
                 }
             }
 
@@ -347,7 +406,11 @@ async fn execute(
             r.sub_results = Some(subs);
         }
 
-        Extract { id, pattern, history } => {
+        Extract {
+            id,
+            pattern,
+            history,
+        } => {
             let term = app.terminal(owner, id)?;
             let content = term.read_screen(history);
             r.id = Some(id);
@@ -360,9 +423,13 @@ async fn execute(
     Ok(r)
 }
 
-fn perform_extraction(content: &str, pattern: &str) -> crate::Result<Vec<std::collections::HashMap<String, String>>> {
-    let re = regex::Regex::new(pattern).map_err(|e| crate::Error::Protocol(format!("invalid regex: {e}")))?;
-    
+fn perform_extraction(
+    content: &str,
+    pattern: &str,
+) -> crate::Result<Vec<std::collections::HashMap<String, String>>> {
+    let re = regex::Regex::new(pattern)
+        .map_err(|e| crate::Error::Protocol(format!("invalid regex: {e}")))?;
+
     let mut results = Vec::new();
     for caps in re.captures_iter(content) {
         let mut map = std::collections::HashMap::new();
@@ -378,17 +445,25 @@ fn perform_extraction(content: &str, pattern: &str) -> crate::Result<Vec<std::co
     Ok(results)
 }
 
-fn distill_semantic_summary(term: &crate::terminal::Terminal<crate::terminal::state::Ready>) -> String {
+fn distill_semantic_summary(
+    term: &crate::terminal::Terminal<crate::terminal::state::Ready>,
+) -> String {
     let content = term.read_screen(true);
     let lines: Vec<&str> = content.lines().collect();
-    
+
     if lines.is_empty() {
         return "empty output".into();
     }
 
     // Patterns for interesting things
     let error_patterns = ["error:", "failed:", "panic!", "exception", "err:"];
-    let success_patterns = ["finished", "success", "completed", "done", "ping statistics"];
+    let success_patterns = [
+        "finished",
+        "success",
+        "completed",
+        "done",
+        "ping statistics",
+    ];
 
     let mut highlights = Vec::new();
 

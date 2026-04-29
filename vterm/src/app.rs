@@ -6,17 +6,17 @@
 //! every operation here is microseconds-bounded.
 
 use std::collections::{HashMap, VecDeque};
-use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::Arc;
 
 use parking_lot::Mutex;
 use regex::Regex;
 use tokio::sync::mpsc;
 
-use crate::{Error, Result};
 use crate::protocol::SpawnArgs;
 use crate::session::ConnectionId;
-use crate::terminal::{Terminal, state::Ready};
+use crate::terminal::{state::Ready, Terminal};
+use crate::{Error, Result};
 
 pub struct App {
     terminals: Mutex<HashMap<u32, Owned>>,
@@ -36,7 +36,9 @@ struct Owned {
 }
 
 impl App {
-    pub fn builder() -> AppBuilder { AppBuilder::default() }
+    pub fn builder() -> AppBuilder {
+        AppBuilder::default()
+    }
 
     /// Spawn a fresh terminal under `owner`. Returns the (terminal_id, spawn_ms, ready_ms).
     pub async fn spawn(&self, owner: ConnectionId, args: SpawnArgs) -> Result<(u32, u64, u64)> {
@@ -44,7 +46,8 @@ impl App {
         let current_count = self.terminals.lock().len() as u32;
         if current_count >= self.max_terminals {
             return Err(Error::SystemSaturation(format!(
-                "max terminals reached: {}/{}", current_count, self.max_terminals
+                "max terminals reached: {}/{}",
+                current_count, self.max_terminals
             )));
         }
 
@@ -57,7 +60,8 @@ impl App {
                 let current_mb = proc.memory() / 1024 / 1024;
                 if current_mb >= max_mb {
                     return Err(Error::SystemSaturation(format!(
-                        "memory limit reached: {}MB/{}MB", current_mb, max_mb
+                        "memory limit reached: {}MB/{}MB",
+                        current_mb, max_mb
                     )));
                 }
             }
@@ -67,7 +71,7 @@ impl App {
         let can_pool = args.env.is_none() && args.cols.is_none() && args.rows.is_none();
         let pool_size = self.pool.lock().len();
         tracing::info!(can_pool, pool_size, ?args.env, ?args.cols, ?args.rows, "pooling check");
-        
+
         if can_pool {
             let pooled = self.pool.lock().pop_front();
             if let Some(term) = pooled {
@@ -76,9 +80,9 @@ impl App {
                 term.set_metadata(
                     format!("Terminal {id}: {}", args.title),
                     args.max_lines,
-                    args.timeout_ms.map(std::time::Duration::from_millis)
+                    args.timeout_ms.map(std::time::Duration::from_millis),
                 );
-                
+
                 // Speculative Injection: If a command is provided, write it immediately
                 if let Some(cmd) = &args.command {
                     let mut payload = cmd.clone();
@@ -90,7 +94,13 @@ impl App {
                     let _ = term.write(payload.as_bytes());
                 }
 
-                self.terminals.lock().insert(id, Owned { owner, terminal: term.clone() });
+                self.terminals.lock().insert(
+                    id,
+                    Owned {
+                        owner,
+                        terminal: term.clone(),
+                    },
+                );
                 if args.visible.unwrap_or(self.default_visible) {
                     let _ = term.promote_to_visible();
                 }
@@ -101,8 +111,15 @@ impl App {
 
         // 2. Cold start (pool empty or custom args)
         let id = self.next_id.fetch_add(1, Ordering::Relaxed);
-        let res = crate::terminal::spawn(id, args, self.default_visible, &self.prompt_regex).await?;
-        self.terminals.lock().insert(id, Owned { owner, terminal: res.terminal });
+        let res =
+            crate::terminal::spawn(id, args, self.default_visible, &self.prompt_regex).await?;
+        self.terminals.lock().insert(
+            id,
+            Owned {
+                owner,
+                terminal: res.terminal,
+            },
+        );
         Ok((id, res.spawn_ms, res.ready_ms))
     }
 
@@ -112,26 +129,35 @@ impl App {
             // Admission Control: Don't over-fill pool if it risks saturation
             let current_total = (self.terminals.lock().len() + self.pool.lock().len()) as u32;
             if current_total >= self.max_terminals {
-                tracing::debug!("pool fill paused: total terminals at limit ({})", self.max_terminals);
+                tracing::debug!(
+                    "pool fill paused: total terminals at limit ({})",
+                    self.max_terminals
+                );
                 break;
             }
 
             let id = self.next_id.fetch_add(1, Ordering::Relaxed);
-            let args = SpawnArgs { title: "Pre-warmed".into(), ..Default::default() };
+            let args = SpawnArgs {
+                title: "Pre-warmed".into(),
+                ..Default::default()
+            };
             // Pre-warmed terminals are ALWAYS headless until promoted (BP-009)
             match crate::terminal::spawn(id, args, false, &self.prompt_regex).await {
                 Ok(res) => {
                     self.pool.lock().push_back(res.terminal);
                     tracing::info!(id, "terminal pre-warmed (headless) and added to pool");
-                    
+
                     // Signal global readiness event (Zero-latency signaling for tests/clients)
                     #[cfg(windows)]
                     {
-                        use windows_sys::Win32::System::Threading::{CreateEventW, SetEvent};
                         use std::os::windows::ffi::OsStrExt;
-                        
+                        use windows_sys::Win32::System::Threading::{CreateEventW, SetEvent};
+
                         let name_str = "Local\\vterm-rs-ready-event";
-                        let name: Vec<u16> = std::ffi::OsStr::new(name_str).encode_wide().chain(std::iter::once(0)).collect();
+                        let name: Vec<u16> = std::ffi::OsStr::new(name_str)
+                            .encode_wide()
+                            .chain(std::iter::once(0))
+                            .collect();
                         unsafe {
                             let handle = CreateEventW(std::ptr::null(), 1, 0, name.as_ptr());
                             if handle != 0 {
@@ -140,7 +166,7 @@ impl App {
                                 } else {
                                     tracing::error!("failed to signal local readiness event");
                                 }
-                                // We don't close the handle here to keep the event alive 
+                                // We don't close the handle here to keep the event alive
                             } else {
                                 tracing::error!("failed to create local readiness event");
                             }
@@ -168,7 +194,9 @@ impl App {
 
     /// IDs of terminals owned by `owner`, in arbitrary order.
     pub fn list(&self, owner: ConnectionId) -> Vec<u32> {
-        self.terminals.lock().iter()
+        self.terminals
+            .lock()
+            .iter()
             .filter_map(|(id, o)| (o.owner == owner).then_some(*id))
             .collect()
     }
@@ -177,7 +205,8 @@ impl App {
     pub fn list_metadata(&self, owner: Option<ConnectionId>) -> Vec<crate::protocol::TerminalInfo> {
         let terminals = self.terminals.lock();
         tracing::trace!(count = terminals.len(), ?owner, "listing terminals");
-        terminals.iter()
+        terminals
+            .iter()
             .filter(|(_, o)| owner.map_or(true, |id| o.owner == id))
             .map(|(id, o)| crate::protocol::TerminalInfo {
                 id: *id,
@@ -189,8 +218,15 @@ impl App {
     }
 
     /// High-speed batch match across all terminals owned by `owner`.
-    pub fn match_all(&self, owner: ConnectionId, pattern: &str) -> Vec<crate::protocol::MatchEntry> {
-        let mut ids: Vec<u32> = self.terminals.lock().iter()
+    pub fn match_all(
+        &self,
+        owner: ConnectionId,
+        pattern: &str,
+    ) -> Vec<crate::protocol::MatchEntry> {
+        let mut ids: Vec<u32> = self
+            .terminals
+            .lock()
+            .iter()
             .filter_map(|(id, o)| (o.owner == owner).then_some(*id))
             .collect();
         ids.sort_unstable(); // Strict acquisition order to prevent deadlocks (BP-011)
@@ -200,7 +236,11 @@ impl App {
             .filter_map(|id| {
                 map.get(&id).map(|o| {
                     let (matched, certain) = o.terminal.match_probabilistic(pattern);
-                    crate::protocol::MatchEntry { id, matched, certain }
+                    crate::protocol::MatchEntry {
+                        id,
+                        matched,
+                        certain,
+                    }
                 })
             })
             .collect()
@@ -210,7 +250,10 @@ impl App {
     pub fn close(&self, owner: ConnectionId, id: u32) -> Result<()> {
         let mut map = self.terminals.lock();
         match map.get(&id) {
-            Some(o) if o.owner == owner => { map.remove(&id); Ok(()) }
+            Some(o) if o.owner == owner => {
+                map.remove(&id);
+                Ok(())
+            }
             _ => Err(Error::UnknownTerminal(id)),
         }
     }
@@ -248,14 +291,18 @@ impl App {
     /// Snapshot every terminal — used by the watchdog. Returns `(id, line_count,
     /// max_lines, spawn_time, max_duration, owner)` tuples.
     pub(crate) fn snapshot_for_watchdog(&self) -> Vec<WatchdogEntry> {
-        self.terminals.lock().iter().map(|(id, o)| WatchdogEntry {
-            id: *id,
-            owner: o.owner,
-            line_count: o.terminal.line_count(),
-            max_lines: o.terminal.max_lines(),
-            spawn_time: o.terminal.spawn_time(),
-            max_duration: o.terminal.max_duration(),
-        }).collect()
+        self.terminals
+            .lock()
+            .iter()
+            .map(|(id, o)| WatchdogEntry {
+                id: *id,
+                owner: o.owner,
+                line_count: o.terminal.line_count(),
+                max_lines: o.terminal.max_lines(),
+                spawn_time: o.terminal.spawn_time(),
+                max_duration: o.terminal.max_duration(),
+            })
+            .collect()
     }
 }
 
@@ -277,10 +324,22 @@ pub struct AppBuilder {
 }
 
 impl AppBuilder {
-    pub fn default_visible(mut self, v: bool) -> Self { self.default_visible = Some(v); self }
-    pub fn prompt_regex(mut self, r: impl Into<String>) -> Self { self.prompt_regex = Some(r.into()); self }
-    pub fn max_terminals(mut self, n: u32) -> Self { self.max_terminals = Some(n); self }
-    pub fn max_mem_mb(mut self, m: u64) -> Self { self.max_mem_mb = Some(m); self }
+    pub fn default_visible(mut self, v: bool) -> Self {
+        self.default_visible = Some(v);
+        self
+    }
+    pub fn prompt_regex(mut self, r: impl Into<String>) -> Self {
+        self.prompt_regex = Some(r.into());
+        self
+    }
+    pub fn max_terminals(mut self, n: u32) -> Self {
+        self.max_terminals = Some(n);
+        self
+    }
+    pub fn max_mem_mb(mut self, m: u64) -> Self {
+        self.max_mem_mb = Some(m);
+        self
+    }
 
     pub fn build(self) -> Result<Arc<App>> {
         let (refill_tx, mut refill_rx) = mpsc::channel(1);
@@ -291,7 +350,9 @@ impl AppBuilder {
             next_id: AtomicU32::new(1),
             default_visible: self.default_visible.unwrap_or(true),
             prompt_regex: Regex::new(
-                &self.prompt_regex.unwrap_or_else(|| r"(?:PS )?[A-Z]:\\.*> ?$".to_string()),
+                &self
+                    .prompt_regex
+                    .unwrap_or_else(|| r"(?:PS )?[A-Z]:\\.*> ?$".to_string()),
             )?,
             max_terminals: self.max_terminals.unwrap_or(100),
             max_mem_mb: self.max_mem_mb,

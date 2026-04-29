@@ -43,15 +43,15 @@ fn expand(token: &str) -> Option<&'static [u8]> {
     // Tokens are case-insensitive — match against a lowercased view via byte trick.
     // For three-byte tokens we can avoid the allocation entirely.
     Some(match token.to_ascii_lowercase().as_str() {
-        "c-c"   => &[0x03],
-        "c-d"   => &[0x04],
-        "tab"   => &[0x09],
-        "esc"   => &[0x1b],
+        "c-c" => &[0x03],
+        "c-d" => &[0x04],
+        "tab" => &[0x09],
+        "esc" => &[0x1b],
         "enter" => b"\r\n",
-        "up"    => b"\x1b[A",
-        "down"  => b"\x1b[B",
+        "up" => b"\x1b[A",
+        "down" => b"\x1b[B",
         "right" => b"\x1b[C",
-        "left"  => b"\x1b[D",
+        "left" => b"\x1b[D",
         _ => return None,
     })
 }
@@ -60,12 +60,36 @@ fn expand(token: &str) -> Option<&'static [u8]> {
 mod tests {
     use super::*;
 
-    #[test] fn ctrl_c() { assert_eq!(parse("<C-c>"), &[0x03]); }
-    #[test] fn arrow_up() { assert_eq!(parse("<Up>"), b"\x1b[A"); }
-    #[test] fn enter() { assert_eq!(parse("<Enter>"), b"\r\n"); }
-    #[test] fn esc() { assert_eq!(parse("<Esc>"), b"\x1b"); }
-    #[test] fn mixed() { assert_eq!(parse("ls -la<Enter>"), b"ls -la\r\n"); }
-    #[test] fn unknown_passes_through() { assert_eq!(parse("<floop>"), b"<floop>"); }
-    #[test] fn case_insensitive() { assert_eq!(parse("<ENTER>"), b"\r\n"); }
-    #[test] fn vim_quit() { assert_eq!(parse("<Esc>:q!<Enter>"), b"\x1b:q!\r\n"); }
+    #[test]
+    fn ctrl_c() {
+        assert_eq!(parse("<C-c>"), &[0x03]);
+    }
+    #[test]
+    fn arrow_up() {
+        assert_eq!(parse("<Up>"), b"\x1b[A");
+    }
+    #[test]
+    fn enter() {
+        assert_eq!(parse("<Enter>"), b"\r\n");
+    }
+    #[test]
+    fn esc() {
+        assert_eq!(parse("<Esc>"), b"\x1b");
+    }
+    #[test]
+    fn mixed() {
+        assert_eq!(parse("ls -la<Enter>"), b"ls -la\r\n");
+    }
+    #[test]
+    fn unknown_passes_through() {
+        assert_eq!(parse("<floop>"), b"<floop>");
+    }
+    #[test]
+    fn case_insensitive() {
+        assert_eq!(parse("<ENTER>"), b"\r\n");
+    }
+    #[test]
+    fn vim_quit() {
+        assert_eq!(parse("<Esc>:q!<Enter>"), b"\x1b:q!\r\n");
+    }
 }

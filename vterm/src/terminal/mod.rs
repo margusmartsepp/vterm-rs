@@ -10,22 +10,22 @@
 
 mod instance;
 mod prompt;
-pub mod shm;
 #[cfg(windows)]
 mod pump;
+pub mod shm;
 
-use std::sync::Arc;
 use std::sync::atomic::AtomicU32;
+use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use parking_lot::Mutex;
-use portable_pty::{CommandBuilder, PtySize, native_pty_system};
+use portable_pty::{native_pty_system, CommandBuilder, PtySize};
 use regex::Regex;
 
-use crate::{Error, Result};
 use crate::protocol::SpawnArgs;
+use crate::{Error, Result};
 
-pub use instance::{Inner, Terminal, state};
+pub use instance::{state, Inner, Terminal};
 
 pub struct SpawnResult {
     pub terminal: Terminal<state::Ready>,
@@ -52,16 +52,35 @@ pub async fn spawn(
     tracing::info!(id, rows, cols, "opening PTY");
     let pty = native_pty_system();
     let pair = pty
-        .openpty(PtySize { rows, cols, pixel_width: 0, pixel_height: 0 })
+        .openpty(PtySize {
+            rows,
+            cols,
+            pixel_width: 0,
+            pixel_height: 0,
+        })
         .map_err(|e| Error::Pty(format!("openpty: {e}")))?;
     tracing::info!(id, "PTY opened");
 
-    let writer = pair.master.take_writer().map_err(|e| Error::Pty(format!("take_writer: {e}")))?;
-    let reader = pair.master.try_clone_reader().map_err(|e| Error::Pty(format!("clone_reader: {e}")))?;
+    let writer = pair
+        .master
+        .take_writer()
+        .map_err(|e| Error::Pty(format!("take_writer: {e}")))?;
+    let reader = pair
+        .master
+        .try_clone_reader()
+        .map_err(|e| Error::Pty(format!("clone_reader: {e}")))?;
 
     // ── spawn the shell ─────────────────────────────────────────────────────────
     let mut cmd = CommandBuilder::new("powershell.exe");
-    cmd.args(["-NoLogo", "-NoProfile", "-NoExit", "-ExecutionPolicy", "Bypass", "-Command", "Remove-Module PSReadLine -ErrorAction SilentlyContinue"]);
+    cmd.args([
+        "-NoLogo",
+        "-NoProfile",
+        "-NoExit",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "Remove-Module PSReadLine -ErrorAction SilentlyContinue",
+    ]);
     cmd.env("TERM", "xterm-256color");
     if let Some(env) = args.env {
         for (k, v) in env {
@@ -70,7 +89,10 @@ pub async fn spawn(
     }
 
     tracing::info!(id, "spawning powershell.exe");
-    let child = pair.slave.spawn_command(cmd).map_err(|e| Error::Pty(format!("spawn: {e}")))?;
+    let child = pair
+        .slave
+        .spawn_command(cmd)
+        .map_err(|e| Error::Pty(format!("spawn: {e}")))?;
     let child_pid = child.process_id().unwrap_or(0);
     tracing::info!(id, pid = child_pid, "powershell spawned");
 
@@ -95,8 +117,14 @@ pub async fn spawn(
         spawn_time: Instant::now(),
         notifier: tokio::sync::broadcast::channel(16).0,
         shm: match shm::ShmBuffer::new(&format!("vterm-rs-shm-{id}"), 4096) {
-            Ok(s) => { tracing::info!(id, "SHM buffer created"); Some(s) }
-            Err(e) => { tracing::warn!(id, error = %e, "SHM buffer creation failed"); None }
+            Ok(s) => {
+                tracing::info!(id, "SHM buffer created");
+                Some(s)
+            }
+            Err(e) => {
+                tracing::warn!(id, error = %e, "SHM buffer creation failed");
+                None
+            }
         },
         last_content: Mutex::new(String::new()),
         full_history: Mutex::new(String::new()),
@@ -123,28 +151,40 @@ pub async fn spawn(
     if let Some(initial) = args.command {
         ready.write(initial.as_bytes())?;
         ready.write(b"\r\n")?;
-        
+
         // If we are in 'wait' mode, we need the shell itself to exit
         // so the orchestrator can detect completion.
         if args.wait.unwrap_or(false) {
             ready.write(b"exit\r\n")?;
         }
     }
-    Ok(SpawnResult { terminal: ready, spawn_ms, ready_ms })
+    Ok(SpawnResult {
+        terminal: ready,
+        spawn_ms,
+        ready_ms,
+    })
 }
 
 #[cfg(windows)]
 pub(crate) fn spawn_viewer_window(id: u32, title: &str) {
     let exe = match std::env::current_exe() {
         Ok(e) => e,
-        Err(e) => { tracing::warn!(error = %e, "current_exe"); return; }
+        Err(e) => {
+            tracing::warn!(error = %e, "current_exe");
+            return;
+        }
     };
     let _ = std::process::Command::new("cmd")
-        .arg("/c").arg("start").arg(title)
-        .arg("powershell").arg("-NoExit").arg("-Command")
+        .arg("/c")
+        .arg("start")
+        .arg(title)
+        .arg("powershell")
+        .arg("-NoExit")
+        .arg("-Command")
         .arg(format!("& '{}' --client {}", exe.display(), id))
         .spawn();
 }
 
 #[cfg(not(windows))]
-pub(crate) fn spawn_viewer_window(_id: u32, _title: &str) { /* no-op for now */ }
+pub(crate) fn spawn_viewer_window(_id: u32, _title: &str) { /* no-op for now */
+}

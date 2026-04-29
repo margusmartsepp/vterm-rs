@@ -18,11 +18,15 @@ pub struct TracingLayer;
 
 impl<S> Layer<S> for TracingLayer {
     type Service = Tracing<S>;
-    fn layer(&self, inner: S) -> Self::Service { Tracing { inner } }
+    fn layer(&self, inner: S) -> Self::Service {
+        Tracing { inner }
+    }
 }
 
 #[derive(Clone)]
-pub struct Tracing<S> { inner: S }
+pub struct Tracing<S> {
+    inner: S,
+}
 
 impl<S> Service<Request> for Tracing<S>
 where
@@ -40,7 +44,11 @@ where
     }
 
     fn call(&mut self, req: Request) -> Self::Future {
-        let span = tracing::info_span!("cmd", kind = req.command.variant_name(), req_id = req.req_id);
+        let span = tracing::info_span!(
+            "cmd",
+            kind = req.command.variant_name(),
+            req_id = req.req_id
+        );
         Box::pin(self.inner.call(req).instrument(span))
     }
 }

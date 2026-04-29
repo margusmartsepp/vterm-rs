@@ -2,12 +2,11 @@
 //
 /// rationale: Part of the Observability community. Provides performance metrics for agentic loops.
 /// links: crate::service::correlation::Correlation, crate::service::tracing::Tracing
-/// 
+///
 /// Wraps any service whose response is a `CommandResult` and stamps `duration_ms`
 /// before forwarding the value outward. Generic over the request type — the same
 /// layer instruments `SkillCommand → CommandResult` (the inner wire) and would
 /// also instrument any future request type that returns `CommandResult`.
-
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
@@ -22,11 +21,15 @@ pub struct TimingLayer;
 
 impl<S> Layer<S> for TimingLayer {
     type Service = Timing<S>;
-    fn layer(&self, inner: S) -> Self::Service { Timing { inner } }
+    fn layer(&self, inner: S) -> Self::Service {
+        Timing { inner }
+    }
 }
 
 #[derive(Clone)]
-pub struct Timing<S> { inner: S }
+pub struct Timing<S> {
+    inner: S,
+}
 
 impl<S, Req> Service<Req> for Timing<S>
 where

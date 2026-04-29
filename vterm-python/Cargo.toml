@@ -2,6 +2,9 @@
 name = "vterm-python"
 version = "0.7.20"
 edition = "2021"
+description = "High-performance Python SDK for the vterm-rs PTY orchestrator"
+license = "MIT"
+repository = "https://github.com/margusmartsepp/vterm-rs"
 
 [lib]
 name = "vterm_python"

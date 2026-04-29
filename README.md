@@ -75,6 +75,8 @@ Add the following to your `%APPDATA%\Claude\claude_desktop_config.json`:
 }
 ```
 
+For a deep dive into Claude Desktop integration with step-by-step examples, see the [**Claude Integration Guide**](examples/claude/README.md).
+
 ### 3. Local Development (Rust)
 ```powershell
 # Build the orchestrator
@@ -96,6 +98,10 @@ For detailed, verified examples of every tool (including JSON inputs, outputs, a
 - [**wait_until**](docs/mcp/wait_until.md): Visual synchronization.
 - [**extract**](docs/mcp/extract.md): Structured data recovery.
 - [**read**](docs/mcp/read.md) / [**write**](docs/mcp/write.md): Interactive terminal primitives.
+
+### **Use Case Spotlights**
+*   [**Gemini-CLI Gauntlet**](scripts/gemini_gauntlet.py): A multi-turn automated stress test for LLM terminal control.
+*   [**Token-Efficient Builds**](examples/batch_efficiency.py): Demonstration of parallel compilation with zero context overhead.
 
 ---
 

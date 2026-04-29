@@ -15,9 +15,29 @@ async fn connect_with_retry(retries: u32) -> Result<named_pipe::NamedPipeClient>
             Err(_) => {
                 if i == 0 {
                     println!(
-                        "Warning: Orchestrator not found at {}. Ensure it is running.",
+                        "Warning: Orchestrator not found at {}. Attempting auto-spawn...",
                         PIPE_NAME
                     );
+                    // Try common development paths
+                    let paths = [
+                        "vterm.exe",
+                        "target/debug/vterm.exe",
+                        "target/release/vterm.exe",
+                        "../target/debug/vterm.exe",
+                        "../target/release/vterm.exe",
+                        "vterm/target/debug/vterm.exe",
+                        "vterm/target/release/vterm.exe",
+                    ];
+                    for path in paths {
+                        if std::path::Path::new(path).exists() {
+                            let _ = std::process::Command::new(path)
+                                .arg("--headless")
+                                .stdout(std::process::Stdio::null())
+                                .stderr(std::process::Stdio::null())
+                                .spawn();
+                            break;
+                        }
+                    }
                 }
                 sleep(Duration::from_secs(2)).await;
             }

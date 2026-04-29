@@ -67,6 +67,10 @@ struct Args {
     /// Admission Control: Maximum memory usage in MB for the orchestrator process.
     #[arg(long)]
     max_mem_mb: Option<u64>,
+
+    /// Internal: exit immediately if pipe is already bound, instead of attempting takeover.
+    #[arg(long)]
+    no_takeover: bool,
 }
 
 #[tokio::main(flavor = "multi_thread")]
@@ -113,7 +117,7 @@ async fn main() -> Result<()> {
         "vterm orchestrator starting",
     );
 
-    accept_loop(app).await
+    accept_loop(app, args.no_takeover).await
 }
 
 fn app_default_visible(headless: bool, visible: bool) -> &'static str {
@@ -139,7 +143,7 @@ fn init_tracing() {
 // ── server ────────────────────────────────────────────────────────────────────
 
 #[cfg(windows)]
-async fn accept_loop(app: Arc<App>) -> Result<()> {
+async fn accept_loop(app: Arc<App>, no_takeover: bool) -> Result<()> {
     let (shutdown_tx, mut shutdown_rx) = tokio::sync::watch::channel(false);
 
     let mut first = true;
@@ -157,6 +161,10 @@ async fn accept_loop(app: Arc<App>) -> Result<()> {
                     || e.raw_os_error() == Some(5))
                     && first =>
             {
+                if no_takeover {
+                    tracing::info!("pipe already bound, --no-takeover set, exiting");
+                    return Ok(());
+                }
                 tracing::info!("pipe already bound (os error 5), attempting takeover...");
                 if let Err(te) = attempt_takeover().await {
                     anyhow::bail!("takeover failed: {te}");

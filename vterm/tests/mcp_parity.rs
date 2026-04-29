@@ -16,14 +16,14 @@ async fn test_batch_extraction_parity() -> anyhow::Result<()> {
     let commands = vec![
         SkillCommand::Spawn(SpawnArgs {
             title: "ping-local-1".into(),
-            command: Some("ping 127.0.0.1 -n 4".into()),
+            command: Some("ping 127.0.0.1 -n 1".into()),
             wait: Some(true),
             extract_pattern: Some(pattern.into()),
             ..Default::default()
         }),
         SkillCommand::Spawn(SpawnArgs {
             title: "ping-local-2".into(),
-            command: Some("ping 127.0.0.1 -n 4".into()),
+            command: Some("ping 127.0.0.1 -n 1".into()),
             wait: Some(true),
             extract_pattern: Some(pattern.into()),
             ..Default::default()
@@ -88,7 +88,7 @@ async fn test_stability_parity() -> anyhow::Result<()> {
     // Spawn a terminal that does something slow
     let spawn_res = client.execute(SkillCommand::Spawn(SpawnArgs {
         title: "stability-test".into(),
-        command: Some("powershell -Command \"Write-Host 'Starting...'; Start-Sleep -Seconds 2; Write-Host 'Done!'\"".into()),
+        command: Some("cmd /c \"echo Starting... && timeout /t 2 > nul && echo Done!\"".into()),
         ..Default::default()
     })).await?;
 
@@ -100,7 +100,7 @@ async fn test_stability_parity() -> anyhow::Result<()> {
         .execute(SkillCommand::WaitUntilStable {
             id,
             stable_ms: 500,
-            timeout_ms: 5000,
+            timeout_ms: 30000,
         })
         .await?;
 

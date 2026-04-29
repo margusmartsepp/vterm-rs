@@ -252,11 +252,12 @@ impl TerminalServer {
             if let Some(token) = token_clone {
                 while let Ok(event) = events.recv().await {
                     if let vterm_rs::protocol::Event::Progress {
-                            token: ev_token,
-                            percentage,
-                            msg,
-                            ..
-                        } = event {
+                        token: ev_token,
+                        percentage,
+                        msg,
+                        ..
+                    } = event
+                    {
                         let token_str = serde_json::to_string(&token)
                             .unwrap_or_default()
                             .replace("\"", "");
@@ -341,11 +342,12 @@ impl TerminalServer {
             if let Some(token) = token_clone {
                 while let Ok(event) = events.recv().await {
                     if let vterm_rs::protocol::Event::Progress {
-                            token: ev_token,
-                            percentage,
-                            msg,
-                            ..
-                        } = event {
+                        token: ev_token,
+                        percentage,
+                        msg,
+                        ..
+                    } = event
+                    {
                         let token_str = serde_json::to_string(&token)
                             .unwrap_or_default()
                             .replace("\"", "");

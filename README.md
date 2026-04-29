@@ -16,6 +16,9 @@
 
 ---
 
+> [!IMPORTANT]
+> **Verified Documentation**: For detailed, factual documentation of every MCP endpoint (input/output/reasoning), see the [**MCP Tool Reference**](docs/mcp/README.md).
+
 ## Key Features
 
 | Feature | Description |
@@ -83,6 +86,18 @@ cargo build --release
 # Run integration tests
 .\tests\playbook_tests.ps1 -Headless
 ```
+
+## Tool Documentation & Examples
+
+For detailed, verified examples of every tool (including JSON inputs, outputs, and reasoning for agents), please refer to the dedicated [**MCP Tool Reference**](docs/mcp/README.md).
+
+- [**spawn**](docs/mcp/spawn.md): Spawning terminals with state verification.
+- [**batch**](docs/mcp/batch.md): Token-efficient multi-step workflows.
+- [**wait_until**](docs/mcp/wait_until.md): Visual synchronization.
+- [**extract**](docs/mcp/extract.md): Structured data recovery.
+- [**read**](docs/mcp/read.md) / [**write**](docs/mcp/write.md): Interactive terminal primitives.
+
+---
 
 ## Ecosystem & SDKs
 

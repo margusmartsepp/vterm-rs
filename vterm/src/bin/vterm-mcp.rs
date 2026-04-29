@@ -477,8 +477,9 @@ async fn main() -> Result<()> {
         .await?;
 
     // tracing::info!("vterm-mcp started, serving over stdio...");
-    serve_server(server, stdio())
-        .await
-        .map_err(|e| anyhow::anyhow!("{:?}", e))?;
+    match serve_server(server, stdio()).await {
+        Ok(_) => tracing::info!("vterm-mcp finished cleanly"),
+        Err(e) => tracing::error!("vterm-mcp finished with error: {:?}", e),
+    }
     Ok(())
 }

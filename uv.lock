@@ -1125,7 +1125,7 @@ wheels = [
 
 [[package]]
 name = "vterm-rs-python-mcp"
-version = "0.7.16"
+version = "0.7.20"
 source = { editable = "vterm-python" }
 dependencies = [
     { name = "fastmcp" },
@@ -1139,7 +1139,14 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "maturin", specifier = ">=1.13.1" }]
+dev = [
+    { name = "maturin", specifier = ">=1.13.1" },
+    { name = "psutil", specifier = ">=5.9" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-asyncio", specifier = ">=0.23" },
+    { name = "pytest-benchmark", specifier = ">=4.0" },
+    { name = "pytest-xdist", specifier = ">=3.5" },
+]
 
 [[package]]
 name = "watchfiles"

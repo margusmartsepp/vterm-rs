@@ -36,3 +36,7 @@ dist/
 
 # Graphify
 graphify-out/cache/
+
+# Binaries and logs
+*.pyd
+*.jsonl

@@ -86,11 +86,13 @@ async fn test_stability_parity() -> anyhow::Result<()> {
     let client = OrchestratorClient::connect().await?;
 
     // Spawn a terminal that does something slow
-    let spawn_res = client.execute(SkillCommand::Spawn(SpawnArgs {
-        title: "stability-test".into(),
-        command: Some("cmd /c \"echo Starting... && timeout /t 2 > nul && echo Done!\"".into()),
-        ..Default::default()
-    })).await?;
+    let spawn_res = client
+        .execute(SkillCommand::Spawn(SpawnArgs {
+            title: "stability-test".into(),
+            command: Some("cmd /c \"echo Starting... && timeout /t 2 > nul && echo Done!\"".into()),
+            ..Default::default()
+        }))
+        .await?;
 
     let id = spawn_res.id.expect("ID expected");
 

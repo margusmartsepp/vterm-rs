@@ -1,4 +1,5 @@
-# vterm-rs
+# vterm-rs [<img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Install in Cursor" height="30">](https://cursor.com/en/install-mcp?name=vterm-rs&config=eyJjb21tYW5kIjoidXZ4IiwiaW5zdGFsbCI6InZ0ZXJtLXJzLXB5dGhvbi1tY3AiLCJhcmdzIjpbInZ0ZXJtLXJzLXB5dGhvbi1tY3AiXX0%3D)
+
 
 <div align="center">
 
@@ -6,8 +7,6 @@
 [![PyPI](https://img.shields.io/pypi/v/vterm-rs-python-mcp.svg)](https://pypi.org/project/vterm-rs-python-mcp/)
 [![CI](https://github.com/margusmartsepp/vterm-rs/actions/workflows/rust-ci.yml/badge.svg)](https://github.com/margusmartsepp/vterm-rs/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-<br/>
-[<img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Install in Cursor" height="30">](https://cursor.com/en/install-mcp?name=vterm-rs&config=eyJjb21tYW5kIjoidXZ4IiwiaW5zdGFsbCI6InZ0ZXJtLXJzLXB5dGhvbi1tY3AiLCJhcmdzIjpbInZ0ZXJtLXJzLXB5dGhvbi1tY3AiXX0%3D)
 
 ### **High-Performance Rust PTY Orchestrator for AI Agents**
 *Transforming the terminal from a blind black box into a verifiable State Machine.*

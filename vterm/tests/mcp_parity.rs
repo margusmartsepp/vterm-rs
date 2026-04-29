@@ -15,15 +15,15 @@ async fn test_batch_extraction_parity() -> anyhow::Result<()> {
 
     let commands = vec![
         SkillCommand::Spawn(SpawnArgs {
-            title: "ping-google".into(),
-            command: Some("ping google.com".into()),
+            title: "ping-local-1".into(),
+            command: Some("ping 127.0.0.1 -n 4".into()),
             wait: Some(true),
             extract_pattern: Some(pattern.into()),
             ..Default::default()
         }),
         SkillCommand::Spawn(SpawnArgs {
-            title: "ping-cloudflare".into(),
-            command: Some("ping 1.1.1.1".into()),
+            title: "ping-local-2".into(),
+            command: Some("ping 127.0.0.1 -n 4".into()),
             wait: Some(true),
             extract_pattern: Some(pattern.into()),
             ..Default::default()

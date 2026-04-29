@@ -14,9 +14,7 @@ async fn connect_with_retry(retries: u32) -> Result<named_pipe::NamedPipeClient>
             Ok(client) => return Ok(client),
             Err(_) => {
                 if i == 0 {
-                    let _ = std::process::Command::new("cargo")
-                        .args(["run", "--bin", "vterm", "--", "--headless"])
-                        .spawn();
+                    println!("Warning: Orchestrator not found at {}. Ensure it is running.", PIPE_NAME);
                 }
                 sleep(Duration::from_secs(2)).await;
             }
@@ -104,7 +102,7 @@ async fn test_supreme_orchestration() -> Result<()> {
         commands: vec![
             SkillCommand::ScreenWrite {
                 id: term_id,
-                text: "ping google.com -n 2<Enter>".into(),
+                text: "ping 127.0.0.1 -n 2<Enter>".into(),
             },
             SkillCommand::WaitUntil {
                 id: term_id,

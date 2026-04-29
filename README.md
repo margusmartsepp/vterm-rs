@@ -136,10 +136,10 @@ cargo run --release --bin vterm-mcp
 
 | Area | Status | Target |
 | :--- | :--- | :--- |
-| **Windows + ConPTY** | Stable | v0.7.0 |
-| **Python SDK** | Stable (v0.7.20) | v0.7.0 |
+| **Windows + ConPTY** | Stable | v0.7.24 |
+| **Python SDK** | Stable | v0.7.24 |
 | **Linux / macOS** | In Progress | v0.8.0 |
-| **Wire Protocol** | Unstable | v1.0.0 |
+| **Wire Protocol** | Stable | v0.7.24 |
 | **Test Coverage** | Improving | Ongoing |
 
 ---

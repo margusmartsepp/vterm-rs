@@ -11,7 +11,7 @@ readme = "../README.md"
 [dependencies]
 # core async + serialization
 tokio              = { version = "1.40", features = ["full"] }
-vterm-protocol     = { version = "0.1.0", path = "../vterm-protocol" }
+vterm-protocol     = { version = "0.7.22", path = "../vterm-protocol" }
 tokio-util         = { version = "0.7", features = ["codec"] }
 serde              = { version = "1.0", features = ["derive"] }
 serde_json         = "1.0"

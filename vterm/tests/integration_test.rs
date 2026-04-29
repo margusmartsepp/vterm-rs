@@ -14,7 +14,10 @@ async fn connect_with_retry(retries: u32) -> Result<named_pipe::NamedPipeClient>
             Ok(client) => return Ok(client),
             Err(_) => {
                 if i == 0 {
-                    println!("Warning: Orchestrator not found at {}. Ensure it is running.", PIPE_NAME);
+                    println!(
+                        "Warning: Orchestrator not found at {}. Ensure it is running.",
+                        PIPE_NAME
+                    );
                 }
                 sleep(Duration::from_secs(2)).await;
             }
